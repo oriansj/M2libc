@@ -166,6 +166,9 @@ int fflush(FILE* stream)
 	/* We only need to flush on writes */
 	if(O_RDONLY == stream->bufmode) return 0;
 
+	/* If nothing to flush */
+	if(0 ==stream->bufpos) return 0;
+
 	/* The actual flushing */
 	int error = write(stream->fd, stream->buffer, stream->bufpos);
 
