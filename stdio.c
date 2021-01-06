@@ -163,10 +163,6 @@ FILE* fopen(char const* filename, char const* mode)
 
 int fflush(FILE* stream)
 {
-	/* Deal with STDIN, STDOUT and STDERR */
-	/* No flush for you*/
-	if(2 >= stream) return 0;
-
 	/* We only need to flush on writes */
 	if(O_RDONLY == stream->bufmode) return 0;
 
@@ -185,7 +181,7 @@ int fclose(FILE* stream)
 {
 	/* Deal with STDIN, STDOUT and STDERR */
 	/* No close for you */
-	if(2 >= stream) return 0;
+	if(2 >= stream->fd) return 0;
 
 	/* We only need to flush on writes */
 	if(O_WRONLY == stream->bufmode)
@@ -210,7 +206,7 @@ int ungetc(int ch, FILE* stream)
 {
 	/* Deal with STDIN, STDOUT and STDERR */
 	/* No ungetc for you */
-	if(2 >= stream) return EOF;
+	if(2 >= stream->fd) return EOF;
 
 	/* You can't unget on a write stream! */
 	if(O_WRONLY == stream->bufmode) return EOF;
@@ -231,7 +227,7 @@ long ftell(FILE* stream)
 {
 	/* Deal with STDIN, STDOUT and STDERR */
 	/* No ftell for you */
-	if(2 >= stream) return 0;
+	if(2 >= stream->fd) return 0;
 
 	/* Deal with buffered output */
 	if(O_WRONLY == stream->bufmode) return stream->file_pos + stream->bufpos;
@@ -245,7 +241,7 @@ int fseek(FILE* f, long offset, int whence)
 {
 	/* Deal with STDIN, STDOUT and STDERR */
 	/* No seek and destroy missions */
-	if(2 >= f) return 0;
+	if(2 >= f->fd) return 0;
 
 	/* Deal with ugly case */
 	if(O_WRONLY == f->bufmode)
