@@ -71,9 +71,52 @@ void __init_io()
 
 /* Standard C functions */
 /* Getting */
-int fgetc(FILE* f);
-int getchar();
-char* fgets(char* str, int count, FILE* stream);
+int fgetc(FILE* f)
+{
+	/* Only read on read buffers */
+	if(O_WRONLY == f->bufmode) return EOF;
+
+	/* Deal with stdin */
+	if(STDIN_FILENO == f->fd)
+	{
+		read(f->fd, f->buffer, 1);
+		f->bufpos = 0;
+	}
+
+	/* Catch EOF */
+	if(f->buflen <= f->bufpos) return EOF;
+
+	/* Deal with standard case */
+	int ret = f->buffer[f->bufpos];
+	f->bufpos = f->bufpos + 1;
+
+	return ret;
+}
+
+
+int getchar()
+{
+	return fgetc(stdin);
+}
+
+
+char* fgets(char* str, int count, FILE* stream)
+{
+	int i = 0;
+	int ch;
+	while(i < count)
+	{
+		ch = fgetc(stream);
+		if(EOF == ch) break;
+
+		str[i] = ch;
+		i = i + 1;
+
+		if('\n' == ch) break;
+	}
+
+	return str;
+}
 
 /* Putting */
 int fflush(FILE* stream);
