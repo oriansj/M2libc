@@ -21,7 +21,7 @@
 
 /* Required constants */
 /* For file I/O*/
-#define EOF -1
+#define EOF 0xFFFFFFFF
 #define BUFSIZ 0x140000 /* 20MB */
 
 /* For lseek */
@@ -170,7 +170,7 @@ int fflush(FILE* stream)
 	if(0 ==stream->bufpos) return 0;
 
 	/* The actual flushing */
-	int error = write(stream->fd, stream->buffer, stream->bufpos);
+	int error = write(stream->fd, stream->buffer, stream->bufpos + 1);
 
 	/* Keep track of position */
 	stream->file_pos = stream->file_pos + stream->bufpos;

@@ -15,6 +15,8 @@
  * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#define NULL 0
+
 int access(char* pathname, int mode)
 {
 	asm("LOAD_EFFECTIVE_ADDRESS_ebx %8"
@@ -125,7 +127,7 @@ int close(int fd)
 	    "INT_80");
 }
 
-int _getcwd(char* buf, size_t size)
+int _getcwd(char* buf, int size)
 {
 	asm("LOAD_EFFECTIVE_ADDRESS_ebx %8"
 	    "LOAD_INTEGER_ebx"
