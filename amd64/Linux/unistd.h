@@ -14,8 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 #define NULL 0
+#define __PATH_MAX 4096
+
+void* malloc(unsigned size);
 
 int access(char* pathname, int mode)
 {
@@ -123,6 +125,7 @@ int lseek(int fd, int offset, int whence)
 	    "SYSCALL");
 }
 
+
 int close(int fd)
 {
 	asm("LOAD_EFFECTIVE_ADDRESS_rdi %8"
@@ -130,6 +133,7 @@ int close(int fd)
 	    "LOAD_IMMEDIATE_rax %3"
 	    "SYSCALL");
 }
+
 
 int _getcwd(char* buf, int size)
 {
@@ -140,6 +144,27 @@ int _getcwd(char* buf, int size)
 	    "LOAD_IMMEDIATE_rax %79"
 	    "SYSCALL");
 }
+
+
+char* getcwd(char* buf, unsigned size)
+{
+	int c = _getcwd(buf, size);
+	if(0 == c) return NULL;
+	return buf;
+}
+
+
+char* getwd(char* buf)
+{
+	return getcwd(buf, __PATH_MAX);
+}
+
+
+char* get_current_dir_name()
+{
+	return getcwd(malloc(__PATH_MAX), __PATH_MAX);
+}
+
 
 int brk(void *addr)
 {

@@ -17,6 +17,9 @@
  */
 
 #define NULL 0
+#define __PATH_MAX 4096
+
+void* malloc(unsigned size);
 
 int access(char* pathname, int mode)
 {
@@ -128,12 +131,14 @@ int lseek(int fd, int offset, int whence)
 	    "SYSCALL");
 }
 
+
 int close(int fd)
 {
 	asm("SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
 	    "SET_X8_TO_SYS_CLOSE"
 	    "SYSCALL");
 }
+
 
 int _getcwd(char* buf, int size)
 {
@@ -143,6 +148,27 @@ int _getcwd(char* buf, int size)
 	    "SET_X8_TO_SYS_GETCWD"
 	    "SYSCALL");
 }
+
+
+char* getcwd(char* buf, unsigned size)
+{
+	int c = _getcwd(buf, size);
+	if(0 == c) return NULL;
+	return buf;
+}
+
+
+char* getwd(char* buf)
+{
+	return getcwd(buf, __PATH_MAX);
+}
+
+
+char* get_current_dir_name()
+{
+	return getcwd(malloc(__PATH_MAX), __PATH_MAX);
+}
+
 
 int brk(void *addr)
 {

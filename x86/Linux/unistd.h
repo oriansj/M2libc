@@ -16,6 +16,9 @@
  */
 
 #define NULL 0
+#define __PATH_MAX 4096
+
+void* malloc(unsigned size);
 
 int access(char* pathname, int mode)
 {
@@ -127,6 +130,7 @@ int close(int fd)
 	    "INT_80");
 }
 
+
 int _getcwd(char* buf, int size)
 {
 	asm("LOAD_EFFECTIVE_ADDRESS_ebx %8"
@@ -136,6 +140,27 @@ int _getcwd(char* buf, int size)
 	    "LOAD_IMMEDIATE_eax %183"
 	    "INT_80");
 }
+
+
+char* getcwd(char* buf, unsigned size)
+{
+	int c = _getcwd(buf, size);
+	if(0 == c) return NULL;
+	return buf;
+}
+
+
+char* getwd(char* buf)
+{
+	return getcwd(buf, __PATH_MAX);
+}
+
+
+char* get_current_dir_name()
+{
+	return getcwd(malloc(__PATH_MAX), __PATH_MAX);
+}
+
 
 int brk(void *addr)
 {
