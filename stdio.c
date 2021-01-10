@@ -79,8 +79,8 @@ int fgetc(FILE* f)
 	/* Deal with stdin */
 	if(STDIN_FILENO == f->fd)
 	{
-		read(f->fd, f->buffer, 1);
 		f->bufpos = 0;
+		read(f->fd, f->buffer, 1);
 	}
 
 	/* Catch EOF */
