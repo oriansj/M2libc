@@ -311,7 +311,7 @@ int fseek(FILE* f, long offset, int whence)
 	}
 	else if(SEEK_END == whence)
 	{
-		pos = f->buflen - offset;
+		pos = f->buflen + offset;
 	}
 	else return -1;
 
