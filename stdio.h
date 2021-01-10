@@ -15,8 +15,10 @@
  * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <fcntl.h>
+#include <unistd.h>
 #include <stdlib.h>
 
 /* Required constants */
@@ -43,9 +45,9 @@ struct __IO_FILE
 typedef struct __IO_FILE FILE;
 
 /* Required variables */
-#define stdin 0;
-#define stdout 1;
-#define stderr 2;
+extern FILE* stdin;
+extern FILE* stdout;
+extern FILE* stderr;
 
 /* Standard C functions */
 /* Getting */

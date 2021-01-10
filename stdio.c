@@ -15,8 +15,10 @@
  * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include <fcntl.h>
+#include <unistd.h>
 #include <stdlib.h>
 
 /* Required constants */
@@ -126,8 +128,8 @@ void fputc(char s, FILE* f)
 	if(O_RDONLY == f->bufmode) return;
 
 	/* Add to buffer */
-	f->bufpos = f->bufpos + 1;
 	f->buffer[f->bufpos] = s;
+	f->bufpos = f->bufpos + 1;
 
 	/* Flush if full or '\n' */
 	if(f->bufpos == f->buflen) fflush(f);
@@ -213,7 +215,7 @@ int fflush(FILE* stream)
 	if(0 ==stream->bufpos) return 0;
 
 	/* The actual flushing */
-	int error = write(stream->fd, stream->buffer, stream->bufpos + 1);
+	int error = write(stream->fd, stream->buffer, stream->bufpos);
 
 	/* Keep track of position */
 	stream->file_pos = stream->file_pos + stream->bufpos;
