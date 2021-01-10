@@ -1,4 +1,4 @@
-/* Copyright (C) 2016 Jeremiah Orians
+/* Copyright (C) 2020 Jeremiah Orians
  * Copyright (C) 2020 deesix <deesix@tuta.io>
  * This file is part of M2-Planet.
  *
@@ -15,6 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+#define NULL 0
 
 int access(char* pathname, int mode)
 {
@@ -43,17 +45,13 @@ int fchdir(int fd)
 	    "SYSCALL");
 }
 
-void exit(int value)
+void _exit(int value)
 {
 	asm("SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
 	    "SET_X8_TO_SYS_EXIT"
 	    "SYSCALL");
 }
 
-void _exit(int value)
-{
-	exit(value);
-}
 
 int fork()
 {
@@ -69,7 +67,8 @@ int fork()
 	    "SYSCALL");
 }
 
-int waitpid(int pid, int* status_ptr, int options)
+
+int waitpid (int pid, int* status_ptr, int options)
 {
 	asm("SET_X0_TO_MINUS_1"
 	    "SET_X3_FROM_X0"
@@ -82,10 +81,10 @@ int waitpid(int pid, int* status_ptr, int options)
 	    "SYSCALL");
 }
 
+
 int execve(char* file_name, char** argv, char** envp)
 {
-	asm(
-	    "SET_X0_FROM_BP" "SUB_X0_24" "DEREF_X0"
+	asm("SET_X0_FROM_BP" "SUB_X0_24" "DEREF_X0"
 	    "SET_X2_FROM_X0"
 	    "SET_X0_FROM_BP" "SUB_X0_16" "DEREF_X0"
 	    "SET_X1_FROM_X0"
@@ -94,7 +93,49 @@ int execve(char* file_name, char** argv, char** envp)
 	    "SYSCALL");
 }
 
-int _getcwd(char* buf, size_t size)
+int read(int fd, char* buf, unsigned count)
+{
+	asm("SET_X0_FROM_BP" "SUB_X0_24" "DEREF_X0"
+	    "SET_X2_FROM_X0"
+	    "SET_X0_FROM_BP" "SUB_X0_16" "DEREF_X0"
+	    "SET_X1_FROM_X0"
+	    "SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
+	    "SET_X8_TO_SYS_READ"
+	    "SYSCALL");
+}
+
+int write(int fd, char* buf, unsigned count)
+{
+	asm("SET_X0_FROM_BP" "SUB_X0_24" "DEREF_X0"
+	    "SET_X2_FROM_X0"
+	    "SET_X0_FROM_BP" "SUB_X0_16" "DEREF_X0"
+	    "SET_X1_FROM_X0"
+	    "SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
+	    "SET_X8_TO_SYS_WRITE"
+	    "SYSCALL");
+}
+
+int lseek(int fd, int offset, int whence)
+{
+	asm("SET_X0_TO_MINUS_1"
+	    "SET_X3_FROM_X0"
+	    "SET_X0_FROM_BP" "SUB_X0_24" "DEREF_X0"
+	    "SET_X2_FROM_X0"
+	    "SET_X0_FROM_BP" "SUB_X0_16" "DEREF_X0"
+	    "SET_X1_FROM_X0"
+	    "SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
+	    "SET_X8_TO_SYS_LSEEK"
+	    "SYSCALL");
+}
+
+int close(int fd)
+{
+	asm("SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
+	    "SET_X8_TO_SYS_CLOSE"
+	    "SYSCALL");
+}
+
+int _getcwd(char* buf, int size)
 {
 	asm("SET_X0_FROM_BP" "SUB_X0_16" "DEREF_X0"
 	    "SET_X1_FROM_X0"
