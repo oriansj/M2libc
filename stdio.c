@@ -147,15 +147,15 @@ int fputs(char const* str, FILE* stream)
 		fputc(str[0], stream);
 		str = str + 1;
 	}
-
-	fputc('\n', stream);
 	return 0;
 }
 
 
 int puts(char const* str)
 {
-	return fputs(str, stdout);
+	fputs(str, stdout);
+	fputc('\n', stdout);
+	return 0;
 }
 
 
