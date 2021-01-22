@@ -182,17 +182,13 @@ FILE* fopen(char const* filename, char const* mode)
 
 	if('w' == mode[0])
 	{
-		f = open(filename, O_WRONLY|O_CREAT|O_TRUNC , 00600);
-
 		/* Buffer as much as possible */
 		fi->buffer = calloc(BUFSIZ, sizeof(char));
 		fi->buflen = BUFSIZ;
 		fi->bufmode = O_WRONLY;
 	}
 	else
-	{ /* Everything else is a read */
-		f = open(filename, 0, 0);
-
+	{
 		/* Get enough buffer to read it all */
 		size = lseek(f, 0, SEEK_END);
 		fi->buffer = calloc(size + 1, sizeof(char));
