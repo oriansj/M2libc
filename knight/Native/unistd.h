@@ -17,6 +17,7 @@
 
 #define NULL 0
 #define __PATH_MAX 4096
+#define EOF 0xFFFFFFFF
 
 void* malloc(unsigned size);
 

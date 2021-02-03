@@ -23,15 +23,26 @@
 	LOADUI R0 0x1100
 	FOPEN_READ
 
-	LOADR32 R12 @HEAP           ; Setup HEAP pointer
-	LOADUI R15 $STACK           ; Setup initial stack pointer
+	LOADR R15 4
+	JUMP 4
+	&STACK                      ; Setup initial stack pointer
 	COPY R14 R15                ; Setup initial base pointer
+
+	LOADR32 R12 @HEAP           ; Setup HEAP pointer
+	ADD R12 R12 R15             ; After Stack ends
+
+	;; Setup for FILE*
+	LOADR R0 4
+	JUMP 4
+	&FUNCTION___init_io
+	CALL R0 R15
+
 	LOADR R0 4
 	JUMP 4
 	&FUNCTION_main
 	CALL R0 R15
 	HALT                        ; Exit to kernel
 
-	;; Our default heap pointer
+	;; Our default heap offset (how big our stack ia)
 :HEAP
 	'00100000'

@@ -15,12 +15,13 @@
 ## along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
 
 :_start
-	LOADR32 R12 @HEAP           ; Setup HEAP pointer
-
 	; Setup initial stack pointer
 	LOADR R15 4
 	JUMP 4
 	&STACK
+
+	LOADR32 R12 @HEAP           ; Setup HEAP pointer
+	ADD R12 R12 R15             ; After Stack
 
 	; Setup initial base pointer
 	COPY R14 R15
@@ -33,6 +34,6 @@
 
 	HALT                        ; Exit to kernel
 
-	;; Our default heap pointer
+	;; Our default heap pointer (offset from start of stack)
 :HEAP
 	'00100000'
