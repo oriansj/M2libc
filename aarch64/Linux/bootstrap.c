@@ -1,4 +1,5 @@
 /* Copyright (C) 2016 Jeremiah Orians
+ * Copyright (C) 2020 deesix <deesix@tuta.io>
  * This file is part of M2-Planet.
  *
  * M2-Planet is free software: you can redistribute it and/or modify
