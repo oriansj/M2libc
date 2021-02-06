@@ -24,7 +24,7 @@
 /* Required constants */
 /* For file I/O*/
 #define EOF -1
-#define BUFSIZ 0x140000 /* 20MB */
+#define BUFSIZ 4096
 
 /* For lseek */
 #define SEEK_SET 0

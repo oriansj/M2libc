@@ -24,7 +24,7 @@
 /* Required constants */
 /* For file I/O*/
 #define EOF 0xFFFFFFFF
-#define BUFSIZ 0x140000 /* 20MB */
+#define BUFSIZ 4096
 
 /* For lseek */
 #define SEEK_SET 0
@@ -183,7 +183,7 @@ FILE* fopen(char const* filename, char const* mode)
 	if('w' == mode[0])
 	{
 		/* Buffer as much as possible */
-		fi->buffer = calloc(BUFSIZ, sizeof(char));
+		fi->buffer = malloc(BUFSIZ * sizeof(char));
 		fi->buflen = BUFSIZ;
 		fi->bufmode = O_WRONLY;
 	}
@@ -191,7 +191,7 @@ FILE* fopen(char const* filename, char const* mode)
 	{
 		/* Get enough buffer to read it all */
 		size = lseek(f, 0, SEEK_END);
-		fi->buffer = calloc(size + 1, sizeof(char));
+		fi->buffer = malloc((size + 1) * sizeof(char));
 		fi->buflen = size;
 		fi->bufmode = O_RDONLY;
 
