@@ -24,7 +24,7 @@
 /* Required constants */
 /* For file I/O*/
 #define EOF 0xFFFFFFFF
-#define BUFSIZ 4096
+#define BUFSIZ 0x1000
 
 /* For lseek */
 #define SEEK_SET 0
@@ -61,14 +61,14 @@ void __init_io()
 	stdout = calloc(1, sizeof(FILE));
 	stdout->fd = STDOUT_FILENO;
 	stdout->bufmode = O_WRONLY;
-	stdout->buflen = 1;
-	stdout->buffer = calloc(2, sizeof(char));
+	stdout->buflen = 512;
+	stdout->buffer = calloc(514, sizeof(char));
 
 	stderr = calloc(1, sizeof(FILE));
 	stderr->fd = STDERR_FILENO;
 	stderr->bufmode = O_WRONLY;
-	stderr->buflen = 1;
-	stderr->buffer = calloc(2, sizeof(char));
+	stderr->buflen = 512;
+	stderr->buffer = calloc(514, sizeof(char));
 }
 
 /* Standard C functions */
@@ -136,7 +136,7 @@ void fputc(char s, FILE* f)
 
 	/* Flush if full or '\n' */
 	if(f->bufpos == f->buflen) fflush(f);
-	else if('\n' == s) fflush(f);
+	else if(('\n' == s) && (2 >= f->fd)) fflush(f);
 }
 
 void putchar(char s)
