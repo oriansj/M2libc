@@ -146,3 +146,42 @@ int strtoint(char *a)
 	if(0 != (0x80000000 & result)) result = (0xFFFFFFFF << 31) | result;
 	return result;
 }
+
+char* int2str(int x, int base, int signed_p)
+{
+	require(1 < base, "int2str doesn't support a base less than 2\n");
+	require(37 > base, "int2str doesn't support a base more than 36\n");
+	/* Be overly conservative and save space for 32binary digits and padding null */
+	char* p = calloc(34, sizeof(char));
+	/* if calloc fails return null to let calling code deal with it */
+	if(NULL == p) return p;
+
+	p = p + 32;
+	unsigned i;
+	int sign_p = FALSE;
+	char* table = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+	if(signed_p && (10 == base) && (0 != (x & 0x80000000)))
+	{
+		/* Truncate to 31bits */
+		i = -x & 0x7FFFFFFF;
+		if(0 == i) return "-2147483648";
+		sign_p = TRUE;
+	} /* Truncate to 32bits */
+	else i = x & (0x7FFFFFFF | (1 << 31));
+
+	do
+	{
+		p[0] = table[i % base];
+		p = p - 1;
+		i = i / base;
+	} while(0 < i);
+
+	if(sign_p)
+	{
+		p[0] = '-';
+		p = p - 1;
+	}
+
+	return p + 1;
+}

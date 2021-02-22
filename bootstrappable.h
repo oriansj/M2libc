@@ -24,3 +24,4 @@ void require(int bool, char* error);
 int match(char* a, char* b);
 int in_set(int c, char* s);
 int strtoint(char *a);
+char* int2str(int a);
