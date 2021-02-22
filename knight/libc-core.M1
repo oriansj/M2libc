@@ -29,8 +29,8 @@
 	&FUNCTION_main
 	CALL R0 R15
 
+	COPY R14 R15                ; Setup base pointer
 	PUSHR R0 R15                ; Put return on the stack
-	PUSHR R0 R15                ; So it is where _exit needs it
 
 :FUNCTION_exit
 :FUNCTION__exit

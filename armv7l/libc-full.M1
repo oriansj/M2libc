@@ -36,7 +36,11 @@
 
 	^~FUNCTION_main CALL_ALWAYS     ; Jump right into main
 
+	{R1} POP_ALWAYS                 ; Fix stack
+	{R1} POP_ALWAYS                 ; Fix stack
+	{R1} POP_ALWAYS                 ; Fix stack
 	{R0} PUSH_ALWAYS                ; put return on the stack
+	{R0} PUSH_ALWAYS                ; So that _exit will have it
 	{R0} PUSH_ALWAYS                ; So that _exit will have it
 
 :FUNCTION_exit

@@ -40,7 +40,11 @@
 	&FUNCTION_main
 	BLR_X16
 
+	POP_X1
+	POP_X1
+	POP_X1
 	PUSH_X0                     ; Put return on the stack
+	PUSH_X0                     ; So that _exit has it
 	PUSH_X0                     ; So that _exit has it
 
 :FUNCTION_exit
