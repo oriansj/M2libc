@@ -36,7 +36,12 @@
 	;; Perform the main loop
 	CALL_IMMEDIATE %FUNCTION_main
 
-	;; Exit to kernel
-	COPY_rax_to_rdi             ; Using the return code given by main
-	LOAD_IMMEDIATE_rax %0x3C    ; Syscall exit
-	SYSCALL                     ; Exit with that code
+	PUSH_RAX                    ; Put return value on the stack
+	PUSH_RAX                    ; So that _exit gets it
+
+:FUNCTION_exit
+:FUNCTION__exit
+	POP_RBX
+	POP_RDI
+	LOAD_IMMEDIATE_rax %0x3C
+	SYSCALL

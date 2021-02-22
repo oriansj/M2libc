@@ -40,6 +40,8 @@ struct __IO_FILE
 	int file_pos;
 	int buflen;
 	char* buffer;
+	struct __IO_FILE* next;
+	struct __IO_FILE* prev;
 };
 
 /* Now give us the FILE we all love */
@@ -49,9 +51,11 @@ typedef struct __IO_FILE FILE;
 FILE* stdin;
 FILE* stdout;
 FILE* stderr;
+FILE* __list;
 
 void __init_io()
 {
+	__list = NULL;
 	stdin = calloc(1, sizeof(FILE));
 	stdin->fd = STDIN_FILENO;
 	stdin->bufmode = O_RDONLY;
@@ -69,6 +73,19 @@ void __init_io()
 	stderr->bufmode = O_WRONLY;
 	stderr->buflen = 512;
 	stderr->buffer = calloc(514, sizeof(char));
+}
+
+
+/* Flush all IO on exit */
+int fflush(FILE* stream);
+void __kill_io()
+{
+	fflush(stdout);
+	while(NULL != __list)
+	{
+		fflush(__list);
+		__list = __list->next;
+	}
 }
 
 /* Standard C functions */
@@ -124,7 +141,6 @@ char* fgets(char* str, int count, FILE* stream)
 }
 
 /* Putting */
-int fflush(FILE* stream);
 void fputc(char s, FILE* f)
 {
 	/* Only write on write buffers */
@@ -169,6 +185,9 @@ FILE* fopen(char const* filename, char const* mode)
 {
 	int f;
 	FILE* fi = calloc(1, sizeof(FILE));
+	fi->next = __list;
+	if(NULL != __list) __list->prev = fi;
+	__list = fi;
 	int size;
 
 	if('w' == mode[0]) f = open(filename, O_WRONLY|O_CREAT|O_TRUNC , 00600);
@@ -238,6 +257,10 @@ int fclose(FILE* stream)
 
 	/* Need to keep the File Descriptor for a moment */
 	int fd = stream->fd;
+
+	/* Remove from __list */
+	if(NULL != stream->prev) stream->prev->next = stream->next;
+	if(NULL != stream->next) stream->next->prev = stream->prev;
 
 	/* Free up the buffer and struct used for FILE */
 	free(stream->buffer);

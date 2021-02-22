@@ -32,7 +32,9 @@
 	&FUNCTION_main
 	CALL R0 R15
 
-	HALT                        ; Exit to kernel
+:FUNCTION_exit
+:FUNCTION__exit
+	HALT                        ; Stop the machine
 
 	;; Our default heap pointer (offset from start of stack)
 :HEAP

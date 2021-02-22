@@ -35,5 +35,15 @@
 	&FUNCTION_main
 	CALL R0 R15
 
-	;; Exit to kernel
-	SYS_EXIT                    ; Return what is in R0
+	PUSHR R0 R15                ; Put return on the stack
+	PUSHR R0 R15                ; So it is where _exit needs it
+
+:FUNCTION_exit
+	LOADR R0 4
+	JUMP 4
+	&FUNCTION___kill_io
+	CALL R0 R15
+
+:FUNCTION__exit
+	LOAD R0 R14 0
+	SYS_EXIT

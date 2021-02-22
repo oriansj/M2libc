@@ -45,14 +45,7 @@ int fchdir(int fd)
 	    "SYSCALL");
 }
 
-void _exit(int value)
-{
-	asm("POP_RBX"
-	    "POP_RDI"
-	    "LOAD_IMMEDIATE_rax %0x3C"
-	    "SYSCALL");
-}
-
+void _exit(int value);
 
 int fork()
 {

@@ -38,8 +38,13 @@
 
 	;; Perform the main loop
 	CALL_IMMEDIATE %FUNCTION_main
+	PUSH_eax                    ; Put return on stack
+	PUSH_eax                    ; so that _exit gets the value
 
-	;; Exit to kernel
-	COPY_eax_to_ebx             ; Using the return code given by main
-	LOAD_IMMEDIATE_eax %1       ; Syscall exit
-	INT_80                      ; Exit with that code
+:FUNCTION_exit
+	CALL_IMMEDIATE %FUNCTION___kill_io
+:FUNCTION__exit
+	POP_ebx
+	POP_ebx
+	LOAD_IMMEDIATE_eax %1
+	INT_80

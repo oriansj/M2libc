@@ -39,11 +39,6 @@ int fchdir(int fd)
 	return 0;
 }
 
-void _exit(int value)
-{
-
-}
-
 
 int fork()
 {

@@ -39,12 +39,7 @@ int fchdir(int fd)
 	    "SYS_FCHDIR");
 }
 
-void _exit(int value)
-{
-	asm("LOAD R0 R14 0"
-	    "SYS_EXIT");
-}
-
+void _exit(int value);
 
 int fork()
 {

@@ -33,8 +33,17 @@
 	!4 BP ADD BP ARITH_ALWAYS       ; Fix BP
 
 	^~FUNCTION_main CALL_ALWAYS     ; Jump right into main
-	!1 R7 LOADI8_ALWAYS             ; Setup for final exit
-	SYSCALL_ALWAYS                  ; Exit
+
+	{R0} PUSH_ALWAYS                ; put return on the stack
+	{R0} PUSH_ALWAYS                ; So that _exit will have it
+
+:FUNCTION_exit
+:FUNCTION__exit
+	!4 R0 SUB R12 ARITH_ALWAYS
+	!0 R0 LOAD32 R0 MEMORY
+	!1 R7 LOADI8_ALWAYS
+	SYSCALL_ALWAYS                  ; exit
+
 
 # Unsigned Divide
 :divide

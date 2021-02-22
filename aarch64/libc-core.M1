@@ -32,5 +32,14 @@
 	SKIP_32_DATA
 	&FUNCTION_main
 	BLR_X16
+
+	PUSH_X0                     ; Put return on the stack
+	PUSH_X0                     ; So that _exit has it
+
+:FUNCTION_exit
+:FUNCTION__exit
+	SET_X0_FROM_BP
+	SUB_X0_8
+	DEREF_X0
 	SET_X8_TO_SYS_EXIT
 	SYSCALL

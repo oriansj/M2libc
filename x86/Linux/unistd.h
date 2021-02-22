@@ -46,14 +46,8 @@ int fchdir(int fd)
 	    "INT_80");
 }
 
-void _exit(int value)
-{
-	asm("POP_ebx"
-	    "POP_ebx"
-	    "LOAD_IMMEDIATE_eax %1"
-	    "INT_80");
-}
-
+/* Defined in the libc */
+void _exit(int value);
 
 int fork()
 {

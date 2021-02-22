@@ -20,10 +20,7 @@
 #define EXIT_FAILURE 1
 #define EXIT_SUCCESS 0
 
-void exit(int value)
-{
-	_exit(value);
-}
+void exit(int value);
 
 long _malloc_ptr;
 long _brk_ptr;

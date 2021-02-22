@@ -48,13 +48,7 @@ int fchdir(int fd)
 	    "SYSCALL");
 }
 
-void _exit(int value)
-{
-	asm("SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X8_TO_SYS_EXIT"
-	    "SYSCALL");
-}
-
+void _exit(int value);
 
 int fork()
 {
