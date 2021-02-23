@@ -81,6 +81,7 @@ int fflush(FILE* stream);
 void __kill_io()
 {
 	fflush(stdout);
+	fflush(stderr);
 	while(NULL != __list)
 	{
 		fflush(__list);
@@ -261,6 +262,8 @@ int fclose(FILE* stream)
 	/* Remove from __list */
 	if(NULL != stream->prev) stream->prev->next = stream->next;
 	if(NULL != stream->next) stream->next->prev = stream->prev;
+	/* Deal with special case of first node in __list */
+	if (__list == stream) __list = __list->next;
 
 	/* Free up the buffer and struct used for FILE */
 	free(stream->buffer);
