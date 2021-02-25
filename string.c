@@ -73,11 +73,7 @@ char* strncat(char* dest, char const* src, size_t count)
 {
 	size_t i = 0;
 	size_t j = 0;
-	while(0 != dest[i])
-	{
-		if(count == i) return dest;
-		i = i + 1;
-	}
+	while(0 != dest[i]) i = i + 1;
 	while(0 != src[j])
 	{
 		if(count == j)
@@ -137,7 +133,7 @@ int strncmp(char const* lhs, char const* rhs, size_t count)
 		i = i + 1;
 	}
 
-	return lhs[i] - rhs[i];
+	return 0;
 }
 
 
@@ -149,6 +145,7 @@ char* strchr(char const* str, int ch)
 		if(0 == p[0]) return NULL;
 		p = p + 1;
 	}
+	if(0 == p[0]) return NULL;
 	return p;
 }
 
@@ -160,7 +157,7 @@ char* strrchr(char const* str, int ch)
 	while(0 != p[i]) i = i + 1;
 	while(ch != p[i])
 	{
-		if(str == p) return NULL;
+		if(0 == i) return NULL;
 		i = i - 1;
 	}
 	return (p + i);
@@ -168,6 +165,7 @@ char* strrchr(char const* str, int ch)
 
 size_t strspn(char const* dest, char const* src)
 {
+	if(0 == dest[0]) return 0;
 	int i = 0;
 	while(NULL != strchr(src, dest[i])) i = i + 1;
 	return i;
@@ -184,9 +182,11 @@ size_t strcspn(char const* dest, char const* src)
 char* strpbrk(char const* dest, char const* breakset)
 {
 	char* p = dest;
+	char* s;
 	while(0 != p[0])
 	{
-		if(strchr(breakset, p[0])) return p;
+		s = strchr(breakset, p[0]);
+		if(NULL != s) return strchr(p,  s[0]);
 		p = p + 1;
 	}
 	return p;
