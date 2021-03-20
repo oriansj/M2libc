@@ -163,6 +163,7 @@ char* strrchr(char const* str, int ch)
 	return (p + i);
 }
 
+
 size_t strspn(char const* dest, char const* src)
 {
 	if(0 == dest[0]) return 0;
@@ -179,6 +180,7 @@ size_t strcspn(char const* dest, char const* src)
 	return i;
 }
 
+
 char* strpbrk(char const* dest, char const* breakset)
 {
 	char* p = dest;
@@ -191,3 +193,66 @@ char* strpbrk(char const* dest, char const* breakset)
 	}
 	return p;
 }
+
+
+void* memset(void* dest, int ch, size_t count)
+{
+	if(NULL == dest) return dest;
+	size_t i = 0;
+	char* s = dest;
+	while(i < count)
+	{
+		s[i] = ch;
+		i = i + 1;
+	}
+	return dest;
+}
+
+
+void* memcpy(void* dest, void const* src, size_t count)
+{
+	if(NULL == dest) return dest;
+	if(NULL == src) return NULL;
+
+	char* s1 = dest;
+	char const* s2 = src;
+	size_t i = 0;
+	while(i < count)
+	{
+		s1[i] = s2[i];
+		i = i + 1;
+	}
+	return dest;
+}
+
+void* memmove(void* dest, void const* src, size_t count)
+{
+	if (dest < src) return memcpy (dest, src, count);
+	char *p = dest;
+	char const *q = src;
+	count = count - 1;
+	while (count >= 0)
+	{
+		p[count] = q[count];
+		count = count - 1;
+	}
+	return dest;
+}
+
+
+int memcmp(void const* lhs, void const* rhs, size_t count)
+{
+	if(0 == count) return 0;
+	size_t i = 0;
+	char const* s1 = lhs;
+	char const* s2 = rhs;
+	while(s1[i] == s2[i])
+	{
+		i = i + 1;
+		if(count == i) return count;
+	}
+	return (s1[i] - s2[i]);
+}
+
+
+void* memchr( void const* ptr, int ch, size_t count );

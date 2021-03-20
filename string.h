@@ -17,10 +17,13 @@
 
 #include <stddef.h>
 
+/* String manipulation */
 char* strcpy(char* dest, char const* src);
 char* strncpy(char* dest, char const* src, size_t count);
 char* strcat(char* dest, char const* src);
 char* strncat(char* dest, char const* src, size_t count);
+
+/* String examination */
 size_t strlen(char const* str );
 size_t strnlen_s(char const* str, size_t strsz );
 int strcmp(char const* lhs, char const* rhs );
@@ -30,3 +33,10 @@ char* strrchr(char const* str, int ch);
 size_t strspn(char const* dest, char const* src);
 size_t strcspn(char const* dest, char const* src);
 char* strpbrk(char const* dest, char const* breakset);
+
+/* Memory manipulation */
+void* memset(void* dest, int ch, size_t count );
+void* memcpy(void* dest, void const* src, size_t count );
+void* memmove(void* dest, void const* src, size_t count );
+int memcmp(void const* lhs, void const* rhs, size_t count );
+void* memchr( void const* ptr, int ch, size_t count );
