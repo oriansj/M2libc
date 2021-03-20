@@ -113,7 +113,8 @@ int fgetc(FILE* f)
 	int ret = f->buffer[f->bufpos];
 	f->bufpos = f->bufpos + 1;
 
-	return ret;
+	/* Ensure 0xFF doesn't return EOF */
+	return (ret & 0xFF);
 }
 
 
