@@ -51,6 +51,15 @@ void fputc(char s, FILE* f)
 	    "SYSCALL");
 }
 
+void fputs(char* s, FILE* f)
+{
+	while(0 != s[0])
+	{
+		fputc(s[0], f);
+		s = s + 1;
+	}
+}
+
 FILE* open(char* name, int flag, int mode)
 {
 	asm("LOAD_EFFECTIVE_ADDRESS_rdi %24"

@@ -48,6 +48,15 @@ void fputc(char s, FILE* f)
 	    "SYSCALL_ALWAYS");
 }
 
+void fputs(char* s, FILE* f)
+{
+	while(0 != s[0])
+	{
+		fputc(s[0], f);
+		s = s + 1;
+	}
+}
+
 FILE* open(char* name, int flag, int mode)
 {
 	asm("!4 R0 SUB R12 ARITH_ALWAYS"

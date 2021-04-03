@@ -52,6 +52,15 @@ void fputc(char s, FILE* f)
 	    "POPR R1 R15");
 }
 
+void fputs(char* s, FILE* f)
+{
+	while(0 != s[0])
+	{
+		fputc(s[0], f);
+		s = s + 1;
+	}
+}
+
 FILE* open(char* name, int flag, int mode)
 {
 	asm("LOAD R0 R14 0"

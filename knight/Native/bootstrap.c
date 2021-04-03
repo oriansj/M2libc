@@ -37,6 +37,15 @@ void fputc(char s, FILE* f)
 	    "FPUTC");
 }
 
+void fputs(char* s, FILE* f)
+{
+	while(0 != s[0])
+	{
+		fputc(s[0], f);
+		s = s + 1;
+	}
+}
+
 FILE* open_read(int filename)
 {
 	asm("LOAD R0 R14 0"
