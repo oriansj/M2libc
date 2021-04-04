@@ -134,6 +134,13 @@ void* malloc(int size)
 	return old_malloc;
 }
 
+int strlen(char const* str )
+{
+	int i = 0;
+	while(0 != str[i]) i = i + 1;
+	return i;
+}
+
 void* memset(void* ptr, int value, int num)
 {
 	char* s;
