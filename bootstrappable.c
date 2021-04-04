@@ -35,6 +35,10 @@ void require(int bool, char* error)
 
 int match(char* a, char* b)
 {
+	if((NULL == a) && (NULL == b)) return TRUE;
+	if(NULL == a) return FALSE;
+	if(NULL == b) return FALSE;
+
 	int i = -1;
 	do
 	{
@@ -50,6 +54,9 @@ int match(char* a, char* b)
 
 int in_set(int c, char* s)
 {
+	/* NULL set is always false */
+	if(NULL == s) return FALSE;
+
 	while(0 != s[0])
 	{
 		if(c == s[0]) return TRUE;
