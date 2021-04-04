@@ -131,7 +131,7 @@ void* malloc(int size)
 	return old_malloc;
 }
 
-int strlen(char const* str )
+int strlen(char* str )
 {
 	int i = 0;
 	while(0 != str[i]) i = i + 1;
