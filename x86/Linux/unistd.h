@@ -165,16 +165,6 @@ int brk(void *addr)
 	    "INT_80");
 }
 
-int chmod(char *pathname, int mode)
-{
-	asm("LOAD_EFFECTIVE_ADDRESS_ebx %8"
-	    "LOAD_INTEGER_ebx"
-	    "LOAD_EFFECTIVE_ADDRESS_ecx %4"
-	    "LOAD_INTEGER_ecx"
-	    "LOAD_IMMEDIATE_eax %15"
-	    "INT_80");
-}
-
 struct utsname
 {
 	char sysname[65];    /* Operating system name (e.g., "Linux") */

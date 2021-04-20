@@ -164,16 +164,6 @@ int brk(void *addr)
 	    "SYSCALL_ALWAYS");
 }
 
-int chmod(char *pathname, int mode)
-{
-	asm("!15 R7 LOADI8_ALWAYS"
-	    "!8 R1 SUB R12 ARITH_ALWAYS"
-	    "!0 R1 LOAD32 R1 MEMORY"
-	    "!4 R0 SUB R12 ARITH_ALWAYS"
-	    "!0 R0 LOAD32 R0 MEMORY"
-	    "SYSCALL_ALWAYS");
-}
-
 struct utsname
 {
 	char sysname[65];    /* Operating system name (e.g., "Linux") */

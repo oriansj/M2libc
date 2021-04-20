@@ -169,16 +169,6 @@ int brk(void *addr)
 	    "SYSCALL");
 }
 
-int chmod(char *pathname, int mode)
-{
-	asm("LOAD_EFFECTIVE_ADDRESS_rdi %16"
-	    "LOAD_INTEGER_rdi"
-	    "LOAD_EFFECTIVE_ADDRESS_rsi %8"
-	    "LOAD_INTEGER_rsi"
-	    "LOAD_IMMEDIATE_rax %90"
-	    "SYSCALL");
-}
-
 struct utsname
 {
 	char sysname[65];    /* Operating system name (e.g., "Linux") */
