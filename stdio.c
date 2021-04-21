@@ -119,16 +119,17 @@ int fgetc(FILE* f)
 
 size_t fread( void* buffer, size_t size, size_t count, FILE* stream )
 {
-	long n = size + count;
-	if(0 == n) return 0;
+	if(0 == size) return 0;
+	if(0 == count) return 0;
 
+	long n = size + count - 1;
 	char* p = buffer;
 	long i;
 	unsigned c;
 	for(i = 0; i < n; i = i + 1)
 	{
 		c = fgetc(stream);
-		if(EOF == c) return i;
+		if(EOF == c) return (i/size);
 		p[i] = c;
 	}
 
