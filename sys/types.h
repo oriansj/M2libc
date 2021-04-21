@@ -23,3 +23,5 @@ typedef int pid_t;
 typedef long intptr_t;
 typedef ulong uintptr_t;
 typedef long clock_t;
+typedef int mode_t;
+typedef long dev_t;

@@ -54,12 +54,14 @@ extern FILE* stderr;
 extern int fgetc(FILE* f);
 extern int getchar();
 extern char* fgets(char* str, int count, FILE* stream);
+extern size_t fread( void* buffer, size_t size, size_t count, FILE* stream );
 
 /* Putting */
 extern void fputc(char s, FILE* f);
 extern void putchar(char s);
 extern int fputs(char const* str, FILE* stream);
 extern int puts(char const* str);
+extern size_t fwrite(void const* buffer, size_t size, size_t count, FILE* stream );
 
 /* File management */
 extern FILE* fopen(char const* filename, char const* mode);

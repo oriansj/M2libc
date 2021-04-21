@@ -117,6 +117,23 @@ int fgetc(FILE* f)
 	return (ret & 0xFF);
 }
 
+size_t fread( void* buffer, size_t size, size_t count, FILE* stream )
+{
+	long n = size + count;
+	if(0 == n) return 0;
+
+	char* p = buffer;
+	long i;
+	unsigned c;
+	for(i = 0; i < n; i = i + 1)
+	{
+		c = fgetc(stream);
+		if(EOF == c) return i;
+		p[i] = c;
+	}
+
+	return (i/size);
+}
 
 int getchar()
 {
@@ -155,6 +172,23 @@ void fputc(char s, FILE* f)
 	/* Flush if full or '\n' */
 	if(f->bufpos == f->buflen) fflush(f);
 	else if(('\n' == s) && (2 >= f->fd)) fflush(f);
+}
+
+size_t fwrite(void const* buffer, size_t size, size_t count, FILE* stream )
+{
+	long n = size * count;
+	if(0 == n) return 0;
+
+	char* p = buffer;
+	int c;
+	long i;
+	for(i=0; i < n; i = i + 1)
+	{
+		c = p[i];
+		fputc(c, stream);
+	}
+
+	return (i/size);
 }
 
 void putchar(char s)
