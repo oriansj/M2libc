@@ -171,19 +171,6 @@ int brk(void *addr)
 	    "SYSCALL");
 }
 
-int chmod(char *pathname, int mode)
-{
-	asm("SET_X0_FROM_BP" "SUB_X0_16" "DEREF_X0"
-	    "SET_X2_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X1_FROM_X0"
-	    "SET_X0_TO_0"
-	    "SET_X3_FROM_X0"
-	    "SET_X0_TO_FCNTL_H_AT_FDCWD"
-	    "SET_X8_TO_SYS_FCHMODAT"
-	    "SYSCALL");
-}
-
 struct utsname
 {
 	char sysname[65];    /* Operating system name (e.g., "Linux") */

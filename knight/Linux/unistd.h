@@ -135,13 +135,6 @@ int brk(void *addr)
 	    "SWAP R0 R12");
 }
 
-int chmod(char *pathname, int mode)
-{
-	asm("LOAD R0 R14 0"
-	    "LOAD R1 R14 4"
-	    "SYS_CHMOD");
-}
-
 struct utsname
 {
 	char sysname[65];    /* Operating system name (e.g., "Linux") */
