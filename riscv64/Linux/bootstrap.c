@@ -1,4 +1,5 @@
 /* Copyright (C) 2016 Jeremiah Orians
+ * Copyright (C) 2021 Andrius Štikonas
  * This file is part of M2-Planet.
  *
  * M2-Planet is free software: you can redistribute it and/or modify
@@ -46,7 +47,7 @@ int fgetc(FILE* f)
 void fputc(char s, FILE* f)
 {
 	asm("RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-8 ADDI"
+	    "RD_A1 RS1_A0 !-8 ADDI"
 	    "RD_A0 RS1_FP MV"
 	    "RD_A0 RS1_A0 !-16 ADDI"
 	    "RD_A0 RS1_A0 LD"
