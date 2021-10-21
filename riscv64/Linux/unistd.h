@@ -22,13 +22,9 @@ void* malloc(unsigned size);
 
 int access(char* pathname, int mode)
 {
-	asm("RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-16 ADDI"
-	    "RD_A2 RS1_A0 LD"
-	    "RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-8 ADDI"
-	    "RD_A1 RS1_A0 LD"
-	    "RD_A0 !-100 ADDI" /* AT_FDCWD */
+        asm("RD_A0 !-100 ADDI" /* AT_FDCWD */
+	    "RD_A1 RS1_FP !-8 LD"
+	    "RD_A2 RS1_FP !-16 LD"
 	    "RD_A3 ADDI" /* flags = 0 */
 	    "RD_A7 !48 ADDI"
 	    "ECALL");
@@ -36,18 +32,14 @@ int access(char* pathname, int mode)
 
 int chdir(char* path)
 {
-	asm("RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-8 ADDI"
-	    "RD_A0 RS1_A0 LD"
+	asm("RD_A0 RS1_FP !-8 LD"
 	    "RD_A7 !49 ADDI"
 	    "ECALL");
 }
 
 int fchdir(int fd)
 {
-	asm("RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-8 ADDI"
-	    "RD_A0 RS1_A0 LD"
+	asm("RD_A0 RS1_FP !-8 LD"
 	    "RD_A7 !50 ADDI"
 	    "ECALL");
 }
@@ -66,15 +58,9 @@ int fork()
 int waitpid (int pid, int* status_ptr, int options)
 {
 	/* Uses wait4 with struct rusage *ru set to NULL */
-	asm("RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-24 ADDI"
-	    "RD_A2 RS1_A0 LD"
-	    "RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-16 ADDI"
-	    "RD_A1 RS1_A0 LD"
-	    "RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-8 ADDI"
-	    "RD_A0 RS1_A0 LD"
+	asm("RD_A0 RS1_FP !-8 LD"
+	    "RD_A1 RS1_FP !-16 LD"
+	    "RD_A2 RS1_FP !-24 LD"
 	    "RD_A3 ADDI"
 	    "RD_A7 !260 ADDI"
 	    "ECALL");
@@ -83,60 +69,36 @@ int waitpid (int pid, int* status_ptr, int options)
 
 int execve(char* file_name, char** argv, char** envp)
 {
-	asm("RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-24 ADDI"
-	    "RD_A2 RS1_A0 LD"
-	    "RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-16 ADDI"
-	    "RD_A1 RS1_A0 LD"
-	    "RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-8 ADDI"
-	    "RD_A0 RS1_A0 LD"
+	asm("RD_A0 RS1_FP !-8 LD"
+	    "RD_A1 RS1_FP !-16 LD"
+	    "RD_A2 RS1_FP !-24 LD"
 	    "RD_A7 !221 ADDI"
 	    "ECALL");
 }
 
 int read(int fd, char* buf, unsigned count)
 {
-	asm("RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-24 ADDI"
-	    "RD_A2 RS1_A0 LD"
-	    "RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-16 ADDI"
-	    "RD_A1 RS1_A0 LD"
-	    "RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-8 ADDI"
-	    "RD_A0 RS1_A0 LD"
+	asm("RD_A0 RS1_FP !-8 LD"
+	    "RD_A1 RS1_FP !-16 LD"
+	    "RD_A2 RS1_FP !-24 LD"
 	    "RD_A7 !63 ADDI"
 	    "ECALL");
 }
 
 int write(int fd, char* buf, unsigned count)
 {
-	asm("RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-24 ADDI"
-	    "RD_A2 RS1_A0 LD"
-	    "RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-16 ADDI"
-	    "RD_A1 RS1_A0 LD"
-	    "RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-8 ADDI"
-	    "RD_A0 RS1_A0 LD"
+	asm("RD_A0 RS1_FP !-8 LD"
+	    "RD_A1 RS1_FP !-16 LD"
+	    "RD_A2 RS1_FP !-24 LD"
 	    "RD_A7 !64 ADDI"
 	    "ECALL");
 }
 
 int lseek(int fd, int offset, int whence)
 {
-	asm("RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-24 ADDI"
-	    "RD_A2 RS1_A0 LD"
-	    "RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-16 ADDI"
-	    "RD_A1 RS1_A0 LD"
-	    "RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-8 ADDI"
-	    "RD_A0 RS1_A0 LD"
+	asm("RD_A0 RS1_FP !-8 LD"
+	    "RD_A1 RS1_FP !-16 LD"
+	    "RD_A2 RS1_FP !-24 LD"
 	    "RD_A7 !62 ADDI"
 	    "ECALL");
 }
@@ -144,9 +106,7 @@ int lseek(int fd, int offset, int whence)
 
 int close(int fd)
 {
-	asm("RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-8 ADDI"
-	    "RD_A0 RS1_A0 LD"
+	asm("RD_A0 RS1_FP !-8 LD"
 	    "RD_A7 !57 ADDI"    /* close */
 	    "ECALL");
 }
@@ -154,12 +114,8 @@ int close(int fd)
 
 int _getcwd(char* buf, int size)
 {
-	asm("RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-16 ADDI"
-	    "RD_A1 RS1_A0 LD"
-	    "RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-8 ADDI"
-	    "RD_A0 RS1_A0 LD"
+	asm("RD_A0 RS1_FP !-8 LD"
+	    "RD_A1 RS1_FP !-16 LD"
 	    "RD_A7 !17 ADDI"
 	    "ECALL");
 }
@@ -187,9 +143,7 @@ char* get_current_dir_name()
 
 int brk(void *addr)
 {
-	asm("RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-8 ADDI"
-	    "RD_A0 RS1_A0 LD"
+	asm("RD_A0 RS1_FP !-8 LD"
 	    "RD_A7 !214 ADDI"
 	    "ECALL");
 }
@@ -205,9 +159,7 @@ struct utsname
 
 int uname(struct utsname* unameData)
 {
-	asm("RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-8 ADDI"
-	    "RD_A0 RS1_A0 LD"
+	asm("RD_A0 RS1_FP !-8 LD"
 	    "RD_A7 !160 ADDI"
 	    "ECALL");
 }

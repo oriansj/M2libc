@@ -37,13 +37,9 @@
 
 int chmod(char *pathname, int mode)
 {
-	asm("RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-16 ADDI"
-	    "RD_A2 RS1_A0 LD"
-	    "RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-8 ADDI"
-	    "RD_A1 RS1_A0 LD"
-	    "RD_A0 !-100 ADDI" /* AT_FDCWD */
+        asm("RD_A0 !-100 ADDI" /* AT_FDCWD */
+	    "RD_A1 RS1_FP !-8 LD"
+	    "RD_A2 RS1_FP !-16 LD"
 	    "RD_A7 !53 ADDI"
 	    "ECALL");
 }
@@ -51,13 +47,9 @@ int chmod(char *pathname, int mode)
 
 int fchmod(int a, mode_t b)
 {
-	asm("RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-16 ADDI"
-	    "RD_A2 RS1_A0 LD"
-	    "RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-8 ADDI"
-	    "RD_A1 RS1_A0 LD"
-	    "RD_A0 !-100 ADDI" /* AT_FDCWD */
+        asm("RD_A0 !-100 ADDI" /* AT_FDCWD */
+	    "RD_A1 RS1_FP !-8 LD"
+	    "RD_A2 RS1_FP !-16 LD"
 	    "RD_A7 !52 ADDI"
 	    "ECALL");
 }
@@ -65,13 +57,9 @@ int fchmod(int a, mode_t b)
 
 int mkdir(char const* a, mode_t b)
 {
-	asm("RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-16 ADDI"
-	    "RD_A2 RS1_A0 LD"
-	    "RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-8 ADDI"
-	    "RD_A1 RS1_A0 LD"
-	    "RD_A0 !-100 ADDI" /* AT_FDCWD */
+        asm("RD_A0 !-100 ADDI" /* AT_FDCWD */
+	    "RD_A1 RS1_FP !-8 LD"
+	    "RD_A2 RS1_FP !-16 LD"
 	    "RD_A7 !34 ADDI"
 	    "ECALL");
 }
@@ -79,16 +67,10 @@ int mkdir(char const* a, mode_t b)
 
 int mknod(char const* a, mode_t b, dev_t c)
 {
-	asm("RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-24 ADDI"
-	    "RD_A3 RS1_A0 LD"
-	    "RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-16 ADDI"
-	    "RD_A2 RS1_A0 LD"
-	    "RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-8 ADDI"
-	    "RD_A1 RS1_A0 LD"
-	    "RD_A0 !-100 ADDI" /* AT_FDCWD */
+        asm("RD_A0 !-100 ADDI" /* AT_FDCWD */
+	    "RD_A1 RS1_FP !-8 LD"
+	    "RD_A2 RS1_FP !-16 LD"
+	    "RD_A3 RS1_FP !-24 LD"
 	    "RD_A7 !33 ADDI"
 	    "ECALL");
 }
@@ -96,9 +78,7 @@ int mknod(char const* a, mode_t b, dev_t c)
 
 mode_t umask(mode_t m)
 {
-	asm("RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-8 ADDI"
-	    "RD_A0 RS1_A0 LD"
+	asm("RD_A0 RS1_FP !-8 LD"
 	    "RD_A7 !166 ADDI"
 	    "ECALL");
 }

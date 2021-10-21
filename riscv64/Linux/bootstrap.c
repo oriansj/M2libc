@@ -29,9 +29,7 @@
 
 int fgetc(FILE* f)
 {
-	asm("RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-8 ADDI"
-	    "RD_A0 RS1_A0 LD"
+	asm("RD_A0 RS1_FP !-8 LD"
 	    "RS1_SP RS2_A0 SD"
 	    "RD_A1 RS1_SP MV"
 	    "RD_A2 !1 ADDI"
@@ -46,11 +44,8 @@ int fgetc(FILE* f)
 
 void fputc(char s, FILE* f)
 {
-	asm("RD_A0 RS1_FP MV"
-	    "RD_A1 RS1_A0 !-8 ADDI"
-	    "RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-16 ADDI"
-	    "RD_A0 RS1_A0 LD"
+	asm("RD_A0 RS1_FP !-16 LD"
+	    "RD_A1 RS1_FP !-8 ADDI"
 	    "RD_A2 !1 ADDI"   /* 1 byte */
 	    "RD_A7 !64 ADDI"  /* write */
 	    "ECALL");
@@ -67,16 +62,10 @@ void fputs(char* s, FILE* f)
 
 FILE* open(char* name, int flag, int mode)
 {
-	asm("RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-24 ADDI"
-	    "RD_A3 RS1_A0 LD"
-	    "RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-16 ADDI"
-	    "RD_A2 RS1_A0 LD"
-	    "RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-8 ADDI"
-	    "RD_A1 RS1_A0 LD"
-	    "RD_A0 !-100 ADDI" /* AT_FDCWD */
+	asm("RD_A0 !-100 ADDI" /* AT_FDCWD */
+	    "RD_A1 RS1_FP !-8 LD"
+	    "RD_A2 RS1_FP !-16 LD"
+	    "RD_A3 RS1_FP !-24 LD"
 	    "RD_A7 !56 ADDI"   /* openat */
 	    "ECALL");
 }
@@ -103,9 +92,7 @@ FILE* fopen(char* filename, char* mode)
 
 int close(int fd)
 {
-	asm("RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-8 ADDI"
-	    "RD_A0 RS1_A0 LD"
+	asm("RD_A0 RS1_FP !-8 LD"
 	    "RD_A7 !57 ADDI"    /* close */
 	    "ECALL");
 }
@@ -118,9 +105,7 @@ int fclose(FILE* stream)
 
 int brk(void *addr)
 {
-	asm("RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-8 ADDI"
-	    "RD_A0 RS1_A0 LD"
+	asm("RD_A0 RS1_FP !-8 LD"
 	    "RD_A7 !214 ADDI"   /* brk */
 	    "ECALL");
 }
@@ -179,9 +164,7 @@ void free(void* l)
 
 void exit(int value)
 {
-	asm("RD_A0 RS1_FP MV"
-	    "RD_A0 RS1_A0 !-8 ADDI"
-	    "RD_A0 RS1_A0 LD"
+	asm("RD_A0 RS1_FP !-8 LD"
 	    "RD_A7 !93 ADDI"   /* exit */
 	    "ECALL");
 }
