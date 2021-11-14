@@ -28,6 +28,7 @@ DEFINE COPY_eax_to_ebx 89C3
 DEFINE COPY_eax_to_ecx 89C1
 DEFINE COPY_ebp_to_eax 89E8
 DEFINE COPY_ebx_to_eax 89D8
+DEFINE COPY_ebx_to_ecx 89D9
 DEFINE COPY_ebx_to_edx 89DA
 DEFINE COPY_ecx_to_ebp 89CD
 DEFINE COPY_edi_to_ebp 89fd
