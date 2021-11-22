@@ -310,6 +310,13 @@ int fclose(FILE* stream)
 }
 
 
+/* File Removal */
+ int remove(char *pathname)
+{
+	return unlink(pathname);
+}
+
+
 /* File Positioning */
 int ungetc(int ch, FILE* stream)
 {

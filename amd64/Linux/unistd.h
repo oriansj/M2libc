@@ -128,6 +128,15 @@ int close(int fd)
 }
 
 
+int unlink (const char *filename)
+{
+	asm("LOAD_EFFECTIVE_ADDRESS_rdi %8"
+	    "LOAD_INTEGER_rdi"
+	    "LOAD_IMMEDIATE_rax %87"
+	    "SYSCALL");
+}
+
+
 int _getcwd(char* buf, int size)
 {
 	asm("LOAD_EFFECTIVE_ADDRESS_rdi %16"

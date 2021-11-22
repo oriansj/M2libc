@@ -22,7 +22,7 @@ void* malloc(unsigned size);
 
 int access(char* pathname, int mode)
 {
-        asm("RD_A0 !-100 ADDI" /* AT_FDCWD */
+	asm("RD_A0 !-100 ADDI" /* AT_FDCWD */
 	    "RD_A1 RS1_FP !-8 LD"
 	    "RD_A2 RS1_FP !-16 LD"
 	    "RD_A3 ADDI" /* flags = 0 */
@@ -50,7 +50,7 @@ int fork()
 {
 	asm("RD_A7 !220 ADDI"
 	    "RD_A0 !17 ADDI" /* SIGCHLD */
-            "RD_A1 MV"       /* Child uses duplicate of parent's stack */
+	    "RD_A1 MV"       /* Child uses duplicate of parent's stack */
 	    "ECALL");
 }
 
@@ -108,6 +108,16 @@ int close(int fd)
 {
 	asm("RD_A0 RS1_FP !-8 LD"
 	    "RD_A7 !57 ADDI"    /* close */
+	    "ECALL");
+}
+
+
+int unlink (const char *filename)
+{
+	asm("RD_A0 !-100 ADDI" /* AT_FDCWD */
+	    "RD_A1 RS1_FP !-8 LD"
+	    "RD_A2 !0 ADDI"     /* No flags */
+	    "RD_A7 !35 ADDI"    /* unlinkat */
 	    "ECALL");
 }
 

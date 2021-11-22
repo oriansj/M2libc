@@ -134,6 +134,14 @@ int close(int fd)
 }
 
 
+int unlink (const char *filename)
+{
+	asm("SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
+	    "SET_X8_TO_SYS_UNLINK"
+	    "SYSCALL");
+}
+
+
 int _getcwd(char* buf, int size)
 {
 	asm("SET_X0_FROM_BP" "SUB_X0_16" "DEREF_X0"

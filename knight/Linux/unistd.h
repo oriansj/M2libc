@@ -97,6 +97,13 @@ int close(int fd)
 }
 
 
+int unlink (const char *filename)
+{
+	asm("LOAD R0 R14 0"
+	    "SYS_UNLINK");
+}
+
+
 int _getcwd(char* buf, int size)
 {
 	asm("LOAD R0 R14 0"

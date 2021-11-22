@@ -125,6 +125,15 @@ int close(int fd)
 }
 
 
+int unlink (char *filename)
+{
+	asm("LOAD_EFFECTIVE_ADDRESS_ebx %4"
+	    "LOAD_INTEGER_ebx"
+	    "LOAD_IMMEDIATE_eax %10"
+	    "INT_80");
+}
+
+
 int _getcwd(char* buf, int size)
 {
 	asm("LOAD_EFFECTIVE_ADDRESS_ebx %8"

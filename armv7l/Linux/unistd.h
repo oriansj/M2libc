@@ -125,6 +125,14 @@ int close(int fd)
 }
 
 
+int unlink (const char *filename)
+{
+	asm("!4 R0 SUB R12 ARITH_ALWAYS"
+	    "!10 R7 LOADI8_ALWAYS"
+	    "SYSCALL_ALWAYS");
+}
+
+
 int _getcwd(char* buf, int size)
 {
 	asm("!4 R0 SUB R12 ARITH_ALWAYS"
