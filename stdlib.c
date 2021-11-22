@@ -16,6 +16,8 @@
  */
 
 #include <unistd.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #define EXIT_FAILURE 1
 #define EXIT_SUCCESS 0
@@ -70,4 +72,61 @@ void* calloc(int count, int size)
 	if(NULL == ret) return NULL;
 	memset(ret, 0, (count * size));
 	return ret;
+}
+
+
+/* USED EXCLUSIVELY BY MKSTEMP */
+void __set_name(char* s, int i)
+{
+	s[5] = '0' + (i % 10);
+	i = i / 10;
+	s[4] = '0' + (i % 10);
+	i = i / 10;
+	s[3] = '0' + (i % 10);
+	i = i / 10;
+	s[2] = '0' + (i % 10);
+	i = i / 10;
+	s[1] = '0' + (i % 10);
+	i = i / 10;
+	s[0] = '0' + i;
+}
+
+int mkstemp(char *template)
+{
+	int i = 0;
+	while(0 != template[i]) i = i + 1;
+	i = i - 1;
+
+	/* String MUST be more than 6 characters in length */
+	if(i < 6) return -1;
+
+	int count = 6;
+	int c;
+	while(count > 0)
+	{
+		c = template[i];
+		/* last 6 chars must be X */
+		if('X' != c) return -1;
+		template[i] = '0';
+		i = i - 1;
+		count = count - 1;
+	}
+
+	int F = -1;
+	count = -1;
+	while(-1 == F)
+	{
+		/* Just give up after the planet has blown up */
+		if(9000 < count) return -1;
+
+		/* Try upto 9000 unique filenames before stopping */
+		count = count + 1;
+		__set_name(template+i+1, count);
+
+		/* Pray we can */
+		F = open(template, O_CREAT | O_EXCL | O_RDWR | S_IRUSR | S_IWUSR , 0);
+	}
+
+	/* well that only took count many tries */
+	return F;
 }
