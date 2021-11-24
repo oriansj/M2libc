@@ -112,9 +112,10 @@ int mkstemp(char *template)
 		count = count - 1;
 	}
 
-	int F = -1;
+	int fd = -1;
 	count = -1;
-	while(-1 == F)
+	/* open will return -17 or other values */
+	while(0 > fd)
 	{
 		/* Just give up after the planet has blown up */
 		if(9000 < count) return -1;
@@ -124,9 +125,9 @@ int mkstemp(char *template)
 		__set_name(template+i+1, count);
 
 		/* Pray we can */
-		F = open(template, O_RDWR | O_CREAT | O_EXCL, 00600);
+		fd = open(template, O_RDWR | O_CREAT | O_EXCL, 00600);
 	}
 
 	/* well that only took count many tries */
-	return F;
+	return fd;
 }
