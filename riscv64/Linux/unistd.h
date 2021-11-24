@@ -112,7 +112,7 @@ int close(int fd)
 }
 
 
-int unlink (const char *filename)
+int unlink (char* filename)
 {
 	asm("RD_A0 !-100 ADDI" /* AT_FDCWD */
 	    "RD_A1 RS1_FP !-8 LD"

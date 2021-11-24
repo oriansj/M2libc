@@ -97,7 +97,7 @@ int close(int fd)
 }
 
 
-int unlink (const char *filename)
+int unlink (char* filename)
 {
 	asm("LOAD R0 R14 0"
 	    "SYS_UNLINK");

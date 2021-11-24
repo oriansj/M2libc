@@ -124,7 +124,7 @@ int mkstemp(char *template)
 		__set_name(template+i+1, count);
 
 		/* Pray we can */
-		F = open(template, O_CREAT | O_EXCL | O_RDWR | S_IRUSR | S_IWUSR , 0);
+		F = open(template, O_RDWR | O_CREAT | O_EXCL, 00600);
 	}
 
 	/* well that only took count many tries */

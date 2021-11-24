@@ -125,7 +125,7 @@ int close(int fd)
 }
 
 
-int unlink (const char *filename)
+int unlink (char* filename)
 {
 	asm("!4 R0 SUB R12 ARITH_ALWAYS"
 	    "!10 R7 LOADI8_ALWAYS"

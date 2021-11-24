@@ -128,7 +128,7 @@ int close(int fd)
 }
 
 
-int unlink (const char *filename)
+int unlink (char* filename)
 {
 	asm("LOAD_EFFECTIVE_ADDRESS_rdi %8"
 	    "LOAD_INTEGER_rdi"
