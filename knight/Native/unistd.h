@@ -1,4 +1,5 @@
 /* Copyright (C) 2020 Jeremiah Orians
+ * Copyright (C) 2021 Andrius Štikonas
  * This file is part of M2-Planet.
  *
  * M2-Planet is free software: you can redistribute it and/or modify
@@ -109,6 +110,13 @@ int close(int fd)
 {
 	asm("LOAD R0 R14 0"
 	    "FCLOSE");
+}
+
+
+int unlink (char* filename)
+{
+	/* Completely meaningless in bare metal */
+	return 0;
 }
 
 
