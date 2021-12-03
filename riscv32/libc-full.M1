@@ -26,7 +26,7 @@
     RD_A0 RS1_FP MV        ; Address we need to load from
     RD_A0 RS1_A0 LW        ; Get ARGC
     RD_A0 RS1_A0 !2 ADDI   ; OFFSET = ARGC + 2
-    RD_A0 RS1_A0 RS2_X3 SLLI ; OFFSET = OFFSET * WORDSIZE
+    RD_A0 RS1_A0 RS2_X2 SLLI ; OFFSET = OFFSET * WORDSIZE
     RD_A0 RS1_FP RS2_A0 ADD ; ENVP_address = RSP + OFFSET
     RD_SP RS1_SP !-4 ADDI
     RS1_SP RS2_A0 SW       ; Put envp on the stack
