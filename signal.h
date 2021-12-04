@@ -23,14 +23,17 @@
 #define CLD_CONTINUED   6       /* stopped child has continued */
 
 struct siginfo_t {
-	int      si_signo;  /* Signal number */
-	int      si_code;   /* Signal code */
-	int      si_pid;    /* Sending process ID */
-	int      si_uid;    /* Real user ID of sending process */
-	void    *si_addr;   /* Address of faulting instruction */
-	int      si_status; /* Exit value or signal */
-	union {
-		int     sigval_int; /* Integer value */
-		void   *sigval_ptr; /* Pointer value */
-	};
+	int si_signo;
+#ifdef __SI_SWAP_ERRNO_CODE
+	int si_code;
+	int si_errno;
+#else
+	int si_errno;
+	int si_code;
+#endif
+	int si_pid;
+	int si_uid;
+	int si_status;
+	int si_utime;
+	int si_stime;
 };

@@ -17,6 +17,7 @@
  */
 #define NULL 0
 #define __PATH_MAX 4096
+#define __SI_SWAP_ERRNO_CODE
 
 void* malloc(unsigned size);
 

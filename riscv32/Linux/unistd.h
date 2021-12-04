@@ -23,6 +23,7 @@
 
 #define P_PID 1
 #define WEXITED 4
+#define __SI_SWAP_ERRNO_CODE
 
 void* malloc(unsigned size);
 
@@ -72,6 +73,7 @@ int waitid(int idtype, int id, struct siginfo_t *infop, int options)
 }
 
 void* calloc(int count, int size);
+void free(void* l);
 int waitpid(int pid, int* status_ptr, int options)
 {
 	struct siginfo_t *info = calloc(1, sizeof(struct siginfo_t));
@@ -80,7 +82,7 @@ int waitpid(int pid, int* status_ptr, int options)
 	{
 		return r;
 	}
-	if(info->si_pid != 0 && status_ptr)
+	if((info->si_pid != 0) && (status_ptr != NULL))
 	{
 		int sw = 0;
 		if(info->si_code == CLD_EXITED)
@@ -105,8 +107,10 @@ int waitpid(int pid, int* status_ptr, int options)
 		}
 		*status_ptr = sw;
 	}
+	int rval = info->si_pid;
+	free(info);
 
-	return info->si_pid;
+	return rval;
 }
 
 int execve(char* file_name, char** argv, char** envp)
