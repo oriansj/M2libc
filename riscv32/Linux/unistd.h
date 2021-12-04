@@ -61,7 +61,7 @@ int fork()
 	    "ECALL");
 }
 
-int waitid(int idtype, int id, struct siginfo_t *infop, int options)
+int waitid(int idtype, int id, struct siginfo_t *infop, int options, void *rusage)
 {
 	asm("RD_A0 RS1_FP !-4 LW"
 	    "RD_A1 RS1_FP !-8 LW"
