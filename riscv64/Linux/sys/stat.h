@@ -16,6 +16,9 @@
  * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _SYS_STAT_H
+#define _SYS_STAT_H
+
 #include <sys/types.h>
 
 #define S_IRWXU 00700
@@ -82,3 +85,5 @@ mode_t umask(mode_t m)
 	    "RD_A7 !166 ADDI"
 	    "ECALL");
 }
+
+#endif

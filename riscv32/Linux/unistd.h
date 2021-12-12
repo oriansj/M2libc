@@ -16,6 +16,9 @@
  * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _UNISTD_H
+#define _UNISTD_H
+
 #include <signal.h>
 
 #define NULL 0
@@ -230,3 +233,5 @@ int uname(struct utsname* unameData)
 	    "RD_A7 !160 ADDI"
 	    "ECALL");
 }
+
+#endif

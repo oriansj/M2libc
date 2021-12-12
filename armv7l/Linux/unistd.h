@@ -15,6 +15,9 @@
  * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _UNISTD_H
+#define _UNISTD_H
+
 #define NULL 0
 #define __PATH_MAX 4096
 
@@ -188,3 +191,4 @@ int uname(struct utsname* unameData)
 	    "!0 R0 LOAD32 R0 MEMORY"
 	    "SYSCALL_ALWAYS");
 }
+#endif

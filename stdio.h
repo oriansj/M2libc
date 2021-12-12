@@ -15,6 +15,13 @@
  * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _STDIO_H
+#define _STDIO_H
+
+#ifdef __M2__
+#include <stdio.c>
+#else
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -73,3 +80,5 @@ extern int ungetc(int ch, FILE* stream);
 extern long ftell(FILE* stream);
 extern int fseek(FILE* f, long offset, int whence);
 extern void rewind(FILE* f);
+#endif
+#endif

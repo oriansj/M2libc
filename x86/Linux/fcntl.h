@@ -15,6 +15,9 @@
  * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _FCNTL_H
+#define _FCNTL_H
+
 #define O_RDONLY 0
 #define O_WRONLY 1
 #define O_RDWR 2
@@ -44,3 +47,4 @@ int open(char* name, int flag, int mode)
 #define STDIN_FILENO  0
 #define STDOUT_FILENO 1
 #define STDERR_FILENO 2
+#endif

@@ -15,6 +15,9 @@
  * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _UNISTD_H
+#define _UNISTD_H
+
 #define NULL 0
 #define __PATH_MAX 4096
 
@@ -190,3 +193,5 @@ int uname(struct utsname* unameData)
 	    "LOAD_IMMEDIATE_eax %109"
 	    "INT_80");
 }
+
+#endif

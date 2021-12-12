@@ -253,6 +253,3 @@ int memcmp(void const* lhs, void const* rhs, size_t count)
 	}
 	return (s1[i] - s2[i]);
 }
-
-
-void* memchr( void const* ptr, int ch, size_t count );

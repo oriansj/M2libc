@@ -15,6 +15,9 @@
  * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _SIGNAL_H
+#define _SIGNAL_H
+
 #define CLD_EXITED      1       /* child has exited */
 #define CLD_KILLED      2       /* child was killed */
 #define CLD_DUMPED      3       /* child terminated abnormally */
@@ -37,3 +40,5 @@ struct siginfo_t {
 	int si_utime;
 	int si_stime;
 };
+
+#endif

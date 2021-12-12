@@ -15,6 +15,12 @@
  * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _STRING_H
+#define _STRING_H
+
+#ifdef __M2__
+#include <string.c>
+#else
 #include <stddef.h>
 
 /* String manipulation */
@@ -40,3 +46,5 @@ void* memcpy(void* dest, void const* src, size_t count );
 void* memmove(void* dest, void const* src, size_t count );
 int memcmp(void const* lhs, void const* rhs, size_t count );
 void* memchr( void const* ptr, int ch, size_t count );
+#endif
+#endif

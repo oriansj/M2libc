@@ -15,7 +15,12 @@
  * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _SYS_TYPES_H
+#define _SYS_TYPES_H
+
+#ifndef __M2__
 #include "../gcc_req.h"
+#endif
 
 typedef SCM ulong;
 typedef long ssize_t;
@@ -25,3 +30,4 @@ typedef ulong uintptr_t;
 typedef long clock_t;
 typedef int mode_t;
 typedef long dev_t;
+#endif

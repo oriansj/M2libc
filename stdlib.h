@@ -15,7 +15,14 @@
  * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _STDLIB_H
+#define _STDLIB_H
 #include <unistd.h>
+
+#ifdef __M2__
+#include <stdlib.c>
+#else
+
 
 #define EXIT_FAILURE 1
 #define EXIT_SUCCESS 0
@@ -29,3 +36,5 @@ extern void free(void* l);
 extern void* malloc(unsigned size);
 extern void* memset(void* ptr, int value, int num);
 extern void* calloc(int count, int size);
+#endif
+#endif

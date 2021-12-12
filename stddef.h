@@ -15,8 +15,12 @@
  * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _STDDEF_H
+#define _STDDEF_H
 #include <sys/types.h>
 
 #define NULL 0
 typedef long ptrdiff_t;
 typedef ulong size_t;
+
+#endif

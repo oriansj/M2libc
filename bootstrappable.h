@@ -15,13 +15,22 @@
  * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#ifndef _BOOTSTRAPPABLE_H
+#define _BOOTSTRAPPABLE_H
+
 /* Essential common CONSTANTS*/
 #define TRUE 1
 #define FALSE 0
 
+#ifdef __M2__
+#include <bootstrappable.c>
+#else
 /* Universally useful functions */
 void require(int bool, char* error);
 int match(char* a, char* b);
 int in_set(int c, char* s);
 int strtoint(char *a);
 char* int2str(int x, int base, int signed_p);
+
+#endif
+#endif

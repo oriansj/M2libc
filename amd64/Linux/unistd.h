@@ -14,6 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+
+#ifndef _UNISTD_H
+#define _UNISTD_H
+
 #define NULL 0
 #define __PATH_MAX 4096
 
@@ -194,3 +199,4 @@ int uname(struct utsname* unameData)
 	    "LOAD_IMMEDIATE_rax %63"
 	    "SYSCALL");
 }
+#endif
