@@ -15,8 +15,8 @@
  * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _SYS_STAT_H
-#define _SYS_STAT_H
+#ifndef _SYS_STAT_C
+#define _SYS_STAT_C
 
 #include <sys/types.h>
 

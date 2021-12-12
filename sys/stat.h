@@ -1,5 +1,4 @@
 /* Copyright (C) 2020 Jeremiah Orians
- * Copyright (C) 2021 Andrius Štikonas
  * This file is part of M2-Planet.
  *
  * M2-Planet is free software: you can redistribute it and/or modify
@@ -19,6 +18,24 @@
 #ifndef _SYS_STAT_H
 #define _SYS_STAT_H
 
+#ifdef __M2__
+#if __i386__
+#include <x86/linux/sys/stat.c>
+#elif __x86_64__
+#include <amd64/linux/sys/stat.c>
+#elif __arm__
+#include <armv7l/linux/sys/stat.c>
+#elif __aarch64__
+#include <aarch64/linux/sys/stat.c>
+#elif __riscv && __riscv_xlen==32
+#include <riscv32/linux/sys/stat.c>
+#elif __riscv && __riscv_xlen==64
+#include <riscv64/linux/sys/stat.c>
+#else
+#error arch not supported
+#endif
+
+#else
 #include <sys/types.h>
 
 #define S_IRWXU 00700
@@ -38,52 +55,11 @@
 #define S_IRWXO 00007
 
 
-int chmod(char *pathname, int mode)
-{
-        asm("RD_A0 !-100 ADDI" /* AT_FDCWD */
-	    "RD_A1 RS1_FP !-4 LW"
-	    "RD_A2 RS1_FP !-8 LW"
-	    "RD_A7 !53 ADDI"
-	    "ECALL");
-}
+int chmod(char *pathname, int mode);
+int fchmod(int a, mode_t b);
+int mkdir(char const* a, mode_t b);
+int mknod(char const* a, mode_t b, dev_t c);
+mode_t umask(mode_t m);
 
-
-int fchmod(int a, mode_t b)
-{
-        asm("RD_A0 !-100 ADDI" /* AT_FDCWD */
-	    "RD_A1 RS1_FP !-4 LW"
-	    "RD_A2 RS1_FP !-8 LW"
-	    "RD_A7 !52 ADDI"
-	    "ECALL");
-}
-
-
-int mkdir(char const* a, mode_t b)
-{
-        asm("RD_A0 !-100 ADDI" /* AT_FDCWD */
-	    "RD_A1 RS1_FP !-4 LW"
-	    "RD_A2 RS1_FP !-8 LW"
-	    "RD_A7 !34 ADDI"
-	    "ECALL");
-}
-
-
-int mknod(char const* a, mode_t b, dev_t c)
-{
-        asm("RD_A0 !-100 ADDI" /* AT_FDCWD */
-	    "RD_A1 RS1_FP !-4 LW"
-	    "RD_A2 RS1_FP !-8 LW"
-	    "RD_A3 RS1_FP !-12 LW"
-	    "RD_A7 !33 ADDI"
-	    "ECALL");
-}
-
-
-mode_t umask(mode_t m)
-{
-	asm("RD_A0 RS1_FP !-4 LW"
-	    "RD_A7 !166 ADDI"
-	    "ECALL");
-}
-
+#endif
 #endif

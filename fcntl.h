@@ -18,6 +18,24 @@
 #ifndef _FCNTL_H
 #define _FCNTL_H
 
+#ifdef __M2__
+#if __i386__
+#include <x86/linux/fcntl.c>
+#elif __x86_64__
+#include <amd64/linux/fcntl.c>
+#elif __arm__
+#include <armv7l/linux/fcntl.c>
+#elif __aarch64__
+#include <aarch64/linux/fcntl.c>
+#elif __riscv && __riscv_xlen==32
+#include <riscv32/linux/fcntl.c>
+#elif __riscv && __riscv_xlen==64
+#include <riscv64/linux/fcntl.c>
+#else
+#error arch not supported
+#endif
+
+#else
 #define O_RDONLY 0
 #define O_WRONLY 1
 #define O_RDWR 2
@@ -32,19 +50,10 @@
 #define S_IRWXU 00700
 
 
-int open(char* name, int flag, int mode)
-{
-	asm("LOAD_EFFECTIVE_ADDRESS_ebx %12"
-	    "LOAD_INTEGER_ebx"
-	    "LOAD_EFFECTIVE_ADDRESS_ecx %8"
-	    "LOAD_INTEGER_ecx"
-	    "LOAD_EFFECTIVE_ADDRESS_edx %4"
-	    "LOAD_INTEGER_edx"
-	    "LOAD_IMMEDIATE_eax %5"
-	    "INT_80");
-}
+int open(char* name, int flag, int mode);
 
 #define STDIN_FILENO  0
 #define STDOUT_FILENO 1
 #define STDERR_FILENO 2
+#endif
 #endif

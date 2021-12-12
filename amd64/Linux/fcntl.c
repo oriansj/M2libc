@@ -1,5 +1,4 @@
 /* Copyright (C) 2016 Jeremiah Orians
- * Copyright (C) 2020 deesix <deesix@tuta.io>
  * This file is part of M2-Planet.
  *
  * M2-Planet is free software: you can redistribute it and/or modify
@@ -16,8 +15,8 @@
  * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _FCNTL_H
-#define _FCNTL_H
+#ifndef _FCNTL_C
+#define _FCNTL_C
 
 #define O_RDONLY 0
 #define O_WRONLY 1
@@ -35,14 +34,13 @@
 
 int open(char* name, int flag, int mode)
 {
-	asm("SET_X0_FROM_BP" "SUB_X0_24" "DEREF_X0"
-	    "SET_X3_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_16" "DEREF_X0"
-	    "SET_X2_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X1_FROM_X0"
-	    "SET_X0_TO_FCNTL_H_AT_FDCWD"
-	    "SET_X8_TO_SYS_OPENAT"
+	asm("LOAD_EFFECTIVE_ADDRESS_rdi %24"
+	    "LOAD_INTEGER_rdi"
+	    "LOAD_EFFECTIVE_ADDRESS_rsi %16"
+	    "LOAD_INTEGER_rsi"
+	    "LOAD_EFFECTIVE_ADDRESS_rdx %8"
+	    "LOAD_INTEGER_rdx"
+	    "LOAD_IMMEDIATE_rax %2"
 	    "SYSCALL");
 }
 

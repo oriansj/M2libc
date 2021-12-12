@@ -16,8 +16,8 @@
  */
 
 
-#ifndef _UNISTD_H
-#define _UNISTD_H
+#ifndef _UNISTD_C
+#define _UNISTD_C
 
 #define NULL 0
 #define __PATH_MAX 4096

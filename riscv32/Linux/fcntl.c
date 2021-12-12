@@ -16,8 +16,8 @@
  * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _FCNTL_H
-#define _FCNTL_H
+#ifndef _FCNTL_C
+#define _FCNTL_C
 
 #define O_RDONLY 0
 #define O_WRONLY 1
@@ -36,9 +36,9 @@
 int open(char* name, int flag, int mode)
 {
 	asm("RD_A0 !-100 ADDI" /* AT_FDCWD */
-	    "RD_A1 RS1_FP !-8 LD"
-	    "RD_A2 RS1_FP !-16 LD"
-	    "RD_A3 RS1_FP !-24 LD"
+	    "RD_A1 RS1_FP !-4 LW"
+	    "RD_A2 RS1_FP !-8 LW"
+	    "RD_A3 RS1_FP !-12 LW"
 	    "RD_A7 !56 ADDI"
 	    "ECALL");
 }

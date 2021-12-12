@@ -1,4 +1,5 @@
 /* Copyright (C) 2020 Jeremiah Orians
+ * Copyright (C) 2021 Andrius Štikonas
  * This file is part of M2-Planet.
  *
  * M2-Planet is free software: you can redistribute it and/or modify
@@ -15,8 +16,8 @@
  * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _SYS_STAT_H
-#define _SYS_STAT_H
+#ifndef _SYS_STAT_C
+#define _SYS_STAT_C
 
 #include <sys/types.h>
 
@@ -39,55 +40,50 @@
 
 int chmod(char *pathname, int mode)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_rdi %16"
-	    "LOAD_INTEGER_rdi"
-	    "LOAD_EFFECTIVE_ADDRESS_rsi %8"
-	    "LOAD_INTEGER_rsi"
-	    "LOAD_IMMEDIATE_rax %90"
-	    "SYSCALL");
+        asm("RD_A0 !-100 ADDI" /* AT_FDCWD */
+	    "RD_A1 RS1_FP !-8 LD"
+	    "RD_A2 RS1_FP !-16 LD"
+	    "RD_A7 !53 ADDI"
+	    "ECALL");
 }
 
 
 int fchmod(int a, mode_t b)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_rdi %16"
-	    "LOAD_INTEGER_rdi"
-	    "LOAD_EFFECTIVE_ADDRESS_rsi %8"
-	    "LOAD_INTEGER_rsi"
-	    "LOAD_IMMEDIATE_rax %91"
-	    "SYSCALL");
+        asm("RD_A0 !-100 ADDI" /* AT_FDCWD */
+	    "RD_A1 RS1_FP !-8 LD"
+	    "RD_A2 RS1_FP !-16 LD"
+	    "RD_A7 !52 ADDI"
+	    "ECALL");
 }
 
 
 int mkdir(char const* a, mode_t b)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_rdi %16"
-	    "LOAD_INTEGER_rdi"
-	    "LOAD_EFFECTIVE_ADDRESS_rsi %8"
-	    "LOAD_INTEGER_rsi"
-	    "LOAD_IMMEDIATE_rax %83"
-	    "SYSCALL");
+        asm("RD_A0 !-100 ADDI" /* AT_FDCWD */
+	    "RD_A1 RS1_FP !-8 LD"
+	    "RD_A2 RS1_FP !-16 LD"
+	    "RD_A7 !34 ADDI"
+	    "ECALL");
 }
 
 
 int mknod(char const* a, mode_t b, dev_t c)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_rdi %24"
-	    "LOAD_INTEGER_rdi"
-	    "LOAD_EFFECTIVE_ADDRESS_rsi %16"
-	    "LOAD_INTEGER_rsi"
-	    "LOAD_EFFECTIVE_ADDRESS_rdx %8"
-	    "LOAD_INTEGER_rdx"
-	    "LOAD_IMMEDIATE_rax %133"
-	    "SYSCALL");
+        asm("RD_A0 !-100 ADDI" /* AT_FDCWD */
+	    "RD_A1 RS1_FP !-8 LD"
+	    "RD_A2 RS1_FP !-16 LD"
+	    "RD_A3 RS1_FP !-24 LD"
+	    "RD_A7 !33 ADDI"
+	    "ECALL");
 }
 
 
 mode_t umask(mode_t m)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_rdi %8"
-	    "LOAD_INTEGER_rdi"
-	    "LOAD_IMMEDIATE_rax %95"
-	    "SYSCALL");
+	asm("RD_A0 RS1_FP !-8 LD"
+	    "RD_A7 !166 ADDI"
+	    "ECALL");
 }
+
 #endif

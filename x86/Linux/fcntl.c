@@ -15,8 +15,8 @@
  * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _FCNTL_H
-#define _FCNTL_H
+#ifndef _FCNTL_C
+#define _FCNTL_C
 
 #define O_RDONLY 0
 #define O_WRONLY 1
@@ -34,10 +34,14 @@
 
 int open(char* name, int flag, int mode)
 {
-	asm("LOAD R0 R14 0"
-	    "LOAD R1 R14 4"
-	    "LOAD R2 R14 8"
-	    "SYS_OPEN");
+	asm("LOAD_EFFECTIVE_ADDRESS_ebx %12"
+	    "LOAD_INTEGER_ebx"
+	    "LOAD_EFFECTIVE_ADDRESS_ecx %8"
+	    "LOAD_INTEGER_ecx"
+	    "LOAD_EFFECTIVE_ADDRESS_edx %4"
+	    "LOAD_INTEGER_edx"
+	    "LOAD_IMMEDIATE_eax %5"
+	    "INT_80");
 }
 
 #define STDIN_FILENO  0

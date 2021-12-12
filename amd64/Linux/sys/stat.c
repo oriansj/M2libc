@@ -15,8 +15,8 @@
  * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _SYS_STAT_H
-#define _SYS_STAT_H
+#ifndef _SYS_STAT_C
+#define _SYS_STAT_C
 
 #include <sys/types.h>
 
@@ -39,41 +39,55 @@
 
 int chmod(char *pathname, int mode)
 {
-	asm("LOAD R0 R14 0"
-	    "LOAD R1 R14 4"
-	    "SYS_CHMOD");
+	asm("LOAD_EFFECTIVE_ADDRESS_rdi %16"
+	    "LOAD_INTEGER_rdi"
+	    "LOAD_EFFECTIVE_ADDRESS_rsi %8"
+	    "LOAD_INTEGER_rsi"
+	    "LOAD_IMMEDIATE_rax %90"
+	    "SYSCALL");
 }
 
 
 int fchmod(int a, mode_t b)
 {
-	asm("LOAD R0 R14 0"
-	    "LOAD R1 R14 4"
-	    "SYS_FCHMOD");
+	asm("LOAD_EFFECTIVE_ADDRESS_rdi %16"
+	    "LOAD_INTEGER_rdi"
+	    "LOAD_EFFECTIVE_ADDRESS_rsi %8"
+	    "LOAD_INTEGER_rsi"
+	    "LOAD_IMMEDIATE_rax %91"
+	    "SYSCALL");
 }
 
 
 int mkdir(char const* a, mode_t b)
 {
-	asm("LOAD R0 R14 0"
-	    "LOAD R1 R14 4"
-	    "SYS_MKDIR");
+	asm("LOAD_EFFECTIVE_ADDRESS_rdi %16"
+	    "LOAD_INTEGER_rdi"
+	    "LOAD_EFFECTIVE_ADDRESS_rsi %8"
+	    "LOAD_INTEGER_rsi"
+	    "LOAD_IMMEDIATE_rax %83"
+	    "SYSCALL");
 }
 
 
 int mknod(char const* a, mode_t b, dev_t c)
 {
-	asm("LOAD R0 R14 0"
-	    "LOAD R1 R14 4"
-	    "LOAD R2 R14 8"
-	    "SYS_MKNOD");
+	asm("LOAD_EFFECTIVE_ADDRESS_rdi %24"
+	    "LOAD_INTEGER_rdi"
+	    "LOAD_EFFECTIVE_ADDRESS_rsi %16"
+	    "LOAD_INTEGER_rsi"
+	    "LOAD_EFFECTIVE_ADDRESS_rdx %8"
+	    "LOAD_INTEGER_rdx"
+	    "LOAD_IMMEDIATE_rax %133"
+	    "SYSCALL");
 }
 
 
 mode_t umask(mode_t m)
 {
-	asm("LOAD R0 R14 0"
-	    "SYS_UMASK");
+	asm("LOAD_EFFECTIVE_ADDRESS_rdi %8"
+	    "LOAD_INTEGER_rdi"
+	    "LOAD_IMMEDIATE_rax %95"
+	    "SYSCALL");
 }
-
 #endif

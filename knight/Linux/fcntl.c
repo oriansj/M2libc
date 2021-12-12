@@ -1,5 +1,4 @@
 /* Copyright (C) 2016 Jeremiah Orians
- * Copyright (C) 2021 Andrius Štikonas
  * This file is part of M2-Planet.
  *
  * M2-Planet is free software: you can redistribute it and/or modify
@@ -16,8 +15,8 @@
  * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _FCNTL_H
-#define _FCNTL_H
+#ifndef _FCNTL_C
+#define _FCNTL_C
 
 #define O_RDONLY 0
 #define O_WRONLY 1
@@ -35,12 +34,10 @@
 
 int open(char* name, int flag, int mode)
 {
-	asm("RD_A0 !-100 ADDI" /* AT_FDCWD */
-	    "RD_A1 RS1_FP !-4 LW"
-	    "RD_A2 RS1_FP !-8 LW"
-	    "RD_A3 RS1_FP !-12 LW"
-	    "RD_A7 !56 ADDI"
-	    "ECALL");
+	asm("LOAD R0 R14 0"
+	    "LOAD R1 R14 4"
+	    "LOAD R2 R14 8"
+	    "SYS_OPEN");
 }
 
 #define STDIN_FILENO  0
