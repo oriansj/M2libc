@@ -77,42 +77,43 @@ int waitid(int idtype, int id, struct siginfo_t *infop, int options, void *rusag
 
 void* calloc(int count, int size);
 void free(void* l);
+struct siginfo_t *__waitpid_info;
 int waitpid(int pid, int* status_ptr, int options)
 {
-	struct siginfo_t *info = calloc(1, sizeof(struct siginfo_t));
-	int r = waitid(P_PID, pid, info, options|WEXITED, NULL);
+	if(NULL == __waitpid_info) __waitpid_info = calloc(1, sizeof(struct siginfo_t));
+	int r = waitid(P_PID, pid, __waitpid_info, options|WEXITED, NULL);
+
+	if(__waitpid_info->si_pid != 0)
+	{
+		int sw = 0;
+		if(__waitpid_info->si_code == CLD_EXITED)
+		{
+			sw = (__waitpid_info->si_status & 0xff) << 8;
+		}
+		else if(__waitpid_info->si_code == CLD_KILLED)
+		{
+			sw = __waitpid_info->si_status & 0x7f;
+		}
+		else if(__waitpid_info->si_code == CLD_DUMPED)
+		{
+			sw = (__waitpid_info->si_status & 0x7f) | 0x80;
+		}
+		else if(__waitpid_info->si_code == CLD_CONTINUED)
+		{
+			sw = 0xffff;
+		}
+		else if(__waitpid_info->si_code == CLD_STOPPED || __waitpid_info->si_code == CLD_TRAPPED)
+		{
+			sw = ((__waitpid_info->si_status & 0xff) << 8) + 0x7f;
+		}
+		if(status_ptr != NULL) *status_ptr = sw;
+	}
+	int rval = __waitpid_info->si_pid;
+
 	if(r < 0)
 	{
 		return r;
 	}
-	if((info->si_pid != 0) && (status_ptr != NULL))
-	{
-		int sw = 0;
-		if(info->si_code == CLD_EXITED)
-		{
-			sw = (info->si_status & 0xff) << 8;
-		}
-		else if(info->si_code == CLD_KILLED)
-		{
-			sw = info->si_status & 0x7f;
-		}
-		else if(info->si_code == CLD_DUMPED)
-		{
-			sw = (info->si_status & 0x7f) | 0x80;
-		}
-		else if(info->si_code == CLD_CONTINUED)
-		{
-			sw = 0xffff;
-		}
-		else if(info->si_code == CLD_STOPPED || info->si_code == CLD_TRAPPED)
-		{
-			sw = ((info->si_status & 0xff) << 8) + 0x7f;
-		}
-		*status_ptr = sw;
-	}
-	int rval = info->si_pid;
-	free(info);
-
 	return rval;
 }
 
