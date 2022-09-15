@@ -19,22 +19,7 @@
 #define _FCNTL_H
 
 #ifdef __M2__
-#if __i386__
-#include <x86/linux/fcntl.c>
-#elif __x86_64__
-#include <amd64/linux/fcntl.c>
-#elif __arm__
-#include <armv7l/linux/fcntl.c>
-#elif __aarch64__
-#include <aarch64/linux/fcntl.c>
-#elif __riscv && __riscv_xlen==32
-#include <riscv32/linux/fcntl.c>
-#elif __riscv && __riscv_xlen==64
-#include <riscv64/linux/fcntl.c>
-#else
-#error arch not supported
-#endif
-
+#include <fcntl.c>
 #else
 #define O_RDONLY 0
 #define O_WRONLY 1
@@ -50,7 +35,7 @@
 #define S_IRWXU 00700
 
 
-int open(char* name, int flag, int mode);
+extern int open(char* name, int flag, int mode);
 
 #define STDIN_FILENO  0
 #define STDOUT_FILENO 1

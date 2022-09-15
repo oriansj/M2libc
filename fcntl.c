@@ -1,5 +1,4 @@
 /* Copyright (C) 2016 Jeremiah Orians
- * Copyright (C) 2021 Andrius Štikonas
  * This file is part of M2-Planet.
  *
  * M2-Planet is free software: you can redistribute it and/or modify
@@ -16,34 +15,40 @@
  * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __FCNTL_C
-#define __FCNTL_C
+#ifndef _FCNTL_C
+#define _FCNTL_C
 
-#define O_RDONLY 0
-#define O_WRONLY 1
-#define O_RDWR 2
-#define O_CREAT 00100
-#define O_EXCL 00200
-#define O_TRUNC 001000
-#define O_APPEND 002000
+#ifdef __M2__
+#if __i386__
+#include <x86/linux/fcntl.c>
+#elif __x86_64__
+#include <amd64/linux/fcntl.c>
+#elif __arm__
+#include <armv7l/linux/fcntl.c>
+#elif __aarch64__
+#include <aarch64/linux/fcntl.c>
+#elif __riscv && __riscv_xlen==32
+#include <riscv32/linux/fcntl.c>
+#elif __riscv && __riscv_xlen==64
+#include <riscv64/linux/fcntl.c>
+#else
+#error arch not supported
+#endif
+#else
+extern int _open(char* name, int flag, int mode);
+#endif
 
-#define S_IXUSR 00100
-#define S_IWUSR 00200
-#define S_IRUSR 00400
-#define S_IRWXU 00700
+int errno;
 
-
-int _open(char* name, int flag, int mode)
+int open(char* name, int flag, int mode)
 {
-	asm("RD_A0 !-100 ADDI" /* AT_FDCWD */
-	    "RD_A1 RS1_FP !-8 LD"
-	    "RD_A2 RS1_FP !-16 LD"
-	    "RD_A3 RS1_FP !-24 LD"
-	    "RD_A7 !56 ADDI"
-	    "ECALL");
+	int fd = _open(name, flag, mode);
+	if(0 > fd)
+	{
+		errno = -fd;
+		fd = -1;
+	}
+	return fd;
 }
 
-#define STDIN_FILENO  0
-#define STDOUT_FILENO 1
-#define STDERR_FILENO 2
 #endif

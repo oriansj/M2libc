@@ -29,7 +29,7 @@
 #define S_IRWXU 00700
 
 
-int open(char* name, int flag, int mode)
+int _open(char* name, int flag, int mode)
 {
 	if((0 != flag) && (0 != mode))
 	{

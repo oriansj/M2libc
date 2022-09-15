@@ -16,8 +16,8 @@
  * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef _FCNTL_C
-#define _FCNTL_C
+#ifndef __FCNTL_C
+#define __FCNTL_C
 
 #define O_RDONLY 0
 #define O_WRONLY 1
@@ -33,7 +33,7 @@
 #define S_IRWXU 00700
 
 
-int open(char* name, int flag, int mode)
+int _open(char* name, int flag, int mode)
 {
 	asm("SET_X0_FROM_BP" "SUB_X0_24" "DEREF_X0"
 	    "SET_X3_FROM_X0"
