@@ -244,12 +244,13 @@ int memcmp(void const* lhs, void const* rhs, size_t count)
 {
 	if(0 == count) return 0;
 	size_t i = 0;
+	count = count - 1;
 	char const* s1 = lhs;
 	char const* s2 = rhs;
-	while(s1[i] == s2[i])
+	while(i < count)
 	{
+		if(s1[i] != s2[i]) break;
 		i = i + 1;
-		if(count == i) return count;
 	}
 	return (s1[i] - s2[i]);
 }
