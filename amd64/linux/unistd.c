@@ -26,130 +26,130 @@ void* malloc(unsigned size);
 
 int access(char* pathname, int mode)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_rdi %16"
-	    "LOAD_INTEGER_rdi"
-	    "LOAD_EFFECTIVE_ADDRESS_rsi %8"
-	    "LOAD_INTEGER_rsi"
-	    "LOAD_IMMEDIATE_rax %21"
-	    "SYSCALL");
+	asm("lea_rdi,[rsp+DWORD] %16"
+	    "mov_rdi,[rdi]"
+	    "lea_rsi,[rsp+DWORD] %8"
+	    "mov_rsi,[rsi]"
+	    "mov_rax, %21"
+	    "syscall");
 }
 
 int chdir(char* path)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_rdi %8"
-	    "LOAD_INTEGER_rdi"
-	    "LOAD_IMMEDIATE_rax %80"
-	    "SYSCALL");
+	asm("lea_rdi,[rsp+DWORD] %8"
+	    "mov_rdi,[rdi]"
+	    "mov_rax, %80"
+	    "syscall");
 }
 
 int fchdir(int fd)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_rdi %8"
-	    "LOAD_INTEGER_rdi"
-	    "LOAD_IMMEDIATE_rax %81"
-	    "SYSCALL");
+	asm("lea_rdi,[rsp+DWORD] %8"
+	    "mov_rdi,[rdi]"
+	    "mov_rax, %81"
+	    "syscall");
 }
 
 void _exit(int value);
 
 int fork()
 {
-	asm("LOAD_IMMEDIATE_rax %57"
-	    "LOAD_IMMEDIATE_rdi %0"
-	    "SYSCALL");
+	asm("mov_rax, %57"
+	    "mov_rdi, %0"
+	    "syscall");
 }
 
 
 int waitpid (int pid, int* status_ptr, int options)
 {
 	/* Uses wait4 with struct rusage *ru set to NULL */
-	asm("LOAD_EFFECTIVE_ADDRESS_rdi %24"
-	    "LOAD_INTEGER_rdi"
-	    "LOAD_EFFECTIVE_ADDRESS_rsi %16"
-	    "LOAD_INTEGER_rsi"
-	    "LOAD_EFFECTIVE_ADDRESS_rdx %8"
-	    "LOAD_INTEGER_rdx"
-	    "LOAD_IMMEDIATE_r10 %0"
-	    "LOAD_IMMEDIATE_rax %61"
-	    "SYSCALL");
+	asm("lea_rdi,[rsp+DWORD] %24"
+	    "mov_rdi,[rdi]"
+	    "lea_rsi,[rsp+DWORD] %16"
+	    "mov_rsi,[rsi]"
+	    "lea_rdx,[rsp+DWORD] %8"
+	    "mov_rdx,[rdx]"
+	    "mov_r10, %0"
+	    "mov_rax, %61"
+	    "syscall");
 }
 
 
 int execve(char* file_name, char** argv, char** envp)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_rdi %24"
-	    "LOAD_INTEGER_rdi"
-	    "LOAD_EFFECTIVE_ADDRESS_rsi %16"
-	    "LOAD_INTEGER_rsi"
-	    "LOAD_EFFECTIVE_ADDRESS_rdx %8"
-	    "LOAD_INTEGER_rdx"
-	    "LOAD_IMMEDIATE_rax %59"
-	    "SYSCALL");
+	asm("lea_rdi,[rsp+DWORD] %24"
+	    "mov_rdi,[rdi]"
+	    "lea_rsi,[rsp+DWORD] %16"
+	    "mov_rsi,[rsi]"
+	    "lea_rdx,[rsp+DWORD] %8"
+	    "mov_rdx,[rdx]"
+	    "mov_rax, %59"
+	    "syscall");
 }
 
 int read(int fd, char* buf, unsigned count)
 { /*maybe*/
-	asm("LOAD_EFFECTIVE_ADDRESS_rdi %24"
-	    "LOAD_INTEGER_rdi"
-	    "LOAD_EFFECTIVE_ADDRESS_rsi %16"
-	    "LOAD_INTEGER_rsi"
-	    "LOAD_EFFECTIVE_ADDRESS_rdx %8"
-	    "LOAD_INTEGER_rdx"
-	    "LOAD_IMMEDIATE_rax %0"
-	    "SYSCALL");
+	asm("lea_rdi,[rsp+DWORD] %24"
+	    "mov_rdi,[rdi]"
+	    "lea_rsi,[rsp+DWORD] %16"
+	    "mov_rsi,[rsi]"
+	    "lea_rdx,[rsp+DWORD] %8"
+	    "mov_rdx,[rdx]"
+	    "mov_rax, %0"
+	    "syscall");
 }
 
 int write(int fd, char* buf, unsigned count)
 {/*maybe*/
-	asm("LOAD_EFFECTIVE_ADDRESS_rdi %24"
-	    "LOAD_INTEGER_rdi"
-	    "LOAD_EFFECTIVE_ADDRESS_rsi %16"
-	    "LOAD_INTEGER_rsi"
-	    "LOAD_EFFECTIVE_ADDRESS_rdx %8"
-	    "LOAD_INTEGER_rdx"
-	    "LOAD_IMMEDIATE_rax %1"
-	    "SYSCALL");
+	asm("lea_rdi,[rsp+DWORD] %24"
+	    "mov_rdi,[rdi]"
+	    "lea_rsi,[rsp+DWORD] %16"
+	    "mov_rsi,[rsi]"
+	    "lea_rdx,[rsp+DWORD] %8"
+	    "mov_rdx,[rdx]"
+	    "mov_rax, %1"
+	    "syscall");
 }
 
 int lseek(int fd, int offset, int whence)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_rdi %24"
-	    "LOAD_INTEGER_rdi"
-	    "LOAD_EFFECTIVE_ADDRESS_rsi %16"
-	    "LOAD_INTEGER_rsi"
-	    "LOAD_EFFECTIVE_ADDRESS_rdx %8"
-	    "LOAD_INTEGER_rdx"
-	    "LOAD_IMMEDIATE_rax %8"
-	    "SYSCALL");
+	asm("lea_rdi,[rsp+DWORD] %24"
+	    "mov_rdi,[rdi]"
+	    "lea_rsi,[rsp+DWORD] %16"
+	    "mov_rsi,[rsi]"
+	    "lea_rdx,[rsp+DWORD] %8"
+	    "mov_rdx,[rdx]"
+	    "mov_rax, %8"
+	    "syscall");
 }
 
 
 int close(int fd)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_rdi %8"
-	    "LOAD_INTEGER_rdi"
-	    "LOAD_IMMEDIATE_rax %3"
-	    "SYSCALL");
+	asm("lea_rdi,[rsp+DWORD] %8"
+	    "mov_rdi,[rdi]"
+	    "mov_rax, %3"
+	    "syscall");
 }
 
 
 int unlink (char* filename)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_rdi %8"
-	    "LOAD_INTEGER_rdi"
-	    "LOAD_IMMEDIATE_rax %87"
-	    "SYSCALL");
+	asm("lea_rdi,[rsp+DWORD] %8"
+	    "mov_rdi,[rdi]"
+	    "mov_rax, %87"
+	    "syscall");
 }
 
 
 int _getcwd(char* buf, int size)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_rdi %16"
-	    "LOAD_INTEGER_rdi"
-	    "LOAD_EFFECTIVE_ADDRESS_rsi %8"
-	    "LOAD_INTEGER_rsi"
-	    "LOAD_IMMEDIATE_rax %79"
-	    "SYSCALL");
+	asm("lea_rdi,[rsp+DWORD] %16"
+	    "mov_rdi,[rdi]"
+	    "lea_rsi,[rsp+DWORD] %8"
+	    "mov_rsi,[rsi]"
+	    "mov_rax, %79"
+	    "syscall");
 }
 
 
@@ -175,12 +175,12 @@ char* get_current_dir_name()
 
 int brk(void *addr)
 {
-	asm("LOAD_RSP_IMMEDIATE_into_rax %8"
-	    "PUSH_RAX"
-	    "LOAD_IMMEDIATE_rax %12"
-	    "POP_RBX"
-	    "COPY_rbx_to_rdi"
-	    "SYSCALL");
+	asm("mov_rax,[rsp+DWORD] %8"
+	    "push_rax"
+	    "mov_rax, %12"
+	    "pop_rbx"
+	    "mov_rdi,rbx"
+	    "syscall");
 }
 
 struct utsname
@@ -194,9 +194,9 @@ struct utsname
 
 int uname(struct utsname* unameData)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_rdi %8"
-	    "LOAD_INTEGER_rdi"
-	    "LOAD_IMMEDIATE_rax %63"
-	    "SYSCALL");
+	asm("lea_rdi,[rsp+DWORD] %8"
+	    "mov_rdi,[rdi]"
+	    "mov_rax, %63"
+	    "syscall");
 }
 #endif

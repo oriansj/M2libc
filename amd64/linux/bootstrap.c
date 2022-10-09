@@ -28,29 +28,29 @@
 
 int fgetc(FILE* f)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_rdi %8"
-	    "LOAD_INTEGER_rdi"
-	    "LOAD_IMMEDIATE_rax %0"
-	    "PUSH_RAX"
-	    "LOAD_EFFECTIVE_ADDRESS_rsi %0"
-	    "LOAD_IMMEDIATE_rdx %1"
-	    "SYSCALL"
-	    "LOAD_IMMEDIATE_rbx %0"
-	    "CMP"
-	    "POP_RAX"
-	    "JUMP_NE %FUNCTION_fgetc_Done"
-	    "LOAD_IMMEDIATE_rax %-1"
+	asm("lea_rdi,[rsp+DWORD] %8"
+	    "mov_rdi,[rdi]"
+	    "mov_rax, %0"
+	    "push_rax"
+	    "lea_rsi,[rsp+DWORD] %0"
+	    "mov_rdx, %1"
+	    "syscall"
+	    "mov_rbx, %0"
+	    "cmp_rbx,rax"
+	    "pop_rax"
+	    "jne %FUNCTION_fgetc_Done"
+	    "mov_rax, %-1"
 	    ":FUNCTION_fgetc_Done");
 }
 
 void fputc(char s, FILE* f)
 {
-	asm("LOAD_IMMEDIATE_rax %1"
-	    "LOAD_EFFECTIVE_ADDRESS_rdi %8"
-	    "LOAD_INTEGER_rdi"
-	    "LOAD_EFFECTIVE_ADDRESS_rsi %16"
-	    "LOAD_IMMEDIATE_rdx %1"
-	    "SYSCALL");
+	asm("mov_rax, %1"
+	    "lea_rdi,[rsp+DWORD] %8"
+	    "mov_rdi,[rdi]"
+	    "lea_rsi,[rsp+DWORD] %16"
+	    "mov_rdx, %1"
+	    "syscall");
 }
 
 void fputs(char* s, FILE* f)
@@ -64,14 +64,14 @@ void fputs(char* s, FILE* f)
 
 FILE* open(char* name, int flag, int mode)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_rdi %24"
-	    "LOAD_INTEGER_rdi"
-	    "LOAD_EFFECTIVE_ADDRESS_rsi %16"
-	    "LOAD_INTEGER_rsi"
-	    "LOAD_EFFECTIVE_ADDRESS_rdx %8"
-	    "LOAD_INTEGER_rdx"
-	    "LOAD_IMMEDIATE_rax %2"
-	    "SYSCALL");
+	asm("lea_rdi,[rsp+DWORD] %24"
+	    "mov_rdi,[rdi]"
+	    "lea_rsi,[rsp+DWORD] %16"
+	    "mov_rsi,[rsi]"
+	    "lea_rdx,[rsp+DWORD] %8"
+	    "mov_rdx,[rdx]"
+	    "mov_rax, %2"
+	    "syscall");
 }
 
 FILE* fopen(char* filename, char* mode)
@@ -96,10 +96,10 @@ FILE* fopen(char* filename, char* mode)
 
 int close(int fd)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_rdi %8"
-	    "LOAD_INTEGER_rdi"
-	    "LOAD_IMMEDIATE_rax %3"
-	    "SYSCALL");
+	asm("lea_rdi,[rsp+DWORD] %8"
+	    "mov_rdi,[rdi]"
+	    "mov_rax, %3"
+	    "syscall");
 }
 
 int fclose(FILE* stream)
@@ -110,12 +110,12 @@ int fclose(FILE* stream)
 
 int brk(void *addr)
 {
-	asm("LOAD_RSP_IMMEDIATE_into_rax %8"
-	    "PUSH_RAX"
-	    "LOAD_IMMEDIATE_rax %12"
-	    "POP_RBX"
-	    "COPY_rbx_to_rdi"
-	    "SYSCALL");
+	asm("mov_rax,[rsp+DWORD] %8"
+	    "push_rax"
+	    "mov_rax, %12"
+	    "pop_rbx"
+	    "mov_rdi,rbx"
+	    "syscall");
 }
 
 long _malloc_ptr;
@@ -172,8 +172,8 @@ void free(void* l)
 
 void exit(int value)
 {
-	asm("POP_RBX"
-	    "POP_RDI"
-	    "LOAD_IMMEDIATE_rax %0x3C"
-	    "SYSCALL");
+	asm("pop_rbx"
+	    "pop_rdi"
+	    "mov_rax, %0x3C"
+	    "syscall");
 }

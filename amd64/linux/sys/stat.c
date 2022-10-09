@@ -39,55 +39,55 @@
 
 int chmod(char *pathname, int mode)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_rdi %16"
-	    "LOAD_INTEGER_rdi"
-	    "LOAD_EFFECTIVE_ADDRESS_rsi %8"
-	    "LOAD_INTEGER_rsi"
-	    "LOAD_IMMEDIATE_rax %90"
-	    "SYSCALL");
+	asm("lea_rdi,[rsp+DWORD] %16"
+	    "mov_rdi,[rdi]"
+	    "lea_rsi,[rsp+DWORD] %8"
+	    "mov_rsi,[rsi]"
+	    "mov_rax, %90"
+	    "syscall");
 }
 
 
 int fchmod(int a, mode_t b)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_rdi %16"
-	    "LOAD_INTEGER_rdi"
-	    "LOAD_EFFECTIVE_ADDRESS_rsi %8"
-	    "LOAD_INTEGER_rsi"
-	    "LOAD_IMMEDIATE_rax %91"
-	    "SYSCALL");
+	asm("lea_rdi,[rsp+DWORD] %16"
+	    "mov_rdi,[rdi]"
+	    "lea_rsi,[rsp+DWORD] %8"
+	    "mov_rsi,[rsi]"
+	    "mov_rax, %91"
+	    "syscall");
 }
 
 
 int mkdir(char const* a, mode_t b)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_rdi %16"
-	    "LOAD_INTEGER_rdi"
-	    "LOAD_EFFECTIVE_ADDRESS_rsi %8"
-	    "LOAD_INTEGER_rsi"
-	    "LOAD_IMMEDIATE_rax %83"
-	    "SYSCALL");
+	asm("lea_rdi,[rsp+DWORD] %16"
+	    "mov_rdi,[rdi]"
+	    "lea_rsi,[rsp+DWORD] %8"
+	    "mov_rsi,[rsi]"
+	    "mov_rax, %83"
+	    "syscall");
 }
 
 
 int mknod(char const* a, mode_t b, dev_t c)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_rdi %24"
-	    "LOAD_INTEGER_rdi"
-	    "LOAD_EFFECTIVE_ADDRESS_rsi %16"
-	    "LOAD_INTEGER_rsi"
-	    "LOAD_EFFECTIVE_ADDRESS_rdx %8"
-	    "LOAD_INTEGER_rdx"
-	    "LOAD_IMMEDIATE_rax %133"
-	    "SYSCALL");
+	asm("lea_rdi,[rsp+DWORD] %24"
+	    "mov_rdi,[rdi]"
+	    "lea_rsi,[rsp+DWORD] %16"
+	    "mov_rsi,[rsi]"
+	    "lea_rdx,[rsp+DWORD] %8"
+	    "mov_rdx,[rdx]"
+	    "mov_rax, %133"
+	    "syscall");
 }
 
 
 mode_t umask(mode_t m)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_rdi %8"
-	    "LOAD_INTEGER_rdi"
-	    "LOAD_IMMEDIATE_rax %95"
-	    "SYSCALL");
+	asm("lea_rdi,[rsp+DWORD] %8"
+	    "mov_rdi,[rdi]"
+	    "mov_rax, %95"
+	    "syscall");
 }
 #endif
