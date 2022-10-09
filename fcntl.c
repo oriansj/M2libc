@@ -31,6 +31,8 @@
 #include <riscv32/linux/fcntl.c>
 #elif __riscv && __riscv_xlen==64
 #include <riscv64/linux/fcntl.c>
+#elif __knight_posix__
+#include <knight/linux/fcntl.c>
 #else
 #error arch not supported
 #endif
