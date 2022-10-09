@@ -33,6 +33,8 @@
 #include <riscv64/linux/fcntl.c>
 #elif __knight_posix__
 #include <knight/linux/fcntl.c>
+#elif __knight__
+#include <knight/native/fcntl.c>
 #else
 #error arch not supported
 #endif
