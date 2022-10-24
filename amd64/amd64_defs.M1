@@ -17,6 +17,7 @@
 
 DEFINE add_rax, 4805
 DEFINE add_rbp, 4881C5
+DEFINE add_rsp, 4881C4
 DEFINE add_rax,rbx 4801D8
 DEFINE add_rax,rbp 4801E8
 DEFINE add_rbx,rax 4801C3
@@ -32,10 +33,14 @@ DEFINE je 0F84
 DEFINE jne 0F85
 DEFINE lea_rax,[rbp+DWORD] 488D85
 DEFINE lea_rax,[rip+DWORD] 488D05
-DEFINE lea_rax,[rsp+DWORD] 488D8424
+DEFINE lea_rcx,[rbp+DWORD] 488D8D
 DEFINE lea_rdi,[rsp+DWORD] 488DBC24
+DEFINE lea_rdx,[rip+DWORD] 488D15
 DEFINE lea_rdx,[rsp+DWORD] 488D9424
+DEFINE lea_rdx,[rbp+DWORD] 488D95
 DEFINE lea_rsi,[rsp+DWORD] 488DB424
+DEFINE lea_r8,[rbp+DWORD] 4C8D85
+DEFINE lea_r9,[rbp+DWORD] 4C8D8D
 DEFINE mov_rax, 48C7C0
 DEFINE mov_rbx, 48C7C3
 DEFINE mov_rdi, 48C7C7
@@ -51,14 +56,27 @@ DEFINE mov_rcx,rax 4889C1
 DEFINE mov_rdi,rax 4889C7
 DEFINE mov_rdi,rbx 4889DF
 DEFINE mov_rdi,rsp 4889E7
+DEFINE mov_rdx,rsp 4889E2
+DEFINE mov_r8,rsp 4989E0
 DEFINE mov_[rbx],al 8803
 DEFINE mov_[rbx],rax 488903
+DEFINE mov_[rip+DWORD],rax 488905
+DEFINE mov_[rip+DWORD],rbp 48892D
+DEFINE mov_[rip+DWORD],rcx 48890D
+DEFINE mov_[rip+DWORD],rdx 488915
+DEFINE mov_[rip+DWORD],rsp 488925
 DEFINE mov_rax,[rax] 488B00
 DEFINE mov_rbx,[rbx] 488B1B
+DEFINE mov_rcx,[rcx] 488B09
 DEFINE mov_rdi,[rdi] 488B3F
 DEFINE mov_rdx,[rdx] 488B12
 DEFINE mov_rsi,[rsi] 488B36
 DEFINE mov_rax,[rsp+DWORD] 488B8424
+DEFINE mov_rax,[rip+DWORD] 488B05
+DEFINE mov_rbp,[rip+DWORD] 488B2D
+DEFINE mov_rsp,[rip+DWORD] 488B25
+DEFINE mov_r8,[r8] 4D8B00
+DEFINE mov_r9,[r9] 4D8B09
 DEFINE movzx_rax,al 480FB6C0
 DEFINE movsxd_rax,eax 4863C0
 DEFINE movsx_rax,BYTE_PTR_[rax] 480FBE00
@@ -72,6 +90,7 @@ DEFINE pop_rax 58
 DEFINE pop_rbp 5D
 DEFINE pop_rbx 5B
 DEFINE pop_rdi 5F
+DEFINE push 6A
 DEFINE push_rax 50
 DEFINE push_rbp 55
 DEFINE push_rbx 53
@@ -92,6 +111,7 @@ DEFINE setge_al 0F9DC0
 DEFINE setl_al 0F9CC0
 DEFINE setle_al 0F9EC0
 DEFINE setne_al 0F95C0
+DEFINE sub_rsp, 4881EC
 DEFINE sub_rbx,rax 4829C3
 DEFINE syscall 0F05
 DEFINE test_rax,rax 4885C0
