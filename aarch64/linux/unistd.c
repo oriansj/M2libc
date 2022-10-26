@@ -140,9 +140,10 @@ int close(int fd)
 
 int unlink (char* filename)
 {
-	asm("SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X8_TO_SYS_UNLINK"
-	    "SYSCALL");
+	asm("SET_X1_FROM_X0"
+	    "SET_X2_TO_0"
+	    "SET_X0_TO_FCNTL_H_AT_FDCWD"
+	    "SET_X8_TO_SYS_UNLINKAT"
 }
 
 int symlink(char *path1, char *path2)
