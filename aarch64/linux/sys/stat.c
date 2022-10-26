@@ -73,7 +73,7 @@ int mkdir(char const* a, mode_t b)
 	    "SET_X0_TO_0"
 	    "SET_X3_FROM_X0"
 	    "SET_X0_TO_FCNTL_H_AT_FDCWD"
-	    "SET_X8_TO_SYS_MKDIR"
+	    "SET_X8_TO_SYS_MKDIRAT"
 	    "SYSCALL");
 }
 
