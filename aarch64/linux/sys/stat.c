@@ -80,14 +80,11 @@ int mkdir(char const* a, mode_t b)
 
 int mknod(char const* a, mode_t b, dev_t c)
 {
-	asm("SET_X0_TO_MINUS_1"
-	    "SET_X3_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_24" "DEREF_X0"
-	    "SET_X2_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_16" "DEREF_X0"
+	asm("SET_X3_FROM_X2"
+	    "SET_X2_FROM_X1"
 	    "SET_X1_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X8_TO_SYS_MKNOD"
+	    "SET_X0_TO_FCNTL_H_AT_FDCWD"
+	    "SET_X8_TO_SYS_MKNODAT"
 	    "SYSCALL");
 }
 
