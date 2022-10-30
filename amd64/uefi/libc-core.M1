@@ -32,11 +32,12 @@
 	push !0                                        # envp = NULL
 	call %FUNCTION_main
 
+:FUNCTION__exit
 	;; Do UEFI cleanup
 	call %enter_uefi_stack                         # Switch back to UEFI stack
 	call %FUNCTION__cleanup
 
-:FUNCTION__exit
+:FUNCTION___exit
 	mov_rsp,[rip+DWORD] %__return_address          # Get UEFI return address
 	ret
 
