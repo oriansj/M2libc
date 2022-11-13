@@ -22,18 +22,95 @@
 #define EXIT_FAILURE 1
 #define EXIT_SUCCESS 0
 
+#define _ALLOC_HDR_SIZE sizeof(struct _malloc_node)
+#define _MIN_ALLOC_SIZE 32
+#define _ALLOC_BLOCK_SIZE 131072
+
 void exit(int value);
 
-long _malloc_ptr;
-long _brk_ptr;
+struct _malloc_node
+{
+	struct _malloc_node *next;
+	struct _malloc_node *prev;
+	size_t size;
+};
+struct _malloc_node _free_list;
+
+void __init_malloc()
+{
+	_free_list.next = &_free_list;
+	_free_list.prev = &_free_list;
+	_free_list.size = 0;
+}
+
+void __list_add(struct _malloc_node* n, struct _malloc_node* prev, struct _malloc_node* next)
+{
+	next->prev = n;
+	n->next = next;
+	n->prev = prev;
+	prev->next = n;
+}
+
+void _list_add(struct _malloc_node* n, struct _malloc_node* head)
+{
+	__list_add(n, head, head->next);
+}
+
+void _list_del(struct _malloc_node* entry)
+{
+	entry->next->prev = entry->prev;
+	entry->prev->next = entry->next;
+	entry->next = NULL;
+	entry->prev = NULL;
+}
+
+void _malloc_addblock(struct _malloc_node *blk, size_t size)
+{
+	blk->size = size - _ALLOC_HDR_SIZE;
+	_list_add(blk, &_free_list);
+}
 
 void free(void* l)
 {
 	return;
 }
 
+void* _malloc_free_list(unsigned size)
+{
+	void* ptr = NULL;
+	struct _malloc_node* blk;
 
-void* malloc(unsigned size)
+	if(size > 0)
+	{
+		for(blk = _free_list.next; blk != &_free_list; blk = blk->next)
+		{
+			if(blk->size >= size)
+			{
+				ptr = blk + _ALLOC_HDR_SIZE;
+				break;
+			}
+		}
+	}
+
+	if(ptr)
+	{
+		if((blk->size - size) >= _MIN_ALLOC_SIZE)
+		{
+			struct _malloc_node *new_blk;
+			new_blk = blk + _ALLOC_HDR_SIZE + size;
+			new_blk->size = blk->size - size - _ALLOC_HDR_SIZE;
+			blk->size = size;
+			_list_add(new_blk, blk, blk->next);
+		}
+		_list_del(blk);
+	}
+
+	return ptr;
+}
+
+long _malloc_ptr;
+long _brk_ptr;
+void* _malloc_brk(unsigned size)
 {
 	if(NULL == _brk_ptr)
 	{
@@ -50,6 +127,22 @@ void* malloc(unsigned size)
 	long old_malloc = _malloc_ptr;
 	_malloc_ptr = _malloc_ptr + size;
 	return old_malloc;
+}
+
+void* malloc(unsigned size)
+{
+	void* ptr = _malloc_free_list(size);
+	if(ptr)
+	{
+		return ptr;
+	}
+
+	unsigned memory_required = (size / _ALLOC_BLOCK_SIZE + 1) * _ALLOC_BLOCK_SIZE;
+	void* blk = _malloc_brk(memory_required);
+
+	_malloc_addblock(blk, memory_required);
+	ptr = _malloc_free_list(size);
+	return ptr;
 }
 
 

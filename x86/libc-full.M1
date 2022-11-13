@@ -33,6 +33,9 @@
 	;; Stack offset
 	ADD_IMMEDIATE_to_ebp %4     ; Fix ebp
 
+	;; Setup for malloc
+	CALL_IMMEDIATE %FUNCTION___init_malloc
+
 	;; Setup for FILE*
 	CALL_IMMEDIATE %FUNCTION___init_io
 

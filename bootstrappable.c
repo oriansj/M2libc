@@ -128,7 +128,7 @@ int strtoint(char *a)
 	{
 		result = 0;
 	}
-	/* Deal with binary*/
+	/* Deal with binary */
 	else if ('0' == a[0] && 'b' == a[1])
 	{
 		result = __set_reader("01", 2, a+2);

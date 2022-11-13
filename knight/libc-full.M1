@@ -23,6 +23,12 @@
 
 	SUBI R14 R15 16             ; Set our base pointer
 
+	;; Setup for malloc
+	LOADR R0 4
+	JUMP 4
+	&FUNCTION___init_mallloc
+	CALL R0 R15
+
 	;; Setup for FILE*
 	LOADR R0 4
 	JUMP 4

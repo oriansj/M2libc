@@ -32,6 +32,8 @@
 	;; Stack offset
 	!4 BP ADD BP ARITH_ALWAYS       ; Fix BP
 
+	^~FUNCTION___init_malloc CALL_ALWAYS ; Setup for malloc
+
 	^~FUNCTION___init_io CALL_ALWAYS ; Setup for FILE*
 
 	^~FUNCTION_main CALL_ALWAYS     ; Jump right into main

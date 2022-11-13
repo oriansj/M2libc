@@ -34,6 +34,9 @@
     ; Stack offset
     RD_FP RS1_FP !8 ADDI
 
+    ; Setup for malloc
+    RD_RA $FUNCTION___init_malloc JAL
+
     ; Setup for FILE*
     RD_RA $FUNCTION___init_io JAL
 

@@ -33,6 +33,9 @@
 	;; Stack offset
 	add_rbp, %8                 ; Fix rbp
 
+	;; Setup for malloc
+	call %FUNCTION___init_malloc
+
 	;; Setup for FILE*
 	call %FUNCTION___init_io
 

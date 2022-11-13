@@ -28,6 +28,12 @@
 	ADD_X0_BP_X0
 	PUSH_X0
 
+	;; Setup for malloc
+	LOAD_W16_AHEAD
+	SKIP_32_DATA
+	&FUNCTION___init_malloc
+	BLR_X16
+
 	;; Setup for FILE*
 	LOAD_W16_AHEAD
 	SKIP_32_DATA
