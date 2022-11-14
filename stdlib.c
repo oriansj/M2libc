@@ -56,22 +56,77 @@ void _list_add(struct _malloc_node* n, struct _malloc_node* head)
 	__list_add(n, head, head->next);
 }
 
+void _list_add_tail(struct _malloc_node* n, struct _malloc_node* head)
+{
+	__list_add(n, head->prev, head);
+}
+
 void _list_del(struct _malloc_node* entry)
 {
 	entry->next->prev = entry->prev;
 	entry->prev->next = entry->next;
-	entry->next = NULL;
-	entry->prev = NULL;
 }
 
 void _malloc_addblock(struct _malloc_node *blk, size_t size)
 {
+	/* This uses M2 pointer arithmetic which is different from C.
+	   pointer + 1 moves the pointer by 1 rather than by sizeof(type). */
 	blk->size = size - _ALLOC_HDR_SIZE;
 	_list_add(blk, &_free_list);
 }
 
-void free(void* l)
+/**
+ * When we free, we can take our node and check to see if any memory blocks
+ * can be combined into larger blocks.  This will help us fight against
+ * memory fragmentation in a simple way.
+ */
+void _defrag_free_list(void)
 {
+	struct _malloc_node* block;
+	struct _malloc_node* last_block = NULL;
+
+	for(block = _free_list.next; block != &_free_list; block = block->next)
+	{
+		if(last_block)
+		{
+			if((last_block + _ALLOC_HDR_SIZE + last_block->size) == block)
+			{
+				last_block->size += _ALLOC_HDR_SIZE + block->size;
+				_list_del(block);
+				continue;
+			}
+		}
+		last_block = block;
+	}
+}
+
+void free(void* ptr)
+{
+	struct _malloc_node* blk;
+	struct _malloc_node* free_blk;
+
+	/* Don't free a NULL pointer */
+	if(ptr)
+	{
+		/* Get corresponding allocation block */
+		blk = ptr - _ALLOC_HDR_SIZE;
+
+		/* Let's put it back in the proper spot */
+		for(free_blk = _free_list.next; free_blk != &_free_list; free_blk = free_blk->next)
+		{
+			if(free_blk > blk)
+			{
+				__list_add(blk, free_blk->prev, free_blk);
+				goto blockadded;
+			}
+		}
+		_list_add_tail(blk, &_free_list);
+
+	blockadded:
+		/* Let's see if we can combine any memory */
+		_defrag_free_list();
+	}
+
 	return;
 }
 
@@ -97,10 +152,10 @@ void* _malloc_free_list(unsigned size)
 		if((blk->size - size) >= _MIN_ALLOC_SIZE)
 		{
 			struct _malloc_node *new_blk;
-			new_blk = blk + _ALLOC_HDR_SIZE + size;
+			new_blk = ptr + size;
 			new_blk->size = blk->size - size - _ALLOC_HDR_SIZE;
 			blk->size = size;
-			_list_add(new_blk, blk, blk->next);
+			__list_add(new_blk, blk, blk->next);
 		}
 		_list_del(blk);
 	}
