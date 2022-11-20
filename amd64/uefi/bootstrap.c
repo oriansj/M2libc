@@ -40,15 +40,11 @@ char* string2wide(char *narrow_string, unsigned length);
 void exit(unsigned value);
 
 void* _image_handle;
-
 void* _root_device;
-
 void* __user_stack;
-
 void* _malloc_start;
 long _malloc_ptr;
 long _brk_ptr;
-
 int _argc;
 char** _argv;
 
@@ -578,6 +574,8 @@ int _init()
 	/* Allocate user stack, UEFI stack is not big enough for compilers */
 	__user_stack = malloc(USER_STACK_SIZE);
 	_malloc_start = __user_stack;
+	/* Go to the other end of allocated memory, as stack grows downwards)*/
+	__user_stack = __user_stack + USER_STACK_SIZE;
 
 	/* Process command line arguments */
 	EFI_LOADED_IMAGE_PROTOCOL_GUID = calloc(1, sizeof(struct efi_guid));

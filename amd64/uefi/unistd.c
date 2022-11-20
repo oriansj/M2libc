@@ -1,0 +1,198 @@
+/* Copyright (C) 2020 Jeremiah Orians
+ * This file is part of M2-Planet.
+ *
+ * M2-Planet is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * M2-Planet is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+#ifndef _UNISTD_C
+#define _UNISTD_C
+
+#define NULL 0
+#define __PATH_MAX 4096
+
+void* malloc(unsigned size);
+
+int access(char* pathname, int mode)
+{
+	asm("lea_rdi,[rsp+DWORD] %16"
+	    "mov_rdi,[rdi]"
+	    "lea_rsi,[rsp+DWORD] %8"
+	    "mov_rsi,[rsi]"
+	    "mov_rax, %21"
+	    "syscall");
+}
+
+int chdir(char* path)
+{
+	asm("lea_rdi,[rsp+DWORD] %8"
+	    "mov_rdi,[rdi]"
+	    "mov_rax, %80"
+	    "syscall");
+}
+
+int fchdir(int fd)
+{
+	asm("lea_rdi,[rsp+DWORD] %8"
+	    "mov_rdi,[rdi]"
+	    "mov_rax, %81"
+	    "syscall");
+}
+
+void _exit(int value);
+
+int fork()
+{
+	asm("mov_rax, %57"
+	    "mov_rdi, %0"
+	    "syscall");
+}
+
+
+int waitpid (int pid, int* status_ptr, int options)
+{
+	/* Uses wait4 with struct rusage *ru set to NULL */
+	asm("lea_rdi,[rsp+DWORD] %24"
+	    "mov_rdi,[rdi]"
+	    "lea_rsi,[rsp+DWORD] %16"
+	    "mov_rsi,[rsi]"
+	    "lea_rdx,[rsp+DWORD] %8"
+	    "mov_rdx,[rdx]"
+	    "mov_r10, %0"
+	    "mov_rax, %61"
+	    "syscall");
+}
+
+
+int execve(char* file_name, char** argv, char** envp)
+{
+	asm("lea_rdi,[rsp+DWORD] %24"
+	    "mov_rdi,[rdi]"
+	    "lea_rsi,[rsp+DWORD] %16"
+	    "mov_rsi,[rsi]"
+	    "lea_rdx,[rsp+DWORD] %8"
+	    "mov_rdx,[rdx]"
+	    "mov_rax, %59"
+	    "syscall");
+}
+
+int read(int fd, char* buf, unsigned count)
+{
+	asm("lea_rdi,[rsp+DWORD] %24"
+	    "mov_rdi,[rdi]"
+	    "lea_rsi,[rsp+DWORD] %16"
+	    "mov_rsi,[rsi]"
+	    "lea_rdx,[rsp+DWORD] %8"
+	    "mov_rdx,[rdx]"
+	    "mov_rax, %0"
+	    "syscall");
+}
+
+int write(int fd, char* buf, unsigned count)
+{
+	asm("lea_rdi,[rsp+DWORD] %24"
+	    "mov_rdi,[rdi]"
+	    "lea_rsi,[rsp+DWORD] %16"
+	    "mov_rsi,[rsi]"
+	    "lea_rdx,[rsp+DWORD] %8"
+	    "mov_rdx,[rdx]"
+	    "mov_rax, %1"
+	    "syscall");
+}
+
+int lseek(int fd, int offset, int whence)
+{
+	asm("lea_rdi,[rsp+DWORD] %24"
+	    "mov_rdi,[rdi]"
+	    "lea_rsi,[rsp+DWORD] %16"
+	    "mov_rsi,[rsi]"
+	    "lea_rdx,[rsp+DWORD] %8"
+	    "mov_rdx,[rdx]"
+	    "mov_rax, %8"
+	    "syscall");
+}
+
+
+int close(int fd)
+{
+	asm("lea_rdi,[rsp+DWORD] %8"
+	    "mov_rdi,[rdi]"
+	    "mov_rax, %3"
+	    "syscall");
+}
+
+
+int unlink (char* filename)
+{
+	asm("lea_rdi,[rsp+DWORD] %8"
+	    "mov_rdi,[rdi]"
+	    "mov_rax, %87"
+	    "syscall");
+}
+
+
+int _getcwd(char* buf, int size)
+{
+	asm("lea_rdi,[rsp+DWORD] %16"
+	    "mov_rdi,[rdi]"
+	    "lea_rsi,[rsp+DWORD] %8"
+	    "mov_rsi,[rsi]"
+	    "mov_rax, %79"
+	    "syscall");
+}
+
+
+char* getcwd(char* buf, unsigned size)
+{
+	int c = _getcwd(buf, size);
+	if(0 == c) return NULL;
+	return buf;
+}
+
+
+char* getwd(char* buf)
+{
+	return getcwd(buf, __PATH_MAX);
+}
+
+
+char* get_current_dir_name()
+{
+	return getcwd(malloc(__PATH_MAX), __PATH_MAX);
+}
+
+
+int brk(void *addr)
+{
+	return -1;
+}
+
+struct utsname
+{
+	char sysname[65];    /* Operating system name (e.g., "Linux") */
+	char nodename[65];   /* Name within "some implementation-defined network" */
+	char release[65];    /* Operating system release (e.g., "2.6.28") */
+	char version[65];    /* Operating system version */
+	char machine[65];    /* Hardware identifier */
+};
+
+int uname(struct utsname* unameData)
+{
+	unameData->sysname = "UEFI";
+	unameData->release = "1.0";
+	unameData->release = "1.0";
+	unameData->machine= "x86_64";
+}
+
+#endif

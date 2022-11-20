@@ -24,7 +24,7 @@
 
 #define _ALLOC_HDR_SIZE sizeof(struct _malloc_node)
 #define _MIN_ALLOC_SIZE 32
-#define _ALLOC_BLOCK_SIZE 131072
+#define _ALLOC_BLOCK_SIZE 1048576
 
 void exit(int value);
 
@@ -193,10 +193,17 @@ void* malloc(unsigned size)
 	}
 
 	unsigned memory_required = (size / _ALLOC_BLOCK_SIZE + 1) * _ALLOC_BLOCK_SIZE;
+#ifdef __uefi__
+	void* blk = _malloc_uefi(memory_required);
+#else
 	void* blk = _malloc_brk(memory_required);
+#endif
 
-	_malloc_addblock(blk, memory_required);
-	ptr = _malloc_free_list(size);
+	if(blk)
+	{
+		_malloc_addblock(blk, memory_required);
+		ptr = _malloc_free_list(size);
+	}
 	return ptr;
 }
 
@@ -268,7 +275,7 @@ int mkstemp(char *template)
 		/* Just give up after the planet has blown up */
 		if(9000 < count) return -1;
 
-		/* Try upto 9000 unique filenames before stopping */
+		/* Try up to 9000 unique filenames before stopping */
 		count = count + 1;
 		__set_name(template+i+1, count);
 
