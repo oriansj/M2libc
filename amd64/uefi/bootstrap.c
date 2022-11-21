@@ -593,8 +593,8 @@ int _init()
 	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID->data2 = (0x3B7269C9 << 32) + 0x5000398E + 0x50000000;
 
 	_root_device = image->device;
-	struct efi_simple_file_system_protocol* _rootfs = _open_protocol(_root_device, EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID, _image_handle, 0, EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL, _system->boot_services->open_protocol);
-	_rootdir = _open_volume(_rootfs, _rootfs->open_volume);
+	struct efi_simple_file_system_protocol* rootfs = _open_protocol(_root_device, EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID, _image_handle, 0, EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL, _system->boot_services->open_protocol);
+	_rootdir = _open_volume(rootfs, rootfs->open_volume);
 }
 
 int _cleanup()
