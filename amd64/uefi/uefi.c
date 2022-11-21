@@ -18,6 +18,9 @@
 #ifndef __uefi__
 #define __uefi__
 
+#include <ctype.h>
+#include <stdlib.h>
+
 #define PAGE_SIZE 4096
 #define USER_STACK_SIZE 8388608
 #define EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL 1
@@ -149,8 +152,8 @@ struct efi_guid
 	unsigned data1;
 	unsigned data2;
 };
-struct efi_guid* EFI_LOADED_IMAGE_PROTOCOL_GUID;
-struct efi_guid* EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID;
+struct efi_guid EFI_LOADED_IMAGE_PROTOCOL_GUID;
+struct efi_guid EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID;
 
 struct efi_loaded_image_protocol
 {
@@ -200,7 +203,7 @@ struct efi_file_protocol
 };
 struct efi_file_protocol* _rootdir;
 
-long __uefi_2(void*, void*)
+unsigned __uefi_2(void*, void*, FUNCTION f)
 {
 	asm("lea_rcx,[rbp+DWORD] %-8"
 	    "mov_rcx,[rcx]"
@@ -213,8 +216,7 @@ long __uefi_2(void*, void*)
 	    "add_rsp, %16");
 }
 
-/* Returns _malloc_ptr and not exit value from AllocatePages call.*/
-long __uefi_4(void*, void*, void*, void*)
+unsigned __uefi_4(void*, void*, void*, void*, FUNCTION f)
 {
 	asm("lea_rcx,[rbp+DWORD] %-8"
 	    "mov_rcx,[rcx]"
@@ -231,7 +233,30 @@ long __uefi_4(void*, void*, void*, void*)
 	    "add_rsp, %32");
 }
 
-long _allocate_pages(unsigned type, unsigned memory_type, unsigned pages, void* memory)
+unsigned __uefi_6(void*, void*, void*, void*, void*, void*, FUNCTION f)
+{
+	asm("lea_rcx,[rbp+DWORD] %-8"
+	    "mov_rcx,[rcx]"
+	    "lea_rdx,[rbp+DWORD] %-16"
+	    "mov_rdx,[rdx]"
+	    "lea_r8,[rbp+DWORD] %-24"
+	    "mov_r8,[r8]"
+	    "lea_r9,[rbp+DWORD] %-32"
+	    "mov_r9,[r9]"
+	    "lea_rax,[rbp+DWORD] %-48"
+	    "mov_rax,[rax]"
+	    "push_rax"
+	    "lea_rax,[rbp+DWORD] %-40"
+	    "mov_rax,[rax]"
+	    "push_rax"
+	    "lea_rax,[rbp+DWORD] %-56"
+	    "mov_rax,[rax]"
+	    "sub_rsp, %32"
+	    "call_rax"
+	    "add_rsp, %48");
+}
+
+unsigned _allocate_pages(unsigned type, unsigned memory_type, unsigned pages, void* memory)
 {
 	return __uefi_4(type, memory_type, pages, memory, _system->boot_services->allocate_pages);
 }
@@ -239,6 +264,16 @@ long _allocate_pages(unsigned type, unsigned memory_type, unsigned pages, void* 
 void _free_pages(void* memory, unsigned pages)
 {
 	return __uefi_2(memory, pages, _system->boot_services->free_pages);
+}
+
+unsigned _open_protocol(void* handle, struct efi_guid* protocol, void* agent_handle, void** interface, void* controller_handle, long attributes, FUNCTION open_protocol)
+{
+	return __uefi_6(handle, protocol, agent_handle, interface, controller_handle, attributes, _system->boot_services->open_protocol);
+}
+
+unsigned _close_protocol(void* handle, struct efi_guid* protocol, void* agent_handle, void* controller_handle)
+{
+	return __uefi_4(handle, protocol, agent_handle, controller_handle, _system->boot_services->close_protocol);
 }
 
 void exit(unsigned value)
@@ -273,7 +308,54 @@ void _free_allocated_memory()
 	}
 }
 
+void* calloc(int count, int size);
+int isspace(char _c);
+
+void _process_load_options(char* load_options)
+{
+	/* Determine argc */
+	_argc = 1; /* command name */
+	char *i = load_options;
+	unsigned was_space = 0;
+	do
+	{
+		if(isspace(i[0]))
+		{
+			if(!was_space)
+			{
+				_argc = _argc + 1;
+				was_space = 1;
+			}
+		}
+		else
+		{
+			was_space = 0;
+		}
+		i = i + 1;
+	} while(i[0] != 0);
+
+	/* Collect argv */
+	_argv = calloc(_argc + 1, sizeof(char*));
+	i = load_options;
+	unsigned j;
+	for(j = 0; j < _argc; j = j + 1)
+	{
+		_argv[j] = i;
+		do
+		{
+			i = i + 1;
+		} while(!isspace(i[0]));
+		i[0] = 0;
+		do
+		{
+			i = i + 1;
+		} while(isspace(i[0]));
+	}
+}
+
 void* malloc(unsigned size);
+typedef char wchar_t;
+size_t wcstombs(char* dest, wchar_t const* src, size_t n);
 
 int _init()
 {
@@ -281,10 +363,23 @@ int _init()
 
 	/* Allocate user stack, UEFI stack is not big enough for compilers */
 	__user_stack = malloc(USER_STACK_SIZE) + USER_STACK_SIZE;
+
+	/* Process command line arguments */
+	EFI_LOADED_IMAGE_PROTOCOL_GUID.data1 = (0x11D29562 << 32) + 0x5B1B31A1;
+	/* We want to add 0xA0003F8E but M2 treats 32-bit values as negatives, in order to
+	 * have the same behaviour on 32-bit systems, so restrict to 31-bit constants */
+	EFI_LOADED_IMAGE_PROTOCOL_GUID.data2 = (0x3B7269C9 << 32) + 0x50003F8E + 0x50000000;
+
+	struct efi_loaded_image_protocol* image;
+	_open_protocol(_image_handle, &EFI_LOADED_IMAGE_PROTOCOL_GUID, &image, _image_handle, 0, EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL);
+	char* load_options = calloc(image->load_options_size, 1);
+	wcstombs(load_options, image->load_options, image->load_options_size);
+	_process_load_options(load_options);
 }
 
 int _cleanup()
 {
+	_close_protocol(_image_handle, &EFI_LOADED_IMAGE_PROTOCOL_GUID, _image_handle, 0);
 	_free_allocated_memory();
 }
 

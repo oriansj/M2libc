@@ -260,7 +260,7 @@ void _write_stdout(void* con_out, int c, FUNCTION output_string)
 	    "add_rsp, %16");
 }
 
-void* _open_protocol(void* image_handle, struct efi_guid* protocol, void* agent_handle, void* controller_handle, long attributes, FUNCTION open_protocol)
+void* _open_protocol(void* handle, struct efi_guid* protocol, void* agent_handle, void* controller_handle, long attributes, FUNCTION open_protocol)
 {
 	asm("lea_rcx,[rbp+DWORD] %-8"
 	    "mov_rcx,[rcx]"
@@ -284,7 +284,7 @@ void* _open_protocol(void* image_handle, struct efi_guid* protocol, void* agent_
 	    "pop_rax");
 }
 
-int _close_protocol(void *image_handle, struct efi_guid* protocol, void* agent_handle, void* controller_handle, FUNCTION close_protocol)
+int _close_protocol(void *handle, struct efi_guid* protocol, void* agent_handle, void* controller_handle, FUNCTION close_protocol)
 {
 	asm("lea_rcx,[rbp+DWORD] %-8"
 	    "mov_rcx,[rcx]"

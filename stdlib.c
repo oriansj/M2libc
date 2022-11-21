@@ -26,6 +26,8 @@
 #define _MIN_ALLOC_SIZE 32
 #define _ALLOC_BLOCK_SIZE 1048576
 
+typedef char wchar_t;
+
 void exit(int value);
 
 struct _malloc_node
@@ -285,4 +287,22 @@ int mkstemp(char *template)
 
 	/* well that only took count many tries */
 	return fd;
+}
+
+size_t wcstombs(char* dest, wchar_t const* src, size_t n)
+{
+	int i = 0;
+
+	do
+	{
+		dest[i] = src[2 * i];
+		if(dest[i] == 0)
+		{
+			break;
+		}
+		i = i + 1;
+		n = n - 1;
+	} while (n != 0);
+
+	return i;
 }
