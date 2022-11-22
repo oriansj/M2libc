@@ -569,7 +569,7 @@ void process_load_options(char* load_options)
 	}
 }
 
-int _init()
+void _init()
 {
 	/* Allocate user stack, UEFI stack is not big enough for compilers */
 	__user_stack = malloc(USER_STACK_SIZE);
@@ -597,7 +597,7 @@ int _init()
 	_rootdir = _open_volume(rootfs, rootfs->open_volume);
 }
 
-int _cleanup()
+void _cleanup()
 {
 	fclose(_rootdir);
 	_close_protocol(_root_device, EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID, _image_handle, 0, _system->boot_services->close_protocol);

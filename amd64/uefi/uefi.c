@@ -203,6 +203,17 @@ struct efi_file_protocol
 };
 struct efi_file_protocol* _rootdir;
 
+unsigned __uefi_1(void*, void*, FUNCTION f)
+{
+	asm("lea_rcx,[rbp+DWORD] %-8"
+	    "mov_rcx,[rcx]"
+	    "lea_rax,[rbp+DWORD] %-16"
+	    "mov_rax,[rax]"
+	    "sub_rsp, %8"
+	    "call_rax"
+	    "add_rsp, %8");
+}
+
 unsigned __uefi_2(void*, void*, FUNCTION f)
 {
 	asm("lea_rcx,[rbp+DWORD] %-8"
@@ -274,6 +285,16 @@ unsigned _open_protocol(void* handle, struct efi_guid* protocol, void* agent_han
 unsigned _close_protocol(void* handle, struct efi_guid* protocol, void* agent_handle, void* controller_handle)
 {
 	return __uefi_4(handle, protocol, agent_handle, controller_handle, _system->boot_services->close_protocol);
+}
+
+unsigned _open_volume(struct efi_simple_file_system_protocol* rootfs, struct efi_file_protocol** rootdir)
+{
+	return __uefi_2(rootfs, rootdir, rootfs->open_volume);
+}
+
+unsigned _close(struct efi_file_protocol* file)
+{
+	return __uefi_1(file, file->close);
 }
 
 void exit(unsigned value)
@@ -357,7 +378,7 @@ void* malloc(unsigned size);
 typedef char wchar_t;
 size_t wcstombs(char* dest, wchar_t const* src, size_t n);
 
-int _init()
+void _init()
 {
 	__init_malloc_uefi();
 
@@ -375,10 +396,20 @@ int _init()
 	char* load_options = calloc(image->load_options_size, 1);
 	wcstombs(load_options, image->load_options, image->load_options_size);
 	_process_load_options(load_options);
+
+	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID.data1 = (0x11D26459 << 32) + 0x564E5B22 + 0x40000000;
+	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID.data2 = (0x3B7269C9 << 32) + 0x5000398E + 0x50000000;
+
+	_root_device = image->device;
+	struct efi_simple_file_system_protocol* rootfs;
+	_open_protocol(_root_device, &EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID, &rootfs, _image_handle, 0, EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL);
+	_open_volume(rootfs, &_rootdir);
 }
 
-int _cleanup()
+void _cleanup()
 {
+	_close(_rootdir);
+	_close_protocol(_root_device, &EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID, _image_handle, 0);
 	_close_protocol(_image_handle, &EFI_LOADED_IMAGE_PROTOCOL_GUID, _image_handle, 0);
 	_free_allocated_memory();
 }
