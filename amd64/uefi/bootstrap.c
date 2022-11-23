@@ -36,7 +36,6 @@
 // CONSTANT EFI_ALLOCATE_ANY_PAGES 0
 // CONSTANT EFI_LOADER_DATA 2
 
-char* string2wide(char *narrow_string, unsigned length);
 void exit(unsigned value);
 
 void* _image_handle;
@@ -423,9 +422,11 @@ int strlen(char* str)
 	return i;
 }
 
+char* _posix_path_to_uefi(char *narrow_string);
+
 FILE* fopen(char* filename, char* mode)
 {
-	char* wide_filename = string2wide(filename, strlen(filename) + 1);
+	char* wide_filename = _posix_path_to_uefi(filename);
 	FILE* f;
 	long status;
 	if('w' == mode[0])
@@ -500,13 +501,21 @@ void exit(unsigned value)
 	goto FUNCTION__exit;
 }
 
-char* string2wide(char *narrow_string, unsigned length)
+void _posix_path_to_uefi(char *narrow_string)
 {
-	unsigned i;
+	unsigned length = strlen(narrow_string) + 1;
 	char *wide_string = calloc(length, 2);
+	unsigned i;
 	for(i = 0; i < length; i = i + 1)
 	{
-		wide_string[2 * i] = narrow_string[i];
+		if(narrow_string[i] == '/')
+		{
+			wide_string[2 * i] = '\\';
+		}
+		else
+		{
+			wide_string[2 * i] = narrow_string[i];
+		}
 	}
 	return wide_string;
 }

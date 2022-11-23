@@ -34,16 +34,34 @@
 #define S_IRWXU 00700
 
 
+int __open(struct efi_file_protocol* _rootdir, char* name, long mode, long attributes)
+{
+	struct efi_file_protocol* new_handle;
+	unsigned rval = __uefi_5(_rootdir, &new_handle, name, mode, attributes, _rootdir->open);
+	if(rval != NULL)
+	{
+	    return -1;
+	}
+	return new_handle;
+}
+
 int _open(char* name, int flag, int mode)
 {
-	asm("lea_rdi,[rsp+DWORD] %24"
-	    "mov_rdi,[rdi]"
-	    "lea_rsi,[rsp+DWORD] %16"
-	    "mov_rsi,[rsi]"
-	    "lea_rdx,[rsp+DWORD] %8"
-	    "mov_rdx,[rdx]"
-	    "mov_rax, %2"
-	    "syscall");
+	int fd;
+	int i;
+
+	char* wide_filename = _posix_path_to_uefi(name);
+	if('w' == mode[0])
+	{
+		long mode = 1 << 63; /* EFI_FILE_MODE_CREATE = 0x8000000000000000 */
+		mode = mode | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_READ;
+		fd = __open(_rootdir, wide_filename, mode, 0);
+	}
+	else
+	{       /* Everything else is a read */
+		fd = __open(_rootdir, wide_filename, EFI_FILE_MODE_READ, EFI_FILE_READ_ONLY);
+	}
+	return fd;
 }
 
 #define STDIN_FILENO  0

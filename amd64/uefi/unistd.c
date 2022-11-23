@@ -19,6 +19,8 @@
 #ifndef _UNISTD_C
 #define _UNISTD_C
 
+#include <amd64/uefi/uefi.c>
+
 #define NULL 0
 #define __PATH_MAX 4096
 
@@ -89,14 +91,9 @@ int execve(char* file_name, char** argv, char** envp)
 
 int read(int fd, char* buf, unsigned count)
 {
-	asm("lea_rdi,[rsp+DWORD] %24"
-	    "mov_rdi,[rdi]"
-	    "lea_rsi,[rsp+DWORD] %16"
-	    "mov_rsi,[rsi]"
-	    "lea_rdx,[rsp+DWORD] %8"
-	    "mov_rdx,[rdx]"
-	    "mov_rax, %0"
-	    "syscall");
+	struct efi_file_protocol* f = fd;
+	__uefi_3(fd, &count, buf, f->read);
+	return count;
 }
 
 int write(int fd, char* buf, unsigned count)
@@ -113,23 +110,18 @@ int write(int fd, char* buf, unsigned count)
 
 int lseek(int fd, int offset, int whence)
 {
-	asm("lea_rdi,[rsp+DWORD] %24"
-	    "mov_rdi,[rdi]"
-	    "lea_rsi,[rsp+DWORD] %16"
-	    "mov_rsi,[rsi]"
-	    "lea_rdx,[rsp+DWORD] %8"
-	    "mov_rdx,[rdx]"
-	    "mov_rax, %8"
-	    "syscall");
 }
 
 
 int close(int fd)
 {
-	asm("lea_rdi,[rsp+DWORD] %8"
-	    "mov_rdi,[rdi]"
-	    "mov_rax, %3"
-	    "syscall");
+	struct efi_file_protocol* f = fd;
+	unsigned rval = __uefi_1(f, f->close);
+	if(rval != NULL)
+	{
+	    return -1;
+	}
+	return rval;
 }
 
 

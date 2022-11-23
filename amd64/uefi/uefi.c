@@ -19,6 +19,7 @@
 #define __uefi__
 
 #include <ctype.h>
+#include <string.h>
 #include <stdlib.h>
 
 #define PAGE_SIZE 4096
@@ -227,6 +228,21 @@ unsigned __uefi_2(void*, void*, FUNCTION f)
 	    "add_rsp, %16");
 }
 
+unsigned __uefi_3(void*, void*, void*, FUNCTION f)
+{
+	asm("lea_rcx,[rbp+DWORD] %-8"
+	    "mov_rcx,[rcx]"
+	    "lea_rdx,[rbp+DWORD] %-16"
+	    "mov_rdx,[rdx]"
+	    "lea_r8,[rbp+DWORD] %-24"
+	    "mov_r8,[r8]"
+	    "lea_rax,[rbp+DWORD] %-32"
+	    "mov_rax,[rax]"
+	    "sub_rsp, %24"
+	    "call_rax"
+	    "add_rsp, %24");
+}
+
 unsigned __uefi_4(void*, void*, void*, void*, FUNCTION f)
 {
 	asm("lea_rcx,[rbp+DWORD] %-8"
@@ -242,6 +258,26 @@ unsigned __uefi_4(void*, void*, void*, void*, FUNCTION f)
 	    "sub_rsp, %32"
 	    "call_rax"
 	    "add_rsp, %32");
+}
+
+unsigned __uefi_5(void*, void*, void*, void*, void*, FUNCTION f)
+{
+	asm("lea_rcx,[rbp+DWORD] %-8"
+	    "mov_rcx,[rcx]"
+	    "lea_rdx,[rbp+DWORD] %-16"
+	    "mov_rdx,[rdx]"
+	    "lea_r8,[rbp+DWORD] %-24"
+	    "mov_r8,[r8]"
+	    "lea_r9,[rbp+DWORD] %-32"
+	    "mov_r9,[r9]"
+	    "lea_rax,[rbp+DWORD] %-40"
+	    "mov_rax,[rax]"
+	    "push_rax"
+	    "lea_rax,[rbp+DWORD] %-48"
+	    "mov_rax,[rax]"
+	    "sub_rsp, %32"
+	    "call_rax"
+	    "add_rsp, %40");
 }
 
 unsigned __uefi_6(void*, void*, void*, void*, void*, void*, FUNCTION f)
@@ -329,7 +365,28 @@ void _free_allocated_memory()
 	}
 }
 
+size_t strlen(char const* str);
 void* calloc(int count, int size);
+
+void _posix_path_to_uefi(char *narrow_string)
+{
+	unsigned length = strlen(narrow_string) + 1;
+	char *wide_string = calloc(length, 2);
+	unsigned i;
+	for(i = 0; i < length; i = i + 1)
+	{
+		if(narrow_string[i] == '/')
+		{
+			wide_string[2 * i] = '\\';
+		}
+		else
+		{
+			wide_string[2 * i] = narrow_string[i];
+		}
+	}
+	return wide_string;
+}
+
 int isspace(char _c);
 
 void _process_load_options(char* load_options)
@@ -406,8 +463,11 @@ void _init()
 	_open_volume(rootfs, &_rootdir);
 }
 
+void __kill_io();
+
 void _cleanup()
 {
+	__kill_io();
 	_close(_rootdir);
 	_close_protocol(_root_device, &EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID, _image_handle, 0);
 	_close_protocol(_image_handle, &EFI_LOADED_IMAGE_PROTOCOL_GUID, _image_handle, 0);
