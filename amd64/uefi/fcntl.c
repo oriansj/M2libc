@@ -45,13 +45,14 @@ int __open(struct efi_file_protocol* _rootdir, char* name, long mode, long attri
 	return new_handle;
 }
 
+void free(void* l);
+
 int _open(char* name, int flag, int mode)
 {
 	int fd;
-	int i;
 
 	char* wide_filename = _posix_path_to_uefi(name);
-	if('w' == mode[0])
+	if(flag == O_WRONLY|O_CREAT|O_TRUNC)
 	{
 		long mode = 1 << 63; /* EFI_FILE_MODE_CREATE = 0x8000000000000000 */
 		mode = mode | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_READ;
@@ -61,6 +62,7 @@ int _open(char* name, int flag, int mode)
 	{       /* Everything else is a read */
 		fd = __open(_rootdir, wide_filename, EFI_FILE_MODE_READ, EFI_FILE_READ_ONLY);
 	}
+	free(wide_filename);
 	return fd;
 }
 

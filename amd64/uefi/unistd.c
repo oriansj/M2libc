@@ -22,7 +22,12 @@
 #include <amd64/uefi/uefi.c>
 
 #define NULL 0
-#define __PATH_MAX 4096
+#define EOF 0xFFFFFFFF
+
+/* For lseek */
+#define SEEK_SET 0
+#define SEEK_CUR 1
+#define SEEK_END 2
 
 void* malloc(unsigned size);
 
@@ -98,18 +103,73 @@ int read(int fd, char* buf, unsigned count)
 
 int write(int fd, char* buf, unsigned count)
 {
-	asm("lea_rdi,[rsp+DWORD] %24"
-	    "mov_rdi,[rdi]"
-	    "lea_rsi,[rsp+DWORD] %16"
-	    "mov_rsi,[rsi]"
-	    "lea_rdx,[rsp+DWORD] %8"
-	    "mov_rdx,[rdx]"
-	    "mov_rax, %1"
-	    "syscall");
+	struct efi_file_protocol* f = fd;
+	unsigned i;
+	char c = 0;
+
+	/* In UEFI StdErr might not be printing stuff to console, so just use stdout */
+	if(f == STDOUT_FILENO || f == STDERR_FILENO)
+	{
+		for(i = 0; i < count; i += 1)
+		{
+			c = buf[i];
+			__uefi_2(_system->con_out, &c, _system->con_out->output_string);
+			if('\n' == c)
+			{
+				c = '\r';
+				__uefi_2(_system->con_out, &c, _system->con_out->output_string);
+			}
+		}
+		return i;
+	}
+
+	/* Otherwise write to file */
+	__uefi_3(f, &count, buf, f->write);
+	return count;
+}
+
+int _get_file_size(struct efi_file_protocol* f)
+{
+	/* Preallocate some extra space for file_name */
+	size_t file_info_size = sizeof(struct efi_file_info);
+	struct efi_file_info* file_info = calloc(1, file_info_size);
+	unsigned rval = __uefi_4(f, &EFI_FILE_INFO_GUID, &file_info_size, file_info, f->get_info);
+	if(rval != EFI_SUCCESS)
+	{
+		return -1;
+	}
+	int file_size = file_info->file_size;
+	free(file_info);
+	return file_size;
 }
 
 int lseek(int fd, int offset, int whence)
 {
+	struct efi_file_protocol* f = fd;
+	if(whence == SEEK_SET)
+	{
+	}
+	else if(whence == SEEK_CUR)
+	{
+		unsigned position;
+		__uefi_2(f, &position, f->get_position);
+		offset += position;
+	}
+	else if(whence == SEEK_END)
+	{
+		offset += _get_file_size(fd);
+	}
+	else
+	{
+		return -1;
+	}
+
+	unsigned rval = __uefi_2(f, offset, f->set_position);
+	if(rval == EFI_SUCCESS)
+	{
+		return offset;
+	}
+	return -1;
 }
 
 
@@ -117,7 +177,7 @@ int close(int fd)
 {
 	struct efi_file_protocol* f = fd;
 	unsigned rval = __uefi_1(f, f->close);
-	if(rval != NULL)
+	if(rval != EFI_SUCCESS)
 	{
 	    return -1;
 	}

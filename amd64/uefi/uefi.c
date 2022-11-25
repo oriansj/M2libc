@@ -21,6 +21,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #define PAGE_SIZE 4096
 #define USER_STACK_SIZE 8388608
@@ -32,6 +33,12 @@
 #define EFI_LOADER_DATA 2
 
 #define EFI_SUCCESS 0
+#define EFI_LOAD_ERROR 1
+#define EFI_INVALID_PARAMETER 2
+#define EFI_UNSUPPORTED 3
+#define EFI_BUFFER_TOO_SMALL 5
+
+#define __PATH_MAX 4096
 
 void* _image_handle;
 void* _root_device;
@@ -143,7 +150,7 @@ struct efi_system_table
 	struct efi_simple_text_output_protocol* std_err;
 	void *runtime_services;
 	struct efi_boot_table* boot_services;
-	long number_table_entries;
+	unsigned number_table_entries;
 	void *configuration_table;
 };
 struct efi_system_table* _system;
@@ -155,6 +162,7 @@ struct efi_guid
 };
 struct efi_guid EFI_LOADED_IMAGE_PROTOCOL_GUID;
 struct efi_guid EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID;
+struct efi_guid EFI_FILE_INFO_GUID;
 
 struct efi_loaded_image_protocol
 {
@@ -203,6 +211,33 @@ struct efi_file_protocol
 	void* flush_ex;
 };
 struct efi_file_protocol* _rootdir;
+
+struct efi_time
+{
+	char year[2];
+	char month;
+	char day;
+	char hour;
+	char minute;
+	char second;
+	char pad1;
+	char nanosecond[4];
+	char time_zone[2];
+	char daylight;
+	char pad2;
+};
+
+struct efi_file_info
+{
+	unsigned size;
+	unsigned file_size;
+	unsigned physical_size;
+	struct efi_time create_time;
+	struct efi_time last_access_time;
+	struct efi_time modifiction_time;
+	unsigned attribute;
+	char file_name[__PATH_MAX];
+};
 
 unsigned __uefi_1(void*, void*, FUNCTION f)
 {
@@ -373,7 +408,7 @@ void _posix_path_to_uefi(char *narrow_string)
 	unsigned length = strlen(narrow_string) + 1;
 	char *wide_string = calloc(length, 2);
 	unsigned i;
-	for(i = 0; i < length; i = i + 1)
+	for(i = 0; i < length; i += 1)
 	{
 		if(narrow_string[i] == '/')
 		{
@@ -401,7 +436,7 @@ void _process_load_options(char* load_options)
 		{
 			if(!was_space)
 			{
-				_argc = _argc + 1;
+				_argc += 1;
 				was_space = 1;
 			}
 		}
@@ -409,24 +444,24 @@ void _process_load_options(char* load_options)
 		{
 			was_space = 0;
 		}
-		i = i + 1;
+		i += 1;
 	} while(i[0] != 0);
 
 	/* Collect argv */
 	_argv = calloc(_argc + 1, sizeof(char*));
 	i = load_options;
 	unsigned j;
-	for(j = 0; j < _argc; j = j + 1)
+	for(j = 0; j < _argc; j += 1)
 	{
 		_argv[j] = i;
 		do
 		{
-			i = i + 1;
+			i += 1;
 		} while(!isspace(i[0]));
 		i[0] = 0;
 		do
 		{
-			i = i + 1;
+			i += 1;
 		} while(isspace(i[0]));
 	}
 }
@@ -434,6 +469,7 @@ void _process_load_options(char* load_options)
 void* malloc(unsigned size);
 typedef char wchar_t;
 size_t wcstombs(char* dest, wchar_t const* src, size_t n);
+void __init_io();
 
 void _init()
 {
@@ -448,6 +484,7 @@ void _init()
 	 * have the same behaviour on 32-bit systems, so restrict to 31-bit constants */
 	EFI_LOADED_IMAGE_PROTOCOL_GUID.data2 = (0x3B7269C9 << 32) + 0x50003F8E + 0x50000000;
 
+	__init_io();
 	struct efi_loaded_image_protocol* image;
 	_open_protocol(_image_handle, &EFI_LOADED_IMAGE_PROTOCOL_GUID, &image, _image_handle, 0, EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL);
 	char* load_options = calloc(image->load_options_size, 1);
@@ -461,6 +498,9 @@ void _init()
 	struct efi_simple_file_system_protocol* rootfs;
 	_open_protocol(_root_device, &EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID, &rootfs, _image_handle, 0, EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL);
 	_open_volume(rootfs, &_rootdir);
+
+	EFI_FILE_INFO_GUID.data1 = (0x11D26D3F << 32) + 0x09576e92;
+	EFI_FILE_INFO_GUID.data2 = (0x3B7269C9 << 32) + 0x5000398E + 0x50000000;
 }
 
 void __kill_io();

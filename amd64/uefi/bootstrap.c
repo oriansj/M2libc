@@ -150,7 +150,7 @@ struct efi_system_table
 	struct efi_simple_text_output_protocol* std_err;
 	void *runtime_services;
 	struct efi_boot_table* boot_services;
-	long number_table_entries;
+	unsigned number_table_entries;
 	void *configuration_table;
 };
 struct efi_system_table* _system;
@@ -394,7 +394,8 @@ void fputc(char c, FILE* f)
 {
 	unsigned size = 1;
 	/* In UEFI StdErr might not be printing stuff to console, so just use stdout */
-	if(f == stdout || f == stderr) {
+	if(f == stdout || f == stderr)
+	{
 		_write_stdout(_system->con_out, c, _system->con_out->output_string);
 		if('\n' == c)
 		{
