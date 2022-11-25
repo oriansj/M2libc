@@ -61,9 +61,7 @@ void _exit(int value);
 
 int fork()
 {
-	asm("mov_rax, %57"
-	    "mov_rdi, %0"
-	    "syscall");
+	return -1;
 }
 
 
