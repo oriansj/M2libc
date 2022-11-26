@@ -33,37 +33,35 @@
 #define S_IRUSR 00400
 #define S_IRWXU 00700
 
+void free(void* l);
 
 int __open(struct efi_file_protocol* _rootdir, char* name, long mode, long attributes)
 {
 	struct efi_file_protocol* new_handle;
-	unsigned rval = __uefi_5(_rootdir, &new_handle, name, mode, attributes, _rootdir->open);
-	if(rval != NULL)
+	char* wide_name = _posix_path_to_uefi(name);
+	unsigned rval = __uefi_5(_rootdir, &new_handle, wide_name, mode, attributes, _rootdir->open);
+	free(wide_name);
+	if(rval != EFI_SUCCESS)
 	{
-	    return -1;
+		return -1;
 	}
 	return new_handle;
 }
 
-void free(void* l);
-
 int _open(char* name, int flag, int mode)
 {
-	int fd;
-
-	char* wide_filename = _posix_path_to_uefi(name);
+	long mode = 0;
+	long attributes = 0;
 	if(flag == O_WRONLY|O_CREAT|O_TRUNC)
 	{
-		long mode = 1 << 63; /* EFI_FILE_MODE_CREATE = 0x8000000000000000 */
-		mode = mode | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_READ;
-		fd = __open(_rootdir, wide_filename, mode, 0);
+		mode = EFI_FILE_MODE_CREATE | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_READ;
 	}
 	else
 	{       /* Everything else is a read */
-		fd = __open(_rootdir, wide_filename, EFI_FILE_MODE_READ, EFI_FILE_READ_ONLY);
+		mode = EFI_FILE_MODE_READ;
+		attributes = EFI_FILE_READ_ONLY;
 	}
-	free(wide_filename);
-	return fd;
+	return __open(_rootdir, name, mode, attributes);
 }
 
 #define STDIN_FILENO  0

@@ -28,7 +28,9 @@
 #define EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL 1
 #define EFI_FILE_MODE_READ 1
 #define EFI_FILE_MODE_WRITE 2
+#define EFI_FILE_MODE_CREATE (1 << 63)
 #define EFI_FILE_READ_ONLY 1
+#define EFI_FILE_DIRECTORY 0x10
 #define EFI_ALLOCATE_ANY_PAGES 0
 #define EFI_LOADER_DATA 2
 
@@ -406,7 +408,7 @@ void* calloc(int count, int size);
 void _posix_path_to_uefi(char *narrow_string)
 {
 	unsigned length = strlen(narrow_string) + 1;
-	char *wide_string = calloc(length, 2);
+	char *wide_string = calloc(length, 4);
 	unsigned i;
 	for(i = 0; i < length; i += 1)
 	{
