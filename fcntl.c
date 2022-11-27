@@ -19,13 +19,6 @@
 #define _FCNTL_C
 
 #ifdef __M2__
-#ifdef __uefi
-#if __x86_64__
-#include <amd64/uefi/fcntl.c>
-#else
-#error UEFI arch not supported
-#endif
-#else
 #if __i386__
 #include <x86/linux/fcntl.c>
 #elif __x86_64__
@@ -44,7 +37,6 @@
 #include <knight/native/fcntl.c>
 #else
 #error arch not supported
-#endif
 #endif
 #else
 extern int _open(char* name, int flag, int mode);
