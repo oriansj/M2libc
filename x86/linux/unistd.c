@@ -25,28 +25,28 @@ void* malloc(unsigned size);
 
 int access(char* pathname, int mode)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_ebx %8"
-	    "LOAD_INTEGER_ebx"
-	    "LOAD_EFFECTIVE_ADDRESS_ecx %4"
-	    "LOAD_INTEGER_ecx"
-	    "LOAD_IMMEDIATE_eax %33"
-	    "INT_80");
+	asm("lea_ebx,[esp+DWORD] %8"
+	    "mov_ebx,[ebx]"
+	    "lea_ecx,[esp+DWORD] %4"
+	    "mov_ecx,[ecx]"
+	    "mov_eax, %33"
+	    "int !0x80");
 }
 
 int chdir(char* path)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_ebx %4"
-	    "LOAD_INTEGER_ebx"
-	    "LOAD_IMMEDIATE_eax %12"
-	    "INT_80");
+	asm("lea_ebx,[esp+DWORD] %4"
+	    "mov_ebx,[ebx]"
+	    "mov_eax, %12"
+	    "int !0x80");
 }
 
 int fchdir(int fd)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_ebx %4"
-	    "LOAD_INTEGER_ebx"
-	    "LOAD_IMMEDIATE_eax %133"
-	    "INT_80");
+	asm("lea_ebx,[esp+DWORD] %4"
+	    "mov_ebx,[ebx]"
+	    "mov_eax, %133"
+	    "int !0x80");
 }
 
 /* Defined in the libc */
@@ -54,97 +54,97 @@ void _exit(int value);
 
 int fork()
 {
-	asm("LOAD_IMMEDIATE_eax %2"
-	    "LOAD_IMMEDIATE_ebx %0"
-	    "INT_80");
+	asm("mov_eax, %2"
+	    "mov_ebx, %0"
+	    "int !0x80");
 }
 
 
 int waitpid (int pid, int* status_ptr, int options)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_ebx %12"
-	    "LOAD_INTEGER_ebx"
-	    "LOAD_EFFECTIVE_ADDRESS_ecx %8"
-	    "LOAD_INTEGER_ecx"
-	    "LOAD_EFFECTIVE_ADDRESS_edx %4"
-	    "LOAD_INTEGER_edx"
-	    "LOAD_IMMEDIATE_eax %7"
-	    "INT_80");
+	asm("lea_ebx,[esp+DWORD] %12"
+	    "mov_ebx,[ebx]"
+	    "lea_ecx,[esp+DWORD] %8"
+	    "mov_ecx,[ecx]"
+	    "lea_edx,[esp+DWORD] %4"
+	    "mov_edx,[edx]"
+	    "mov_eax, %7"
+	    "int !0x80");
 }
 
 
 int execve(char* file_name, char** argv, char** envp)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_ebx %12"
-	    "LOAD_INTEGER_ebx"
-	    "LOAD_EFFECTIVE_ADDRESS_ecx %8"
-	    "LOAD_INTEGER_ecx"
-	    "LOAD_EFFECTIVE_ADDRESS_edx %4"
-	    "LOAD_INTEGER_edx"
-	    "LOAD_IMMEDIATE_eax %11"
-	    "INT_80");
+	asm("lea_ebx,[esp+DWORD] %12"
+	    "mov_ebx,[ebx]"
+	    "lea_ecx,[esp+DWORD] %8"
+	    "mov_ecx,[ecx]"
+	    "lea_edx,[esp+DWORD] %4"
+	    "mov_edx,[edx]"
+	    "mov_eax, %11"
+	    "int !0x80");
 }
 
 int read(int fd, char* buf, unsigned count) {
-	asm("LOAD_EFFECTIVE_ADDRESS_ebx %12"
-	    "LOAD_INTEGER_ebx"
-	    "LOAD_EFFECTIVE_ADDRESS_ecx %8"
-	    "LOAD_INTEGER_ecx"
-	    "LOAD_EFFECTIVE_ADDRESS_edx %4"
-	    "LOAD_INTEGER_edx"
-	    "LOAD_IMMEDIATE_eax %3"
-	    "INT_80");
+	asm("lea_ebx,[esp+DWORD] %12"
+	    "mov_ebx,[ebx]"
+	    "lea_ecx,[esp+DWORD] %8"
+	    "mov_ecx,[ecx]"
+	    "lea_edx,[esp+DWORD] %4"
+	    "mov_edx,[edx]"
+	    "mov_eax, %3"
+	    "int !0x80");
 }
 
 int write(int fd, char* buf, unsigned count) {
-	asm("LOAD_EFFECTIVE_ADDRESS_ebx %12"
-	    "LOAD_INTEGER_ebx"
-	    "LOAD_EFFECTIVE_ADDRESS_ecx %8"
-	    "LOAD_INTEGER_ecx"
-	    "LOAD_EFFECTIVE_ADDRESS_edx %4"
-	    "LOAD_INTEGER_edx"
-	    "LOAD_IMMEDIATE_eax %4"
-	    "INT_80");
+	asm("lea_ebx,[esp+DWORD] %12"
+	    "mov_ebx,[ebx]"
+	    "lea_ecx,[esp+DWORD] %8"
+	    "mov_ecx,[ecx]"
+	    "lea_edx,[esp+DWORD] %4"
+	    "mov_edx,[edx]"
+	    "mov_eax, %4"
+	    "int !0x80");
 }
 
 int lseek(int fd, int offset, int whence)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_ebx %12"
-	    "LOAD_INTEGER_ebx"
-	    "LOAD_EFFECTIVE_ADDRESS_ecx %8"
-	    "LOAD_INTEGER_ecx"
-	    "LOAD_EFFECTIVE_ADDRESS_edx %4"
-	    "LOAD_INTEGER_edx"
-	    "LOAD_IMMEDIATE_eax %19"
-	    "INT_80");
+	asm("lea_ebx,[esp+DWORD] %12"
+	    "mov_ebx,[ebx]"
+	    "lea_ecx,[esp+DWORD] %8"
+	    "mov_ecx,[ecx]"
+	    "lea_edx,[esp+DWORD] %4"
+	    "mov_edx,[edx]"
+	    "mov_eax, %19"
+	    "int !0x80");
 }
 
 int close(int fd)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_ebx %4"
-	    "LOAD_INTEGER_ebx"
-	    "LOAD_IMMEDIATE_eax %6"
-	    "INT_80");
+	asm("lea_ebx,[esp+DWORD] %4"
+	    "mov_ebx,[ebx]"
+	    "mov_eax, %6"
+	    "int !0x80");
 }
 
 
 int unlink (char *filename)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_ebx %4"
-	    "LOAD_INTEGER_ebx"
-	    "LOAD_IMMEDIATE_eax %10"
-	    "INT_80");
+	asm("lea_ebx,[esp+DWORD] %4"
+	    "mov_ebx,[ebx]"
+	    "mov_eax, %10"
+	    "int !0x80");
 }
 
 
 int _getcwd(char* buf, int size)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_ebx %8"
-	    "LOAD_INTEGER_ebx"
-	    "LOAD_EFFECTIVE_ADDRESS_ecx %4"
-	    "LOAD_INTEGER_ecx"
-	    "LOAD_IMMEDIATE_eax %183"
-	    "INT_80");
+	asm("lea_ebx,[esp+DWORD] %8"
+	    "mov_ebx,[ebx]"
+	    "lea_ecx,[esp+DWORD] %4"
+	    "mov_ecx,[ecx]"
+	    "mov_eax, %183"
+	    "int !0x80");
 }
 
 
@@ -170,11 +170,11 @@ char* get_current_dir_name()
 
 int brk(void *addr)
 {
-	asm("LOAD_ESP_IMMEDIATE_into_eax %4"
-	    "PUSH_eax"
-	    "LOAD_IMMEDIATE_eax %45"
-	    "POP_ebx"
-	    "INT_80");
+	asm("mov_eax,[esp+DWORD] %4"
+	    "push_eax"
+	    "mov_eax, %45"
+	    "pop_ebx"
+	    "int !0x80");
 }
 
 struct utsname
@@ -188,10 +188,10 @@ struct utsname
 
 int uname(struct utsname* unameData)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_ebx %4"
-	    "LOAD_INTEGER_ebx"
-	    "LOAD_IMMEDIATE_eax %109"
-	    "INT_80");
+	asm("lea_ebx,[esp+DWORD] %4"
+	    "mov_ebx,[ebx]"
+	    "mov_eax, %109"
+	    "int !0x80");
 }
 
 #endif

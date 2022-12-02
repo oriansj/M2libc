@@ -34,14 +34,14 @@
 
 int _open(char* name, int flag, int mode)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_ebx %12"
-	    "LOAD_INTEGER_ebx"
-	    "LOAD_EFFECTIVE_ADDRESS_ecx %8"
-	    "LOAD_INTEGER_ecx"
-	    "LOAD_EFFECTIVE_ADDRESS_edx %4"
-	    "LOAD_INTEGER_edx"
-	    "LOAD_IMMEDIATE_eax %5"
-	    "INT_80");
+	asm("lea_ebx,[esp+DWORD] %12"
+	    "mov_ebx,[ebx]"
+	    "lea_ecx,[esp+DWORD] %8"
+	    "mov_ecx,[ecx]"
+	    "lea_edx,[esp+DWORD] %4"
+	    "mov_edx,[edx]"
+	    "mov_eax, %5"
+	    "int !0x80");
 }
 
 #define STDIN_FILENO  0

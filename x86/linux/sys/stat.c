@@ -39,56 +39,56 @@
 
 int chmod(char *pathname, int mode)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_ebx %8"
-	    "LOAD_INTEGER_ebx"
-	    "LOAD_EFFECTIVE_ADDRESS_ecx %4"
-	    "LOAD_INTEGER_ecx"
-	    "LOAD_IMMEDIATE_eax %15"
-	    "INT_80");
+	asm("lea_ebx,[esp+DWORD] %8"
+	    "mov_ebx,[ebx]"
+	    "lea_ecx,[esp+DWORD] %4"
+	    "mov_ecx,[ecx]"
+	    "mov_eax, %15"
+	    "int !0x80");
 }
 
 
 int fchmod(int a, mode_t b)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_ebx %8"
-	    "LOAD_INTEGER_ebx"
-	    "LOAD_EFFECTIVE_ADDRESS_ecx %4"
-	    "LOAD_INTEGER_ecx"
-	    "LOAD_IMMEDIATE_eax %94"
-	    "INT_80");
+	asm("lea_ebx,[esp+DWORD] %8"
+	    "mov_ebx,[ebx]"
+	    "lea_ecx,[esp+DWORD] %4"
+	    "mov_ecx,[ecx]"
+	    "mov_eax, %94"
+	    "int !0x80");
 }
 
 
 int mkdir(char const* a, mode_t b)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_ebx %8"
-	    "LOAD_INTEGER_ebx"
-	    "LOAD_EFFECTIVE_ADDRESS_ecx %4"
-	    "LOAD_INTEGER_ecx"
-	    "LOAD_IMMEDIATE_eax %39"
-	    "INT_80");
+	asm("lea_ebx,[esp+DWORD] %8"
+	    "mov_ebx,[ebx]"
+	    "lea_ecx,[esp+DWORD] %4"
+	    "mov_ecx,[ecx]"
+	    "mov_eax, %39"
+	    "int !0x80");
 }
 
 
 int mknod(char const* a, mode_t b, dev_t c)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_ebx %12"
-	    "LOAD_INTEGER_ebx"
-	    "LOAD_EFFECTIVE_ADDRESS_ecx %8"
-	    "LOAD_INTEGER_ecx"
-	    "LOAD_EFFECTIVE_ADDRESS_edx %4"
-	    "LOAD_INTEGER_edx"
-	    "LOAD_IMMEDIATE_eax %14"
-	    "INT_80");
+	asm("lea_ebx,[esp+DWORD] %12"
+	    "mov_ebx,[ebx]"
+	    "lea_ecx,[esp+DWORD] %8"
+	    "mov_ecx,[ecx]"
+	    "lea_edx,[esp+DWORD] %4"
+	    "mov_edx,[edx]"
+	    "mov_eax, %14"
+	    "int !0x80");
 }
 
 
 mode_t umask(mode_t m)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_ebx %4"
-	    "LOAD_INTEGER_ebx"
-	    "LOAD_IMMEDIATE_eax %60"
-	    "INT_80");
+	asm("lea_ebx,[esp+DWORD] %4"
+	    "mov_ebx,[ebx]"
+	    "mov_eax, %60"
+	    "int !0x80");
 }
 
 #endif

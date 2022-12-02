@@ -28,28 +28,28 @@
 
 int fgetc(FILE* f)
 {
-	asm("LOAD_IMMEDIATE_eax %3"
-	    "LOAD_EFFECTIVE_ADDRESS_ebx %4"
-	    "LOAD_INTEGER_ebx"
-	    "PUSH_ebx"
-	    "COPY_esp_to_ecx"
-	    "LOAD_IMMEDIATE_edx %1"
-	    "INT_80"
-	    "TEST"
-	    "POP_eax"
-	    "JUMP_NE8 !FUNCTION_fgetc_Done"
-	    "LOAD_IMMEDIATE_eax %-1"
+	asm("mov_eax, %3"
+	    "lea_ebx,[esp+DWORD] %4"
+	    "mov_ebx,[ebx]"
+	    "push_ebx"
+	    "mov_ecx,esp"
+	    "mov_edx, %1"
+	    "int !0x80"
+	    "test_eax,eax"
+	    "pop_eax"
+	    "jne %FUNCTION_fgetc_Done"
+	    "mov_eax, %-1"
 	    ":FUNCTION_fgetc_Done");
 }
 
 void fputc(char s, FILE* f)
 {
-	asm("LOAD_IMMEDIATE_eax %4"
-	    "LOAD_EFFECTIVE_ADDRESS_ebx %4"
-	    "LOAD_INTEGER_ebx"
-	    "LOAD_EFFECTIVE_ADDRESS_ecx %8"
-	    "LOAD_IMMEDIATE_edx %1"
-	    "INT_80");
+	asm("mov_eax, %4"
+	    "lea_ebx,[esp+DWORD] %4"
+	    "mov_ebx,[ebx]"
+	    "lea_ecx,[esp+DWORD] %8"
+	    "mov_edx, %1"
+	    "int !0x80");
 }
 
 void fputs(char* s, FILE* f)
@@ -63,14 +63,14 @@ void fputs(char* s, FILE* f)
 
 FILE* open(char* name, int flag, int mode)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_ebx %12"
-	    "LOAD_INTEGER_ebx"
-	    "LOAD_EFFECTIVE_ADDRESS_ecx %8"
-	    "LOAD_INTEGER_ecx"
-	    "LOAD_EFFECTIVE_ADDRESS_edx %4"
-	    "LOAD_INTEGER_edx"
-	    "LOAD_IMMEDIATE_eax %5"
-	    "INT_80");
+	asm("lea_ebx,[esp+DWORD] %12"
+	    "mov_ebx,[ebx]"
+	    "lea_ecx,[esp+DWORD] %8"
+	    "mov_ecx,[ecx]"
+	    "lea_edx,[esp+DWORD] %4"
+	    "mov_edx,[edx]"
+	    "mov_eax, %5"
+	    "int !0x80");
 }
 
 FILE* fopen(char* filename, char* mode)
@@ -95,10 +95,10 @@ FILE* fopen(char* filename, char* mode)
 
 int close(int fd)
 {
-	asm("LOAD_EFFECTIVE_ADDRESS_ebx %4"
-	    "LOAD_INTEGER_ebx"
-	    "LOAD_IMMEDIATE_eax %6"
-	    "INT_80");
+	asm("lea_ebx,[esp+DWORD] %4"
+	    "mov_ebx,[ebx]"
+	    "mov_eax, %6"
+	    "int !0x80");
 }
 
 int fclose(FILE* stream)
@@ -109,11 +109,11 @@ int fclose(FILE* stream)
 
 int brk(void *addr)
 {
-	asm("LOAD_ESP_IMMEDIATE_into_eax %4"
-	    "PUSH_eax"
-	    "LOAD_IMMEDIATE_eax %45"
-	    "POP_ebx"
-	    "INT_80");
+	asm("mov_eax,[esp+DWORD] %4"
+	    "push_eax"
+	    "mov_eax, %45"
+	    "pop_ebx"
+	    "int !0x80");
 }
 
 long _malloc_ptr;
@@ -170,8 +170,8 @@ void free(void* l)
 
 void exit(int value)
 {
-	asm("POP_ebx"
-	    "POP_ebx"
-	    "LOAD_IMMEDIATE_eax %1"
-	    "INT_80");
+	asm("pop_ebx"
+	    "pop_ebx"
+	    "mov_eax, %1"
+	    "int !0x80");
 }
