@@ -26,7 +26,7 @@
 	;; Setup for malloc
 	LOADR R0 4
 	JUMP 4
-	&FUNCTION___init_mallloc
+	&FUNCTION___init_malloc
 	CALL R0 R15
 
 	;; Setup for FILE*
