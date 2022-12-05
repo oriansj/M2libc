@@ -42,6 +42,11 @@
 
 #define __PATH_MAX 4096
 
+#define HARDWARE_DEVICE_PATH 1
+#define MEMORY_MAPPED 3
+#define END_HARDWARE_DEVICE_PATH 0x7F
+#define END_ENTIRE_DEVICE_PATH 0xFF
+
 void* _image_handle;
 void* _root_device;
 void* __user_stack;
@@ -188,6 +193,8 @@ struct efi_loaded_image_protocol
 	void* unload;
 };
 
+struct efi_loaded_image_protocol* _image;
+
 struct efi_simple_file_system_protocol
 {
 	unsigned revision;
@@ -216,17 +223,17 @@ struct efi_file_protocol* _rootdir;
 
 struct efi_time
 {
-	char year[2];
-	char month;
-	char day;
-	char hour;
-	char minute;
-	char second;
-	char pad1;
-	char nanosecond[4];
-	char time_zone[2];
-	char daylight;
-	char pad2;
+	uint16_t year;
+	uint8_t month;
+	uint8_t day;
+	uint8_t hour;
+	uint8_t minute;
+	uint8_t second;
+	uint8_t pad1;
+	uint32_t nanosecond;
+	uint16_t time_zone;
+	uint8_t daylight;
+	uint8_t pad2;
 };
 
 struct efi_file_info
@@ -239,6 +246,16 @@ struct efi_file_info
 	struct efi_time modifiction_time;
 	unsigned attribute;
 	char file_name[__PATH_MAX];
+};
+
+struct efi_device_path_protocol
+{
+	uint8_t type;
+	uint8_t subtype;
+	uint16_t length;
+	uint32_t memory_type;
+	unsigned start_address;
+	unsigned end_address;
 };
 
 unsigned __uefi_1(void*, void*, FUNCTION f)
@@ -405,14 +422,14 @@ void _free_allocated_memory()
 size_t strlen(char const* str);
 void* calloc(int count, int size);
 
-void _posix_path_to_uefi(char *narrow_string)
+char* __posix_path_to_uefi(char* narrow_string, int convert_slashes)
 {
 	unsigned length = strlen(narrow_string) + 1;
-	char *wide_string = calloc(length, 4);
+	char* wide_string = calloc(length, 2);
 	unsigned i;
 	for(i = 0; i < length; i += 1)
 	{
-		if(narrow_string[i] == '/')
+		if(convert_slashes && narrow_string[i] == '/')
 		{
 			wide_string[2 * i] = '\\';
 		}
@@ -422,6 +439,16 @@ void _posix_path_to_uefi(char *narrow_string)
 		}
 	}
 	return wide_string;
+}
+
+char* _posix_path_to_uefi(char* narrow_string)
+{
+	return __posix_path_to_uefi(narrow_string, 1);
+}
+
+char* _string2wide(char* narrow_string)
+{
+	return __posix_path_to_uefi(narrow_string, 0);
 }
 
 int isspace(char _c);
@@ -470,7 +497,7 @@ void _process_load_options(char* load_options)
 
 void* malloc(unsigned size);
 typedef char wchar_t;
-size_t wcstombs(char* dest, wchar_t const* src, size_t n);
+size_t wcstombs(char* dest, char* src, size_t n);
 void __init_io();
 
 void _init()
@@ -487,16 +514,15 @@ void _init()
 	EFI_LOADED_IMAGE_PROTOCOL_GUID.data2 = (0x3B7269C9 << 32) + 0x50003F8E + 0x50000000;
 
 	__init_io();
-	struct efi_loaded_image_protocol* image;
-	_open_protocol(_image_handle, &EFI_LOADED_IMAGE_PROTOCOL_GUID, &image, _image_handle, 0, EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL);
-	char* load_options = calloc(image->load_options_size, 1);
-	wcstombs(load_options, image->load_options, image->load_options_size);
+	_open_protocol(_image_handle, &EFI_LOADED_IMAGE_PROTOCOL_GUID, &_image, _image_handle, 0, EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL);
+	char* load_options = calloc(_image->load_options_size, 1);
+	wcstombs(load_options, _image->load_options, _image->load_options_size);
 	_process_load_options(load_options);
 
 	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID.data1 = (0x11D26459 << 32) + 0x564E5B22 + 0x40000000;
 	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID.data2 = (0x3B7269C9 << 32) + 0x5000398E + 0x50000000;
 
-	_root_device = image->device;
+	_root_device = _image->device;
 	struct efi_simple_file_system_protocol* rootfs;
 	_open_protocol(_root_device, &EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID, &rootfs, _image_handle, 0, EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL);
 	_open_volume(rootfs, &_rootdir);

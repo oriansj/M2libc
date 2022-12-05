@@ -20,6 +20,7 @@
 #define _UNISTD_C
 
 #include <amd64/uefi/uefi.c>
+#include <string.h>
 
 #define NULL 0
 #define EOF 0xFFFFFFFF
@@ -33,12 +34,7 @@ void* malloc(unsigned size);
 
 int access(char* pathname, int mode)
 {
-	asm("lea_rdi,[rsp+DWORD] %16"
-	    "mov_rdi,[rdi]"
-	    "lea_rsi,[rsp+DWORD] %8"
-	    "mov_rsi,[rsi]"
-	    "mov_rax, %21"
-	    "syscall");
+	return 0;
 }
 
 int chdir(char* path)
@@ -57,7 +53,91 @@ int fchdir(int fd)
 	    "syscall");
 }
 
-void _exit(int value);
+int _get_file_size(struct efi_file_protocol* f)
+{
+	/* Preallocate some extra space for file_name */
+	size_t file_info_size = sizeof(struct efi_file_info);
+	struct efi_file_info* file_info = calloc(1, file_info_size);
+	unsigned rval = __uefi_4(f, &EFI_FILE_INFO_GUID, &file_info_size, file_info, f->get_info);
+	if(rval != EFI_SUCCESS)
+	{
+		return -1;
+	}
+	int file_size = file_info->file_size;
+	free(file_info);
+	return file_size;
+}
+
+int spawn(char* file_name, char** argv, char** envp)
+{
+	FILE* fcmd = fopen(file_name, "r");
+	if(fcmd == NULL) return -1;
+
+	long program_size = _get_file_size(fcmd->fd);
+
+	void* executable = malloc(program_size);
+	size_t count = fread(executable, 1, program_size, fcmd);
+	if(count < program_size)
+	{
+		free(executable);
+		fclose(fcmd);
+		return -1;
+	}
+	fclose(fcmd);
+
+	struct efi_device_path_protocol* device_path = calloc(2, sizeof(struct efi_device_path_protocol));
+	device_path->type = HARDWARE_DEVICE_PATH;
+	device_path->subtype = MEMORY_MAPPED;
+	device_path->length = sizeof(struct efi_device_path_protocol);
+	device_path->memory_type = EFI_LOADER_DATA;
+	device_path->start_address = executable;
+	device_path->end_address = executable + program_size;
+	device_path[1].type = END_HARDWARE_DEVICE_PATH;
+	device_path[1].subtype = END_ENTIRE_DEVICE_PATH;
+	device_path[1].length = 4;
+
+	void* child_ih;
+
+	unsigned rval = __uefi_6(0, _image_handle, device_path, executable, program_size, &child_ih, _system->boot_services->load_image);
+	free(device_path);
+	free(executable);
+	if(rval != EFI_SUCCESS) return -1;
+	struct efi_loaded_image_protocol* child_image;
+	rval = _open_protocol(child_ih, &EFI_LOADED_IMAGE_PROTOCOL_GUID, &child_image, child_ih, 0, EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL);
+	if(rval != EFI_SUCCESS) return -1;
+
+	/* Concatenate char** argv array */
+	unsigned arg_length = -1 ;
+	unsigned i = 0;
+	while(argv[i] != NULL)
+	{
+		arg_length += strlen(argv[i]) + 1;
+		i += 1;
+	}
+	char* load_options = calloc(arg_length + 1, 1);
+	strcpy(load_options, argv[0]);
+	i = 1;
+	while(argv[i] != NULL)
+	{
+		strcat(load_options, " ");
+		strcat(load_options, argv[i]);
+		i += 1;
+	}
+	char* uefi_path = _string2wide(load_options);
+
+	child_image->load_options = uefi_path;
+	child_image->load_options_size = 2 * arg_length;
+	free(load_options);
+	child_image->device = _image->device;
+	rval = _close_protocol(child_ih, &EFI_LOADED_IMAGE_PROTOCOL_GUID, child_ih, 0);
+	if(rval != EFI_SUCCESS) return -1;
+
+	/* Run command */
+	rval = __uefi_3(child_ih, 0, 0, _system->boot_services->start_image);
+	free(uefi_path);
+
+	return rval;
+}
 
 int fork()
 {
@@ -67,29 +147,13 @@ int fork()
 
 int waitpid (int pid, int* status_ptr, int options)
 {
-	/* Uses wait4 with struct rusage *ru set to NULL */
-	asm("lea_rdi,[rsp+DWORD] %24"
-	    "mov_rdi,[rdi]"
-	    "lea_rsi,[rsp+DWORD] %16"
-	    "mov_rsi,[rsi]"
-	    "lea_rdx,[rsp+DWORD] %8"
-	    "mov_rdx,[rdx]"
-	    "mov_r10, %0"
-	    "mov_rax, %61"
-	    "syscall");
+	return -1;
 }
 
 
 int execve(char* file_name, char** argv, char** envp)
 {
-	asm("lea_rdi,[rsp+DWORD] %24"
-	    "mov_rdi,[rdi]"
-	    "lea_rsi,[rsp+DWORD] %16"
-	    "mov_rsi,[rsi]"
-	    "lea_rdx,[rsp+DWORD] %8"
-	    "mov_rdx,[rdx]"
-	    "mov_rax, %59"
-	    "syscall");
+	return -1;
 }
 
 int read(int fd, char* buf, unsigned count)
@@ -126,20 +190,6 @@ int write(int fd, char* buf, unsigned count)
 	return count;
 }
 
-int _get_file_size(struct efi_file_protocol* f)
-{
-	/* Preallocate some extra space for file_name */
-	size_t file_info_size = sizeof(struct efi_file_info);
-	struct efi_file_info* file_info = calloc(1, file_info_size);
-	unsigned rval = __uefi_4(f, &EFI_FILE_INFO_GUID, &file_info_size, file_info, f->get_info);
-	if(rval != EFI_SUCCESS)
-	{
-		return -1;
-	}
-	int file_size = file_info->file_size;
-	free(file_info);
-	return file_size;
-}
 
 int lseek(int fd, int offset, int whence)
 {
@@ -183,7 +233,7 @@ int close(int fd)
 }
 
 
-int unlink (char* filename)
+int unlink(char* filename)
 {
 	asm("lea_rdi,[rsp+DWORD] %8"
 	    "mov_rdi,[rdi]"

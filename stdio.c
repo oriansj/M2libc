@@ -92,6 +92,7 @@ void __kill_io()
 
 /* Standard C functions */
 /* Getting */
+int read(int fd, char* buf, unsigned count);
 int fgetc(FILE* f)
 {
 	/* Only read on read buffers */
@@ -218,6 +219,7 @@ int puts(char const* str)
 }
 
 
+int lseek(int fd, int offset, int whence);
 /* File management */
 FILE* fopen(char const* filename, char const* mode)
 {
@@ -294,6 +296,7 @@ FILE* fdopen(int fd, char* mode)
 }
 
 
+int write(int fd, char* buf, unsigned count);
 int fflush(FILE* stream)
 {
 	/* We only need to flush on writes */
@@ -313,6 +316,7 @@ int fflush(FILE* stream)
 }
 
 
+int close(int fd);
 int fclose(FILE* stream)
 {
 	/* Deal with STDIN, STDOUT and STDERR */
@@ -343,8 +347,9 @@ int fclose(FILE* stream)
 }
 
 
+int unlink(char* filename);
 /* File Removal */
- int remove(char *pathname)
+int remove(char *pathname)
 {
 	return unlink(pathname);
 }

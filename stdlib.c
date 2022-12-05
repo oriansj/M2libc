@@ -289,7 +289,7 @@ int mkstemp(char *template)
 	return fd;
 }
 
-size_t wcstombs(char* dest, wchar_t const* src, size_t n)
+size_t wcstombs(char* dest, char* src, size_t n)
 {
 	int i = 0;
 
