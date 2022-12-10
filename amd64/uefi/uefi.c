@@ -164,8 +164,10 @@ struct efi_system_table* _system;
 
 struct efi_guid
 {
-	unsigned data1;
-	unsigned data2;
+	uint32_t data1;
+	uint16_t data2;
+	uint16_t data3;
+	uint8_t data4[8];
 };
 struct efi_guid EFI_LOADED_IMAGE_PROTOCOL_GUID;
 struct efi_guid EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID;
@@ -508,10 +510,19 @@ void _init()
 	__user_stack = malloc(USER_STACK_SIZE) + USER_STACK_SIZE;
 
 	/* Process command line arguments */
-	EFI_LOADED_IMAGE_PROTOCOL_GUID.data1 = (0x11D29562 << 32) + 0x5B1B31A1;
+	EFI_LOADED_IMAGE_PROTOCOL_GUID.data1 = 0x5b1b31a1;
+	EFI_LOADED_IMAGE_PROTOCOL_GUID.data2 = 0x9562;
+	EFI_LOADED_IMAGE_PROTOCOL_GUID.data3 = 0x11d2;
 	/* We want to add 0xA0003F8E but M2 treats 32-bit values as negatives, in order to
 	 * have the same behaviour on 32-bit systems, so restrict to 31-bit constants */
-	EFI_LOADED_IMAGE_PROTOCOL_GUID.data2 = (0x3B7269C9 << 32) + 0x50003F8E + 0x50000000;
+	EFI_LOADED_IMAGE_PROTOCOL_GUID.data4[0] = 0x8e;
+	EFI_LOADED_IMAGE_PROTOCOL_GUID.data4[1] = 0x3f;
+	EFI_LOADED_IMAGE_PROTOCOL_GUID.data4[2] = 0;
+	EFI_LOADED_IMAGE_PROTOCOL_GUID.data4[3] = 0xa0;
+	EFI_LOADED_IMAGE_PROTOCOL_GUID.data4[4] = 0xc9;
+	EFI_LOADED_IMAGE_PROTOCOL_GUID.data4[5] = 0x69;
+	EFI_LOADED_IMAGE_PROTOCOL_GUID.data4[6] = 0x72;
+	EFI_LOADED_IMAGE_PROTOCOL_GUID.data4[7] = 0x3b;
 
 	__init_io();
 	_open_protocol(_image_handle, &EFI_LOADED_IMAGE_PROTOCOL_GUID, &_image, _image_handle, 0, EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL);
@@ -519,16 +530,34 @@ void _init()
 	wcstombs(load_options, _image->load_options, _image->load_options_size);
 	_process_load_options(load_options);
 
-	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID.data1 = (0x11D26459 << 32) + 0x564E5B22 + 0x40000000;
-	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID.data2 = (0x3B7269C9 << 32) + 0x5000398E + 0x50000000;
+	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID.data1 = 0x564E5B22 + 0x40000000;
+	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID.data2 = 0x6459;
+	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID.data3 = 0x11d2;
+	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID.data4[0] = 0x8e;
+	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID.data4[1] = 0x39;
+	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID.data4[2] = 0;
+	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID.data4[3] = 0xa0;
+	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID.data4[4] = 0xc9;
+	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID.data4[5] = 0x69;
+	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID.data4[6] = 0x72;
+	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID.data4[7] = 0x3b;
 
 	_root_device = _image->device;
 	struct efi_simple_file_system_protocol* rootfs;
 	_open_protocol(_root_device, &EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID, &rootfs, _image_handle, 0, EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL);
 	_open_volume(rootfs, &_rootdir);
 
-	EFI_FILE_INFO_GUID.data1 = (0x11D26D3F << 32) + 0x09576e92;
-	EFI_FILE_INFO_GUID.data2 = (0x3B7269C9 << 32) + 0x5000398E + 0x50000000;
+	EFI_FILE_INFO_GUID.data1 = 0x09576e92;
+	EFI_FILE_INFO_GUID.data2 = 0x6d3f;
+	EFI_FILE_INFO_GUID.data3 = 0x11d2;
+	EFI_FILE_INFO_GUID.data4[0] = 0x8e;
+	EFI_FILE_INFO_GUID.data4[1] = 0x39;
+	EFI_FILE_INFO_GUID.data4[2] = 0;
+	EFI_FILE_INFO_GUID.data4[3] = 0xa0;
+	EFI_FILE_INFO_GUID.data4[4] = 0xc9;
+	EFI_FILE_INFO_GUID.data4[5] = 0x69;
+	EFI_FILE_INFO_GUID.data4[6] = 0x72;
+	EFI_FILE_INFO_GUID.data4[7] = 0x3b;
 }
 
 void __kill_io();
