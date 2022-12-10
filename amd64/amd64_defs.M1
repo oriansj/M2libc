@@ -67,6 +67,7 @@ DEFINE mov_[rip+DWORD],rbp 48892D
 DEFINE mov_[rip+DWORD],rcx 48890D
 DEFINE mov_[rip+DWORD],rdx 488915
 DEFINE mov_[rip+DWORD],rsp 488925
+DEFINE mov_eax,[rax] 8B00
 DEFINE mov_rax,[rax] 488B00
 DEFINE mov_rbx,[rbx] 488B1B
 DEFINE mov_rcx,[rcx] 488B09
@@ -85,6 +86,8 @@ DEFINE movsx_rax,BYTE_PTR_[rax] 480FBE00
 DEFINE movsx_rbx,BYTE_PTR_[rbx] 480FBE1B
 DEFINE movsx_rax,WORD_PTR_[rax] 480FBF00
 DEFINE movsx_rax,DWORD_PTR_[rax] 486300
+DEFINE movzx_rax,BYTE_PTR_[rax] 480FB600
+DEFINE movzx_rax,WORD_PTR_[rax] 480FB700
 DEFINE imul_rbx 48F7EB
 DEFINE mul_rbx 48F7E3
 DEFINE NULL 0000000000000000

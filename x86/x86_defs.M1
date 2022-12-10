@@ -60,6 +60,8 @@ DEFINE mov_[ebx],eax 8903
 DEFINE movsx_eax,BYTE_PTR_[eax] 0FBE00
 DEFINE movsx_ebx,BYTE_PTR_[ebx] 0FBE1B
 DEFINE movsx_eax,WORD_PTR_[eax] 0FBF00
+DEFINE movzx_eax,BYTE_PTR_[eax] 0FB600
+DEFINE movzx_eax,WORD_PTR_[eax] 0FB700
 DEFINE movzx_eax,al 0FB6C0
 DEFINE mul_ebx F7E3
 DEFINE imul_ebx F7EB
