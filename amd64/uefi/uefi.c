@@ -488,7 +488,7 @@ void _process_load_options(char* load_options)
 		do
 		{
 			i += 1;
-		} while(!isspace(i[0]));
+		} while(!isspace(i[0]) && i[0] != 0);
 		i[0] = 0;
 		do
 		{

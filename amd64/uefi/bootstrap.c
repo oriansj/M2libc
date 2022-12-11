@@ -570,7 +570,7 @@ void process_load_options(char* load_options)
 		do
 		{
 			i = i + 1;
-		} while(!is_space(i[0]));
+		} while(!is_space(i[0]) && i[0] != 0);
 		i[0] = 0;
 		do
 		{
