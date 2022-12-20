@@ -41,10 +41,10 @@ size_t strcspn(char const* dest, char const* src);
 char* strpbrk(char const* dest, char const* breakset);
 
 /* Memory manipulation */
-void* memset(void* dest, int ch, size_t count );
-void* memcpy(void* dest, void const* src, size_t count );
-void* memmove(void* dest, void const* src, size_t count );
-int memcmp(void const* lhs, void const* rhs, size_t count );
-void* memchr( void const* ptr, int ch, size_t count );
+void* memset(void* dest, int ch, size_t count);
+void* memcpy(void* dest, void const* src, size_t count);
+void* memmove(void* dest, void const* src, size_t count);
+int memcmp(void const* lhs, void const* rhs, size_t count);
+void* memchr(void const* ptr, int ch, size_t count);
 #endif
 #endif

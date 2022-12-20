@@ -35,12 +35,14 @@
 #define EFI_LOADER_DATA 2
 
 #define EFI_SUCCESS 0
-#define EFI_LOAD_ERROR 1
-#define EFI_INVALID_PARAMETER 2
-#define EFI_UNSUPPORTED 3
-#define EFI_BUFFER_TOO_SMALL 5
+#define EFI_LOAD_ERROR (1 << 63) | 1
+#define EFI_INVALID_PARAMETER (1 << 63) | 2
+#define EFI_UNSUPPORTED (1 << 63) | 3
+#define EFI_BUFFER_TOO_SMALL (1 << 63) | 5
+#define EFI_NOT_FOUND (1 << 31) | 14
 
 #define __PATH_MAX 4096
+#define __ENV_NAME_MAX 4096
 
 #define HARDWARE_DEVICE_PATH 1
 #define MEMORY_MAPPED 3
@@ -53,6 +55,7 @@ void* __user_stack;
 
 int _argc;
 char** _argv;
+char** _envp;
 
 struct efi_simple_text_output_protocol
 {
@@ -143,6 +146,37 @@ struct efi_boot_table
 	void* create_event_ex;
 };
 
+struct efi_runtime_table
+{
+	struct efi_table_header header;
+
+	/* Time Services */
+	void* get_time;
+	void* set_time;
+	void* get_wakeup_time;
+	void* set_wakeup_time;
+
+	/* Virtual Memory Services */
+	void* set_virtual_address_map;
+	void* convert_pointer;
+
+	/* Variable Services */
+	void* get_variable;
+	void* get_next_variable_name;
+	void* set_variable;
+
+	/* Miscellaneous Services */
+	void* get_next_high_monotonic_count;
+	void* reset_system;
+
+	/* UEFI 2.0 Capsule Services */
+	void* update_capsule;
+	void* query_capsule_capabilities;
+
+	/* Miscellaneous UEFI 2.0 Services */
+	void* query_variable_info;
+};
+
 struct efi_system_table
 {
 	struct efi_table_header header;
@@ -155,7 +189,7 @@ struct efi_system_table
 	struct efi_simple_text_output_protocol* con_out;
 	void *standard_error_handle;
 	struct efi_simple_text_output_protocol* std_err;
-	void *runtime_services;
+	struct efi_runtime_table* runtime_services;
 	struct efi_boot_table* boot_services;
 	unsigned number_table_entries;
 	void *configuration_table;
@@ -172,6 +206,7 @@ struct efi_guid
 struct efi_guid EFI_LOADED_IMAGE_PROTOCOL_GUID;
 struct efi_guid EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID;
 struct efi_guid EFI_FILE_INFO_GUID;
+struct efi_guid EFI_SHELL_PROTOCOL_GUID;
 
 struct efi_loaded_image_protocol
 {
@@ -389,6 +424,16 @@ unsigned _close(struct efi_file_protocol* file)
 	return __uefi_1(file, file->close);
 }
 
+unsigned _get_next_variable_name(unsigned* size, char* name, struct efi_guid* vendor_guid)
+{
+	return __uefi_3(size, name, vendor_guid, _system->runtime_services->get_next_variable_name);
+}
+
+unsigned _get_variable(char* name, struct efi_guid* vendor_guid, uint32_t* attributes, unsigned* data_size, void* data)
+{
+	return __uefi_5(name, vendor_guid, attributes, data_size, data, _system->runtime_services->get_variable);
+}
+
 void exit(unsigned value)
 {
 	goto FUNCTION__exit;
@@ -421,8 +466,10 @@ void _free_allocated_memory()
 	}
 }
 
+char* strcat(char* dest, char const* src);
 size_t strlen(char const* str);
 void* calloc(int count, int size);
+void free(void* ptr);
 
 char* __posix_path_to_uefi(char* narrow_string, int convert_slashes)
 {
@@ -497,9 +544,96 @@ void _process_load_options(char* load_options)
 	}
 }
 
-void* malloc(unsigned size);
-typedef char wchar_t;
+struct efi_guid EFI_SHELL_VARIABLE_GUID;
+int memcmp(void const* lhs, void const* rhs, size_t count);
 size_t wcstombs(char* dest, char* src, size_t n);
+char* int2str(int x, int base, int signed_p);
+void* memset(void* dest, int ch, size_t count);
+
+char* _get_environmental_variable(struct efi_guid* vendor_guid, char* name, unsigned size)
+{
+	unsigned data_size;
+	char* data;
+	char* variable_data;
+	char* envp_line = NULL;
+
+	/* Call with data=NULL to obtain data size that we need to allocate */
+	_get_variable(name, vendor_guid, NULL, &data_size, NULL);
+	data = calloc(data_size + 1, 1);
+	_get_variable(name, vendor_guid, NULL, &data_size, data);
+
+	variable_data = calloc((data_size / 2) + 1, 1);
+	wcstombs(variable_data, data, (data_size / 2) + 1);
+
+	envp_line = calloc((size / 2) + (data_size / 2) + 1, 1);
+	wcstombs(envp_line, name, size / 2);
+	strcat(envp_line, "=");
+	strcat(envp_line, variable_data);
+	free(data);
+	free(variable_data);
+
+	return envp_line;
+}
+
+void _get_environmental_variables()
+{
+	EFI_SHELL_VARIABLE_GUID.data1 = 0x158def5a;
+	EFI_SHELL_VARIABLE_GUID.data2 = 0xf656;
+	EFI_SHELL_VARIABLE_GUID.data3 = 0x419c;
+	EFI_SHELL_VARIABLE_GUID.data4[0] = 0xb0;
+	EFI_SHELL_VARIABLE_GUID.data4[1] = 0x27;
+	EFI_SHELL_VARIABLE_GUID.data4[2] = 0x7a;
+	EFI_SHELL_VARIABLE_GUID.data4[3] = 0x31;
+	EFI_SHELL_VARIABLE_GUID.data4[4] = 0x92;
+	EFI_SHELL_VARIABLE_GUID.data4[5] = 0xc0;
+	EFI_SHELL_VARIABLE_GUID.data4[6] = 0x79;
+	EFI_SHELL_VARIABLE_GUID.data4[7] = 0xd2;
+
+	unsigned size = __ENV_NAME_MAX;
+	unsigned rval;
+	unsigned envc = 0;
+	char* name = calloc(size, 1);
+	char* envp_line;
+	struct efi_guid vendor_guid;
+	/* First count the number of environmental variables */
+	do
+	{
+		size = __ENV_NAME_MAX;
+		rval = _get_next_variable_name(&size, name, &vendor_guid);
+		if(rval == EFI_SUCCESS)
+		{
+			if(memcmp(&vendor_guid, &EFI_SHELL_VARIABLE_GUID, sizeof(struct efi_guid)) == 0)
+			{
+				envc += 1;
+			}
+		}
+	} while(rval == EFI_SUCCESS);
+
+	/* Now redo the search but this time populate envp array */
+	_envp = calloc(sizeof(char*), envc + 1);
+	name[0] = 0;
+	name[1] = 0;
+	unsigned j = 0;
+	do
+	{
+		size = __ENV_NAME_MAX;
+		rval = _get_next_variable_name(&size, name, &vendor_guid);
+		if(rval == EFI_SUCCESS)
+		{
+			if(memcmp(&vendor_guid, &EFI_SHELL_VARIABLE_GUID, sizeof(struct efi_guid)) == 0)
+			{
+				_envp[j] = _get_environmental_variable(&vendor_guid, name, size);
+				j += 1;
+			}
+		}
+	} while(rval == EFI_SUCCESS);
+	_envp[j] = 0;
+	free(name);
+
+	return;
+}
+
+void* malloc(unsigned size);
 void __init_io();
 
 void _init()
@@ -513,8 +647,6 @@ void _init()
 	EFI_LOADED_IMAGE_PROTOCOL_GUID.data1 = 0x5b1b31a1;
 	EFI_LOADED_IMAGE_PROTOCOL_GUID.data2 = 0x9562;
 	EFI_LOADED_IMAGE_PROTOCOL_GUID.data3 = 0x11d2;
-	/* We want to add 0xA0003F8E but M2 treats 32-bit values as negatives, in order to
-	 * have the same behaviour on 32-bit systems, so restrict to 31-bit constants */
 	EFI_LOADED_IMAGE_PROTOCOL_GUID.data4[0] = 0x8e;
 	EFI_LOADED_IMAGE_PROTOCOL_GUID.data4[1] = 0x3f;
 	EFI_LOADED_IMAGE_PROTOCOL_GUID.data4[2] = 0;
@@ -530,7 +662,7 @@ void _init()
 	wcstombs(load_options, _image->load_options, _image->load_options_size);
 	_process_load_options(load_options);
 
-	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID.data1 = 0x564E5B22 + 0x40000000;
+	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID.data1 = 0x964E5B22;
 	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID.data2 = 0x6459;
 	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID.data3 = 0x11d2;
 	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID.data4[0] = 0x8e;
@@ -558,6 +690,8 @@ void _init()
 	EFI_FILE_INFO_GUID.data4[5] = 0x69;
 	EFI_FILE_INFO_GUID.data4[6] = 0x72;
 	EFI_FILE_INFO_GUID.data4[7] = 0x3b;
+
+	_get_environmental_variables();
 }
 
 void __kill_io();

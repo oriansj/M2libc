@@ -29,7 +29,8 @@
 	push_rax                                       # Push it onto stack
 	mov_rax,[rip+DWORD] %GLOBAL__argv              # Get argv
 	push_rax                                       # Push it onto stack
-	push !0                                        # envp = NULL
+	mov_rax,[rip+DWORD] %GLOBAL__envp              # Get envp
+	push_rax                                       # Push it onto stack
 	call %FUNCTION_main
 
 :FUNCTION__exit
