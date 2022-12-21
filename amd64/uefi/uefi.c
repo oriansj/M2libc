@@ -59,6 +59,8 @@ int _argc;
 char** _argv;
 char** _envp;
 
+char* _cwd;
+
 struct efi_simple_text_output_protocol
 {
 	void* reset;
@@ -484,35 +486,47 @@ void _free_allocated_memory()
 }
 
 char* strcat(char* dest, char const* src);
+char* strcpy(char* dest, char const* src);
+size_t strlen(char const* str);
 void* calloc(int count, int size);
 
-char* __posix_path_to_uefi(char* narrow_string, int convert_slashes)
+char* _posix_path_to_uefi(char* narrow_string)
 {
-	unsigned length = strlen(narrow_string) + 1;
-	char* wide_string = calloc(length, 2);
+	char* absolute_path = calloc(__PATH_MAX, 1);
+	if(narrow_string[0] != '/' && narrow_string[0] != '\\')
+	{
+		strcpy(absolute_path, _cwd);
+	}
+	strcat(absolute_path, narrow_string);
+
+	unsigned length = strlen(absolute_path);
+	char* wide_string = calloc(length + 1, 2);
 	unsigned i;
 	for(i = 0; i < length; i += 1)
 	{
-		if(convert_slashes && narrow_string[i] == '/')
+		if(absolute_path[i] == '/')
 		{
 			wide_string[2 * i] = '\\';
 		}
 		else
 		{
-			wide_string[2 * i] = narrow_string[i];
+			wide_string[2 * i] = absolute_path[i];
 		}
 	}
+	free(absolute_path);
 	return wide_string;
-}
-
-char* _posix_path_to_uefi(char* narrow_string)
-{
-	return __posix_path_to_uefi(narrow_string, 1);
 }
 
 char* _string2wide(char* narrow_string)
 {
-	return __posix_path_to_uefi(narrow_string, 0);
+	unsigned length = strlen(narrow_string);
+	char* wide_string = calloc(length + 1, 2);
+	unsigned i;
+	for(i = 0; i < length; i += 1)
+	{
+		wide_string[2 * i] = narrow_string[i];
+	}
+	return wide_string;
 }
 
 int isspace(char _c);
@@ -680,6 +694,43 @@ void _wipe_environment()
 	free(envp);
 }
 
+int strcmp(char const* lhs, char const* rhs);
+char* strcpy(char* dest, char const* src);
+char* strchr(char const* str, int ch);
+
+void _setup_current_working_directory(char** envp)
+{
+	_cwd = calloc(__PATH_MAX, 1);
+	strcpy(_cwd, "/");
+
+	unsigned i = 0;
+	unsigned j;
+	char* value;
+	char* match;
+
+	while(envp[i] != 0)
+	{
+		j = 0;
+		while(envp[i][j] != '=')
+		{
+			j += 1;
+		}
+		envp[i][j] = 0;
+		if(strcmp(envp[i], "cwd") == 0)
+		{
+			value = envp[i] + j + 1;
+			match = strchr(value, ':'); /* strip uefi device, e.g. fs0: */
+			if(match != NULL)
+			{
+				value = match + 1;
+			}
+			strcpy(_cwd, value);
+		}
+		envp[i][j] = '=';
+		i += 1;
+	}
+}
+
 void* malloc(unsigned size);
 void __init_io();
 
@@ -739,6 +790,7 @@ void _init()
 	EFI_FILE_INFO_GUID.data4[7] = 0x3b;
 
 	_envp = _get_environmental_variables(_envp);
+	_setup_current_working_directory(_envp);
 }
 
 void __kill_io();

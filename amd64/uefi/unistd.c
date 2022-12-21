@@ -39,10 +39,8 @@ int access(char* pathname, int mode)
 
 int chdir(char* path)
 {
-	asm("lea_rdi,[rsp+DWORD] %8"
-	    "mov_rdi,[rdi]"
-	    "mov_rax, %80"
-	    "syscall");
+	strcpy(_cwd, path);
+	return 0;
 }
 
 int fchdir(int fd)
@@ -156,6 +154,7 @@ int spawn(char* file_name, char** argv, char** envp)
 
 	/* Setup environment for child process */
 	_set_environment(envp);
+	_set_variable("cwd", _cwd);
 
 	/* Run command */
 	rval = __uefi_3(child_ih, 0, 0, _system->boot_services->start_image);
