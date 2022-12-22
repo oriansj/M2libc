@@ -34,6 +34,8 @@
 #define EFI_ALLOCATE_ANY_PAGES 0
 #define EFI_LOADER_DATA 2
 
+#define EFI_VARIABLE_BOOTSERVICE_ACCESS 2
+
 #define EFI_SUCCESS 0
 #define EFI_LOAD_ERROR (1 << 63) | 1
 #define EFI_INVALID_PARAMETER (1 << 63) | 2
@@ -206,7 +208,7 @@ struct efi_guid
 struct efi_guid EFI_LOADED_IMAGE_PROTOCOL_GUID;
 struct efi_guid EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID;
 struct efi_guid EFI_FILE_INFO_GUID;
-struct efi_guid EFI_SHELL_PROTOCOL_GUID;
+struct efi_guid EFI_SHELL_VARIABLE_GUID;
 
 struct efi_loaded_image_protocol
 {
@@ -434,6 +436,21 @@ unsigned _get_variable(char* name, struct efi_guid* vendor_guid, uint32_t* attri
 	return __uefi_5(name, vendor_guid, attributes, data_size, data, _system->runtime_services->get_variable);
 }
 
+char* _string2wide(char* narrow_string);
+size_t strlen(char const* str);
+void free(void* ptr);
+unsigned _set_variable(char* name, void* data)
+{
+	char* wide_name = _string2wide(name);
+	char* wide_data = _string2wide(data);
+	unsigned data_size = strlen(data) * 2 + 2;
+	uint32_t attributes = EFI_VARIABLE_BOOTSERVICE_ACCESS;
+	unsigned rval = __uefi_5(wide_name, &EFI_SHELL_VARIABLE_GUID, attributes, data_size, wide_data, _system->runtime_services->set_variable);
+	free(wide_name);
+	free(wide_data);
+	return rval;
+}
+
 void exit(unsigned value)
 {
 	goto FUNCTION__exit;
@@ -467,9 +484,7 @@ void _free_allocated_memory()
 }
 
 char* strcat(char* dest, char const* src);
-size_t strlen(char const* str);
 void* calloc(int count, int size);
-void free(void* ptr);
 
 char* __posix_path_to_uefi(char* narrow_string, int convert_slashes)
 {
@@ -544,11 +559,20 @@ void _process_load_options(char* load_options)
 	}
 }
 
-struct efi_guid EFI_SHELL_VARIABLE_GUID;
-int memcmp(void const* lhs, void const* rhs, size_t count);
+/* Function to find the length of a char**; an array of strings */
+unsigned _array_length(char** array)
+{
+	unsigned length = 0;
+
+	while(array[length] != NULL)
+	{
+		length += 1;
+	}
+
+	return length;
+}
+
 size_t wcstombs(char* dest, char* src, size_t n);
-char* int2str(int x, int base, int signed_p);
-void* memset(void* dest, int ch, size_t count);
 
 char* _get_environmental_variable(struct efi_guid* vendor_guid, char* name, unsigned size)
 {
@@ -574,6 +598,8 @@ char* _get_environmental_variable(struct efi_guid* vendor_guid, char* name, unsi
 
 	return envp_line;
 }
+
+int memcmp(void const* lhs, void const* rhs, size_t count);
 
 void _get_environmental_variables()
 {

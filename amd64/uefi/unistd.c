@@ -132,6 +132,28 @@ int spawn(char* file_name, char** argv, char** envp)
 	rval = _close_protocol(child_ih, &EFI_LOADED_IMAGE_PROTOCOL_GUID, child_ih, 0);
 	if(rval != EFI_SUCCESS) return -1;
 
+	/* Setup environment for child process */
+	unsigned max = _array_length(envp);
+	char** envp_copy = calloc(sizeof(char*), max + 1);
+	memcpy(envp_copy, envp, max * sizeof(char*));
+
+	unsigned i;
+	unsigned j;
+	char* name;
+	char* value;
+	for(i = 0; i < max; i += 1)
+	{
+		j = 0;
+		name = envp[i];
+		while(envp[i][j] != '=')
+		{
+			j += 1;
+		}
+		envp[i][j] = 0;
+		value = envp[i] + j + 1;
+		_set_variable(name, value);
+	}
+
 	/* Run command */
 	rval = __uefi_3(child_ih, 0, 0, _system->boot_services->start_image);
 	free(uefi_path);
