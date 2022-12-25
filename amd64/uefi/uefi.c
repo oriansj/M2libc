@@ -443,7 +443,7 @@ unsigned _set_variable(char* name, void* data)
 {
 	char* wide_name = _string2wide(name);
 	char* wide_data = _string2wide(data);
-	unsigned data_size = strlen(data) * 2 + 2;
+	unsigned data_size = strlen(data) * 2;
 	uint32_t attributes = EFI_VARIABLE_BOOTSERVICE_ACCESS;
 	unsigned rval = __uefi_5(wide_name, &EFI_SHELL_VARIABLE_GUID, attributes, data_size, wide_data, _system->runtime_services->set_variable);
 	free(wide_name);
@@ -601,7 +601,7 @@ char* _get_environmental_variable(struct efi_guid* vendor_guid, char* name, unsi
 
 int memcmp(void const* lhs, void const* rhs, size_t count);
 
-void _get_environmental_variables()
+char** _get_environmental_variables(char** envp)
 {
 	EFI_SHELL_VARIABLE_GUID.data1 = 0x158def5a;
 	EFI_SHELL_VARIABLE_GUID.data2 = 0xf656;
@@ -619,7 +619,7 @@ void _get_environmental_variables()
 	unsigned rval;
 	unsigned envc = 0;
 	char* name = calloc(size, 1);
-	char* envp_line;
+
 	struct efi_guid vendor_guid;
 	/* First count the number of environmental variables */
 	do
@@ -636,7 +636,7 @@ void _get_environmental_variables()
 	} while(rval == EFI_SUCCESS);
 
 	/* Now redo the search but this time populate envp array */
-	_envp = calloc(sizeof(char*), envc + 1);
+	envp = calloc(sizeof(char*), envc + 1);
 	name[0] = 0;
 	name[1] = 0;
 	unsigned j = 0;
@@ -648,15 +648,36 @@ void _get_environmental_variables()
 		{
 			if(memcmp(&vendor_guid, &EFI_SHELL_VARIABLE_GUID, sizeof(struct efi_guid)) == 0)
 			{
-				_envp[j] = _get_environmental_variable(&vendor_guid, name, size);
+				envp[j] = _get_environmental_variable(&vendor_guid, name, size);
 				j += 1;
 			}
 		}
 	} while(rval == EFI_SUCCESS);
-	_envp[j] = 0;
+	envp[j] = 0;
 	free(name);
 
-	return;
+	return envp;
+}
+
+void _wipe_environment()
+{
+	char** envp = _get_environmental_variables(envp);
+	unsigned i = 0;
+	unsigned j;
+	char* name;
+	while(envp[i] != 0)
+	{
+		j = 0;
+		name = envp[i];
+		while(envp[i][j] != '=')
+		{
+			j += 1;
+		}
+		envp[i][j] = 0;
+		_set_variable(name, "");
+		i += 1;
+	}
+	free(envp);
 }
 
 void* malloc(unsigned size);
@@ -717,7 +738,7 @@ void _init()
 	EFI_FILE_INFO_GUID.data4[6] = 0x72;
 	EFI_FILE_INFO_GUID.data4[7] = 0x3b;
 
-	_get_environmental_variables();
+	_envp = _get_environmental_variables(_envp);
 }
 
 void __kill_io();

@@ -68,6 +68,28 @@ int _get_file_size(struct efi_file_protocol* f)
 	return file_size;
 }
 
+void _set_environment(char** envp)
+{
+	unsigned i;
+	unsigned j;
+	unsigned length = _array_length(envp);
+	char* name;
+	char* value;
+	for(i = 0; i < length; i += 1)
+	{
+		j = 0;
+		name = envp[i];
+		while(envp[i][j] != '=')
+		{
+			j += 1;
+		}
+		envp[i][j] = 0;
+		value = envp[i] + j + 1;
+		_set_variable(name, value);
+		envp[i][j] = '=';
+	}
+}
+
 int spawn(char* file_name, char** argv, char** envp)
 {
 	FILE* fcmd = fopen(file_name, "r");
@@ -133,30 +155,18 @@ int spawn(char* file_name, char** argv, char** envp)
 	if(rval != EFI_SUCCESS) return -1;
 
 	/* Setup environment for child process */
-	unsigned max = _array_length(envp);
-	char** envp_copy = calloc(sizeof(char*), max + 1);
-	memcpy(envp_copy, envp, max * sizeof(char*));
-
-	unsigned i;
-	unsigned j;
-	char* name;
-	char* value;
-	for(i = 0; i < max; i += 1)
-	{
-		j = 0;
-		name = envp[i];
-		while(envp[i][j] != '=')
-		{
-			j += 1;
-		}
-		envp[i][j] = 0;
-		value = envp[i] + j + 1;
-		_set_variable(name, value);
-	}
+	_set_environment(envp);
 
 	/* Run command */
 	rval = __uefi_3(child_ih, 0, 0, _system->boot_services->start_image);
 	free(uefi_path);
+
+	/* Restore initial environment
+	 * For simplicity we just delete all variables and restore them from _envp.
+	 * This assumes that _envp is not modified by application, e.g. kaem.
+	 */
+	_wipe_environment();
+	_set_environment(_envp);
 
 	return rval;
 }
