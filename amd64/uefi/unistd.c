@@ -39,7 +39,13 @@ int access(char* pathname, int mode)
 
 int chdir(char* path)
 {
-	strcpy(_cwd, path);
+	char* absolute_path = _relative_path_to_absolute(path);
+	strncpy(_cwd, absolute_path, __PATH_MAX);
+	if(_cwd[strlen(_cwd) - 1] != '\\')
+	{
+		strncat(_cwd, "/", __PATH_MAX);
+	}
+	free(absolute_path);
 	return 0;
 }
 

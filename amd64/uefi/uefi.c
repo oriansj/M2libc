@@ -490,7 +490,7 @@ char* strcpy(char* dest, char const* src);
 size_t strlen(char const* str);
 void* calloc(int count, int size);
 
-char* _posix_path_to_uefi(char* narrow_string)
+char* _relative_path_to_absolute(char* narrow_string)
 {
 	char* absolute_path = calloc(__PATH_MAX, 1);
 	if(narrow_string[0] != '/' && narrow_string[0] != '\\')
@@ -500,19 +500,27 @@ char* _posix_path_to_uefi(char* narrow_string)
 	strcat(absolute_path, narrow_string);
 
 	unsigned length = strlen(absolute_path);
-	char* wide_string = calloc(length + 1, 2);
 	unsigned i;
 	for(i = 0; i < length; i += 1)
 	{
 		if(absolute_path[i] == '/')
 		{
-			wide_string[2 * i] = '\\';
+			absolute_path[i] = '\\';
 		}
 		else
 		{
-			wide_string[2 * i] = absolute_path[i];
+			absolute_path[i] = absolute_path[i];
 		}
 	}
+
+	return absolute_path;
+}
+
+char* _posix_path_to_uefi(char* narrow_string)
+{
+	char* absolute_path = _relative_path_to_absolute(narrow_string);
+	unsigned length = strlen(absolute_path);
+	char* wide_string = _string2wide(absolute_path);
 	free(absolute_path);
 	return wide_string;
 }
@@ -695,7 +703,6 @@ void _wipe_environment()
 }
 
 int strcmp(char const* lhs, char const* rhs);
-char* strcpy(char* dest, char const* src);
 char* strchr(char const* str, int ch);
 
 void _setup_current_working_directory(char** envp)
