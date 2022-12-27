@@ -326,10 +326,10 @@ struct utsname
 
 int uname(struct utsname* unameData)
 {
-	unameData->sysname = "UEFI";
-	unameData->release = "1.0";
-	unameData->release = "1.0";
-	unameData->machine= "x86_64";
+	memcpy(unameData->sysname, "UEFI", 5);
+	memcpy(unameData->release, "1.0", 4);
+	memcpy(unameData->version, "1.0", 4);
+	memcpy(unameData->machine, "x86_64", 7);
 }
 
 #endif
