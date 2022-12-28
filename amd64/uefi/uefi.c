@@ -499,6 +499,13 @@ char* _relative_path_to_absolute(char* narrow_string)
 	}
 	strcat(absolute_path, narrow_string);
 
+	return absolute_path;
+}
+
+char* _posix_path_to_uefi(char* narrow_string)
+{
+	char* absolute_path = _relative_path_to_absolute(narrow_string);
+
 	unsigned length = strlen(absolute_path);
 	unsigned i;
 	for(i = 0; i < length; i += 1)
@@ -513,13 +520,6 @@ char* _relative_path_to_absolute(char* narrow_string)
 		}
 	}
 
-	return absolute_path;
-}
-
-char* _posix_path_to_uefi(char* narrow_string)
-{
-	char* absolute_path = _relative_path_to_absolute(narrow_string);
-	unsigned length = strlen(absolute_path);
 	char* wide_string = _string2wide(absolute_path);
 	free(absolute_path);
 	return wide_string;
@@ -708,10 +708,10 @@ char* strchr(char const* str, int ch);
 void _setup_current_working_directory(char** envp)
 {
 	_cwd = calloc(__PATH_MAX, 1);
-	strcpy(_cwd, "/");
 
 	unsigned i = 0;
 	unsigned j;
+	unsigned k;
 	char* value;
 	char* match;
 
@@ -732,9 +732,22 @@ void _setup_current_working_directory(char** envp)
 				value = match + 1;
 			}
 			strcpy(_cwd, value);
+			k = 0;
+			while(_cwd[k] != '\0')
+			{
+				if(_cwd[k] == '\\')
+				{
+					_cwd[k] = '/';
+				}
+				k += 1;
+			}
 		}
 		envp[i][j] = '=';
 		i += 1;
+	}
+	if(strcmp(_cwd, "") == 0)
+	{
+		strcpy(_cwd, "/");
 	}
 }
 

@@ -279,21 +279,11 @@ int unlink(char* filename)
 }
 
 
-int _getcwd(char* buf, int size)
-{
-	asm("lea_rdi,[rsp+DWORD] %16"
-	    "mov_rdi,[rdi]"
-	    "lea_rsi,[rsp+DWORD] %8"
-	    "mov_rsi,[rsi]"
-	    "mov_rax, %79"
-	    "syscall");
-}
-
-
 char* getcwd(char* buf, unsigned size)
 {
-	int c = _getcwd(buf, size);
-	if(0 == c) return NULL;
+	size_t length = strlen(_cwd);
+	if(length >= size) return NULL;
+	strcpy(buf, _cwd);
 	return buf;
 }
 
