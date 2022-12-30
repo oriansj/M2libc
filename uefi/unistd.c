@@ -318,7 +318,9 @@ int uname(struct utsname* unameData)
 	memcpy(unameData->sysname, "UEFI", 5);
 	memcpy(unameData->release, "1.0", 4);
 	memcpy(unameData->version, "1.0", 4);
+#ifdef __x86_64__
 	memcpy(unameData->machine, "x86_64", 7);
+#endif
 }
 
 #endif

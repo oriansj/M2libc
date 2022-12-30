@@ -300,6 +300,7 @@ struct efi_device_path_protocol
 
 unsigned __uefi_1(void*, void*, FUNCTION f)
 {
+#ifdef __x86_64__
 	asm("lea_rcx,[rbp+DWORD] %-8"
 	    "mov_rcx,[rcx]"
 	    "lea_rax,[rbp+DWORD] %-16"
@@ -307,10 +308,14 @@ unsigned __uefi_1(void*, void*, FUNCTION f)
 	    "sub_rsp, %8"
 	    "call_rax"
 	    "add_rsp, %8");
+#else
+#error arch not supported
+#endif
 }
 
 unsigned __uefi_2(void*, void*, FUNCTION f)
 {
+#ifdef __x86_64__
 	asm("lea_rcx,[rbp+DWORD] %-8"
 	    "mov_rcx,[rcx]"
 	    "lea_rdx,[rbp+DWORD] %-16"
@@ -320,10 +325,14 @@ unsigned __uefi_2(void*, void*, FUNCTION f)
 	    "sub_rsp, %16"
 	    "call_rax"
 	    "add_rsp, %16");
+#else
+#error arch not supported
+#endif
 }
 
 unsigned __uefi_3(void*, void*, void*, FUNCTION f)
 {
+#ifdef __x86_64__
 	asm("lea_rcx,[rbp+DWORD] %-8"
 	    "mov_rcx,[rcx]"
 	    "lea_rdx,[rbp+DWORD] %-16"
@@ -335,10 +344,14 @@ unsigned __uefi_3(void*, void*, void*, FUNCTION f)
 	    "sub_rsp, %24"
 	    "call_rax"
 	    "add_rsp, %24");
+#else
+#error arch not supported
+#endif
 }
 
 unsigned __uefi_4(void*, void*, void*, void*, FUNCTION f)
 {
+#ifdef __x86_64__
 	asm("lea_rcx,[rbp+DWORD] %-8"
 	    "mov_rcx,[rcx]"
 	    "lea_rdx,[rbp+DWORD] %-16"
@@ -352,10 +365,14 @@ unsigned __uefi_4(void*, void*, void*, void*, FUNCTION f)
 	    "sub_rsp, %32"
 	    "call_rax"
 	    "add_rsp, %32");
+#else
+#error arch not supported
+#endif
 }
 
 unsigned __uefi_5(void*, void*, void*, void*, void*, FUNCTION f)
 {
+#ifdef __x86_64__
 	asm("lea_rcx,[rbp+DWORD] %-8"
 	    "mov_rcx,[rcx]"
 	    "lea_rdx,[rbp+DWORD] %-16"
@@ -372,10 +389,14 @@ unsigned __uefi_5(void*, void*, void*, void*, void*, FUNCTION f)
 	    "sub_rsp, %32"
 	    "call_rax"
 	    "add_rsp, %40");
+#else
+#error arch not supported
+#endif
 }
 
 unsigned __uefi_6(void*, void*, void*, void*, void*, void*, FUNCTION f)
 {
+#ifdef __x86_64__
 	asm("lea_rcx,[rbp+DWORD] %-8"
 	    "mov_rcx,[rcx]"
 	    "lea_rdx,[rbp+DWORD] %-16"
@@ -395,6 +416,9 @@ unsigned __uefi_6(void*, void*, void*, void*, void*, void*, FUNCTION f)
 	    "sub_rsp, %32"
 	    "call_rax"
 	    "add_rsp, %48");
+#else
+#error arch not supported
+#endif
 }
 
 unsigned _allocate_pool(unsigned memory_type, unsigned size, void* pool)
