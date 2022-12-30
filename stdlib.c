@@ -37,12 +37,6 @@ struct _malloc_node
 	int used;
 };
 
-struct _malloc_blob
-{
-	struct _malloc_blob* next;
-	struct _malloc_node* blob;
-};
-
 struct _malloc_node* _allocated_list;
 struct _malloc_node* _free_list;
 
@@ -70,41 +64,49 @@ void* _malloc_brk(unsigned size)
 	return old_malloc;
 }
 
-
-/* Setup our initial tracking structure */
 void __init_malloc()
 {
-#ifdef __uefi__
-	_free_list = _malloc_uefi(sizeof(struct _malloc_node));
-#else
-	_free_list = _malloc_brk(sizeof(struct _malloc_node));
-#endif
-	_free_list->next = NULL;
-	_free_list->block = NULL;
-	_free_list->size = 0;
-	_free_list->used = _IN_USE;
+	_free_list = NULL;
+	_allocated_list = NULL;
+	return;
 }
 
+/************************************************************************
+ * Handle with the tricky insert behaviors for our nodes                *
+ * As free lists must be sorted from smallest to biggest to enable      *
+ * cheap first fit logic                                                *
+ * The free function however is rarely called, so it can kick sand and  *
+ * do things the hard way                                               *
+ ************************************************************************/
 void _malloc_insert_block(struct _malloc_node* n, int used)
 {
 	/* Allocated block doesn't care about order */
 	if(_IN_USE == used)
 	{
+		/* Literally just be done as fast as possible */
 		n->next = _allocated_list;
 		_allocated_list = n;
 		return;
 	}
 
-	/* Free block does */
+	/* sanity check garbage */
+	if(_NOT_IN_USE != used) exit(EXIT_FAILURE);
+	if(_NOT_IN_USE != n->used) exit(EXIT_FAILURE);
+	if(NULL != n->next) exit(EXIT_FAILURE);
+
+	/* Free block really does care about order */
 	struct _malloc_node* i = _free_list;
 	struct _malloc_node* last = NULL;
 	while(NULL != i)
 	{
 		/* sort smallest to largest */
-		if(n->size < i->size)
+		if(n->size <= i->size)
 		{
+			/* Connect */
 			n->next = i;
+			/* If smallest yet */
 			if(NULL == last) _free_list = n;
+			/* or just another average block */
 			else last->next = n;
 			return;
 		}
@@ -114,27 +116,37 @@ void _malloc_insert_block(struct _malloc_node* n, int used)
 		i = i->next;
 	}
 
-	/* Looks like we are the biggest yet */
-	last->next = n;
+	/* looks like we are the only one */
+	if(NULL == last) _free_list = n;
+	/* or we are the biggest yet */
+	else last->next = n;
 }
 
 /************************************************************************
  * We only mark a block as unused, we don't actually deallocate it here *
+ * But rather shove it into our _free_list                              *
  ************************************************************************/
 void free(void* ptr)
 {
-#ifdef _MALLOC_ENABLE_FREE
+/* just in case someone needs to quickly turn it off */
+#ifndef _MALLOC_DISABLE_FREE
 	struct _malloc_node* i = _allocated_list;
 	struct _malloc_node* last = NULL;
+
+	/* walk the whole freaking list if needed to do so */
 	while(NULL != i)
 	{
+		/* did we find it? */
 		if(i->block == ptr)
 		{
-			/* detach */
+			/* detach the block */
 			if(NULL == last) _allocated_list = i->next;
+			/* in a way that doesn't break the allocated list */
 			else last->next = i->next;
 
+			/* insert into free'd list */
 			i->used = _NOT_IN_USE;
+			i->next = NULL;
 			_malloc_insert_block(i, _NOT_IN_USE);
 			return;
 		}
@@ -145,9 +157,10 @@ void free(void* ptr)
 	}
 
 	/* we received a pointer to a block that wasn't allocated */
-	/* Bail *HARD* */
+	/* Bail *HARD* because I don't want to cover this edge case */
 	exit(EXIT_FAILURE);
 #endif
+	/* if free is disabled, there is nothing to do */
 	return;
 }
 
@@ -159,22 +172,25 @@ void* _malloc_find_free(unsigned size)
 {
 	struct _malloc_node* i = _free_list;
 	struct _malloc_node* last = NULL;
+	/* Walk the whole list if need be */
 	while(NULL != i)
 	{
+		/* see if anything in it is equal or bigger than what I need */
 		if((_NOT_IN_USE == i->used) && (i->size > size))
 		{
-			/* disconnect from list */
+			/* disconnect from list ensuring we don't break free doing so */
 			if(NULL == last) _free_list = i->next;
 			else last->next = i->next;
 
-			/* insert */
+			/* insert into allocated list */
 			i->used = _IN_USE;
+			i->next = NULL;
 			_malloc_insert_block(i, _IN_USE);
 			return i->block;
 		}
 
-		/* iterate */
-		last = i->next;
+		/* iterate (will loop forever if you get this wrong) */
+		last = i;
 		i = i->next;
 	}
 
@@ -182,36 +198,75 @@ void* _malloc_find_free(unsigned size)
 	return NULL;
 }
 
+/************************************************************************
+ * Well we couldn't find any memory good enough to satisfy our needs so *
+ * we are going to have to go beg for some memory on the street corner  *
+ ************************************************************************/
 void* _malloc_add_new(unsigned size)
 {
 	struct _malloc_node* n;
 #ifdef __uefi__
 	n = _malloc_uefi(sizeof(struct _malloc_node));
+	/* Check if we were beaten */
+	if(NULL == n) return NULL;
 	n->block = _malloc_uefi(size);
 #else
 	n = _malloc_brk(sizeof(struct _malloc_node));
+	/* Check if we were beaten */
+	if(NULL == n) return NULL;
 	n->block = _malloc_brk(size);
 #endif
+	/* check if we were robbed */
+	if(NULL == n->block) return NULL;
+
+	/* Looks like we made it home safely */
 	n->size = size;
+	n->next = NULL;
 	n->used = _IN_USE;
+	/* lets pop the cork and party */
 	_malloc_insert_block(n, _IN_USE);
 	return n->block;
 }
 
+/************************************************************************
+ * Provide a POSIX standardish malloc function to keep things working   *
+ ************************************************************************/
 void* malloc(unsigned size)
 {
-	void* ptr = _malloc_find_free(size);
+	/* skip allocating nothing */
+	if(0 == size) return NULL;
+
+	/* use one of the standard block sizes */
+	size_t max = 1 << 30;
+	size_t used = 256;
+	while(used < size)
+	{
+		used = used << 1;
+
+		/* fail big allocations */
+		if(used > max) return NULL;
+	}
+
+	/* try the cabinets around the house */
+	void* ptr = _malloc_find_free(used);
+
+	/* looks like we need to get some more from the street corner */
 	if(NULL == ptr)
 	{
-		ptr = _malloc_add_new(size);
+		ptr = _malloc_add_new(used);
 	}
+
+	/* hopefully you can handle NULL pointers, good luck */
 	return ptr;
 }
 
-
+/************************************************************************
+ * Provide a POSIX standardish memset function to keep things working   *
+ ************************************************************************/
 void* memset(void* ptr, int value, int num)
 {
 	char* s;
+	/* basically walk the block 1 byte at a time and set it to any value you want */
 	for(s = ptr; 0 < num; num = num - 1)
 	{
 		s[0] = value;
@@ -221,10 +276,14 @@ void* memset(void* ptr, int value, int num)
 	return ptr;
 }
 
-
+/************************************************************************
+ * Provide a POSIX standardish calloc function to keep things working   *
+ ************************************************************************/
 void* calloc(int count, int size)
 {
+	/* if things get allocated, we are good*/
 	void* ret = malloc(count * size);
+	/* otherwise good luck */
 	if(NULL == ret) return NULL;
 	memset(ret, 0, (count * size));
 	return ret;
@@ -247,8 +306,12 @@ void __set_name(char* s, int i)
 	s[0] = '0' + i;
 }
 
+/************************************************************************
+ * Provide a POSIX standardish mkstemp function to keep things working  *
+ ************************************************************************/
 int mkstemp(char *template)
 {
+	/* get length of template */
 	int i = 0;
 	while(0 != template[i]) i = i + 1;
 	i = i - 1;
@@ -256,6 +319,7 @@ int mkstemp(char *template)
 	/* String MUST be more than 6 characters in length */
 	if(i < 6) return -1;
 
+	/* Sanity check the string matches the template requirements */
 	int count = 6;
 	int c;
 	while(count > 0)
@@ -288,12 +352,19 @@ int mkstemp(char *template)
 	return fd;
 }
 
+/************************************************************************
+ * wcstombs - convert a wide-character string to a multibyte string     *
+ * because seriously UEFI??? UTF-16 is a bad design choice but I guess  *
+ * they were drinking pretty hard when they designed UEFI; it is DOS    *
+ * but somehow they magically found ways of making it worse             *
+ ************************************************************************/
 size_t wcstombs(char* dest, char* src, size_t n)
 {
 	int i = 0;
 
 	do
 	{
+		/* UTF-16 is 2bytes per char and that first byte maps good enough to ASCII */
 		dest[i] = src[2 * i];
 		if(dest[i] == 0)
 		{
