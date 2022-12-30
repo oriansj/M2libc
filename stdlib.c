@@ -229,6 +229,31 @@ void* _malloc_add_new(unsigned size)
 }
 
 /************************************************************************
+ * Safely iterates over all malloc nodes and frees them                 *
+ ************************************************************************/
+void __malloc_node_iter(struct _malloc_node* node, FUNCTION _free)
+{
+	struct _malloc_node* current;
+	while(node != NULL)
+	{
+		current = node;
+		node = node->next;
+		_free(current->block);
+		_free(current);
+	}
+}
+
+/************************************************************************
+ * Runs a callback with all previously allocated nodes.                 *
+ * This can be useful if operating system does not do any clean up.     *
+ ************************************************************************/
+void* _malloc_release_all(FUNCTION _free)
+{
+	__malloc_node_iter(_allocated_list, _free);
+	__malloc_node_iter(_free_list, _free);
+}
+
+/************************************************************************
  * Provide a POSIX standardish malloc function to keep things working   *
  ************************************************************************/
 void* malloc(unsigned size)

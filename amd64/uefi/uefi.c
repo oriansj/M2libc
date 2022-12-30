@@ -31,7 +31,6 @@
 #define EFI_FILE_MODE_CREATE (1 << 63)
 #define EFI_FILE_READ_ONLY 1
 #define EFI_FILE_DIRECTORY 0x10
-#define EFI_ALLOCATE_ANY_PAGES 0
 #define EFI_LOADER_DATA 2
 
 #define EFI_VARIABLE_BOOTSERVICE_ACCESS 2
@@ -398,14 +397,14 @@ unsigned __uefi_6(void*, void*, void*, void*, void*, void*, FUNCTION f)
 	    "add_rsp, %48");
 }
 
-unsigned _allocate_pages(unsigned type, unsigned memory_type, unsigned pages, void* memory)
+unsigned _allocate_pool(unsigned memory_type, unsigned size, void* pool)
 {
-	return __uefi_4(type, memory_type, pages, memory, _system->boot_services->allocate_pages);
+	return __uefi_3(memory_type, size, pool, _system->boot_services->allocate_pool);
 }
 
-void _free_pages(void* memory, unsigned pages)
+void _free_pool(void* memory)
 {
-	return __uefi_2(memory, pages, _system->boot_services->free_pages);
+	return __uefi_1(memory, _system->boot_services->free_pool);
 }
 
 unsigned _open_protocol(void* handle, struct efi_guid* protocol, void* agent_handle, void** interface, void* controller_handle, long attributes, FUNCTION open_protocol)
@@ -456,33 +455,6 @@ unsigned _set_variable(char* name, void* data)
 void exit(unsigned value)
 {
 	goto FUNCTION__exit;
-}
-
-struct _allocated_node
-{
-	struct _allocated_node *next;
-	unsigned pages;
-};
-struct _allocated_node _allocated_pages;
-
-void __init_malloc();
-
-void __init_malloc_uefi()
-{
-	__init_malloc();
-	_allocated_pages.next = NULL;
-}
-
-void _free_allocated_memory()
-{
-	struct _allocated_node* block = _allocated_pages.next;
-	struct _allocated_node* next_block;
-	while(block)
-	{
-		next_block = block->next;
-		_free_pages(block, block->pages);
-		block = next_block;
-	}
 }
 
 char* strcat(char* dest, char const* src);
@@ -756,8 +728,6 @@ void __init_io();
 
 void _init()
 {
-	__init_malloc_uefi();
-
 	/* Allocate user stack, UEFI stack is not big enough for compilers */
 	__user_stack = malloc(USER_STACK_SIZE) + USER_STACK_SIZE;
 
@@ -814,6 +784,7 @@ void _init()
 }
 
 void __kill_io();
+void* _malloc_release_all(FUNCTION _free);
 
 void _cleanup()
 {
@@ -821,25 +792,17 @@ void _cleanup()
 	_close(_rootdir);
 	_close_protocol(_root_device, &EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID, _image_handle, 0);
 	_close_protocol(_image_handle, &EFI_LOADED_IMAGE_PROTOCOL_GUID, _image_handle, 0);
-	_free_allocated_memory();
+	_malloc_release_all(_free_pool);
 }
 
 void* _malloc_uefi(unsigned size)
 {
 	void* memory_block;
-	unsigned pages = (size + sizeof(struct _allocated_node) + PAGE_SIZE - 1) / PAGE_SIZE;
-	if(_allocate_pages(EFI_ALLOCATE_ANY_PAGES, EFI_LOADER_DATA, pages, &memory_block) != EFI_SUCCESS)
+	if(_allocate_pool(EFI_LOADER_DATA, size, &memory_block) != EFI_SUCCESS)
 	{
 	    return 0;
 	}
-
-	struct _allocated_node *new_node;
-	new_node = memory_block;
-	new_node->pages = pages;
-	new_node->next = _allocated_pages->next;
-	_allocated_pages.next = new_node;
-
-	return memory_block + sizeof(struct _allocated_node);
+	return memory_block;
 }
 
 #endif
