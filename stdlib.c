@@ -22,9 +22,8 @@
 #define EXIT_FAILURE 1
 #define EXIT_SUCCESS 0
 
-#define _ALLOC_HDR_SIZE sizeof(struct _malloc_node)
-#define _MIN_ALLOC_SIZE 32
-#define _ALLOC_BLOCK_SIZE 1048576
+#define _IN_USE 1
+#define _NOT_IN_USE 0
 
 typedef char wchar_t;
 
@@ -33,138 +32,23 @@ void exit(int value);
 struct _malloc_node
 {
 	struct _malloc_node *next;
-	struct _malloc_node *prev;
+	void* block;
 	size_t size;
+	int used;
 };
-struct _malloc_node _free_list;
 
-void __init_malloc()
+struct _malloc_blob
 {
-	_free_list.next = &_free_list;
-	_free_list.prev = &_free_list;
-	_free_list.size = 0;
-}
+	struct _malloc_blob* next;
+	struct _malloc_node* blob;
+};
 
-void __list_add(struct _malloc_node* n, struct _malloc_node* prev, struct _malloc_node* next)
-{
-	next->prev = n;
-	n->next = next;
-	n->prev = prev;
-	prev->next = n;
-}
+struct _malloc_node* _allocated_list;
+struct _malloc_node* _free_list;
 
-void _list_add(struct _malloc_node* n, struct _malloc_node* head)
-{
-	__list_add(n, head, head->next);
-}
-
-void _list_add_tail(struct _malloc_node* n, struct _malloc_node* head)
-{
-	__list_add(n, head->prev, head);
-}
-
-void _list_del(struct _malloc_node* entry)
-{
-	entry->next->prev = entry->prev;
-	entry->prev->next = entry->next;
-}
-
-void _malloc_addblock(struct _malloc_node *blk, size_t size)
-{
-	/* This uses M2 pointer arithmetic which is different from C.
-	   pointer + 1 moves the pointer by 1 rather than by sizeof(type). */
-	blk->size = size - _ALLOC_HDR_SIZE;
-	_list_add(blk, &_free_list);
-}
-
-/**
- * When we free, we can take our node and check to see if any memory blocks
- * can be combined into larger blocks.  This will help us fight against
- * memory fragmentation in a simple way.
- */
-void _defrag_free_list(void)
-{
-	struct _malloc_node* block;
-	struct _malloc_node* last_block = NULL;
-
-	for(block = _free_list.next; block != &_free_list; block = block->next)
-	{
-		if(last_block)
-		{
-			if((last_block + _ALLOC_HDR_SIZE + last_block->size) == block)
-			{
-				last_block->size += _ALLOC_HDR_SIZE + block->size;
-				_list_del(block);
-				continue;
-			}
-		}
-		last_block = block;
-	}
-}
-
-void free(void* ptr)
-{
-	struct _malloc_node* blk;
-	struct _malloc_node* free_blk;
-
-	/* Don't free a NULL pointer */
-	if(ptr)
-	{
-		/* Get corresponding allocation block */
-		blk = ptr - _ALLOC_HDR_SIZE;
-
-		/* Let's put it back in the proper spot */
-		for(free_blk = _free_list.next; free_blk != &_free_list; free_blk = free_blk->next)
-		{
-			if(free_blk > blk)
-			{
-				__list_add(blk, free_blk->prev, free_blk);
-				goto blockadded;
-			}
-		}
-		_list_add_tail(blk, &_free_list);
-
-	blockadded:
-		/* Let's see if we can combine any memory */
-		_defrag_free_list();
-	}
-
-	return;
-}
-
-void* _malloc_free_list(unsigned size)
-{
-	void* ptr = NULL;
-	struct _malloc_node* blk;
-
-	if(size > 0)
-	{
-		for(blk = _free_list.next; blk != &_free_list; blk = blk->next)
-		{
-			if(blk->size >= size)
-			{
-				ptr = blk + _ALLOC_HDR_SIZE;
-				break;
-			}
-		}
-	}
-
-	if(ptr)
-	{
-		if((blk->size - size) >= _MIN_ALLOC_SIZE)
-		{
-			struct _malloc_node *new_blk;
-			new_blk = ptr + size;
-			new_blk->size = blk->size - size - _ALLOC_HDR_SIZE;
-			blk->size = size;
-			__list_add(new_blk, blk, blk->next);
-		}
-		_list_del(blk);
-	}
-
-	return ptr;
-}
-
+/********************************
+ * The core POSIX malloc        *
+ ********************************/
 long _malloc_ptr;
 long _brk_ptr;
 void* _malloc_brk(unsigned size)
@@ -186,25 +70,140 @@ void* _malloc_brk(unsigned size)
 	return old_malloc;
 }
 
-void* malloc(unsigned size)
+
+/* Setup our initial tracking structure */
+void __init_malloc()
 {
-	void* ptr = _malloc_free_list(size);
-	if(ptr)
+#ifdef __uefi__
+	_free_list = _malloc_uefi(sizeof(struct _malloc_node));
+#else
+	_free_list = _malloc_brk(sizeof(struct _malloc_node));
+#endif
+	_free_list->next = NULL;
+	_free_list->block = NULL;
+	_free_list->size = 0;
+	_free_list->used = _IN_USE;
+}
+
+void _malloc_insert_block(struct _malloc_node* n, int used)
+{
+	/* Allocated block doesn't care about order */
+	if(_IN_USE == used)
 	{
-		return ptr;
+		n->next = _allocated_list;
+		_allocated_list = n;
+		return;
 	}
 
-	unsigned memory_required = (size / _ALLOC_BLOCK_SIZE + 1) * _ALLOC_BLOCK_SIZE;
-#ifdef __uefi__
-	void* blk = _malloc_uefi(memory_required);
-#else
-	void* blk = _malloc_brk(memory_required);
-#endif
-
-	if(blk)
+	/* Free block does */
+	struct _malloc_node* i = _free_list;
+	struct _malloc_node* last = NULL;
+	while(NULL != i)
 	{
-		_malloc_addblock(blk, memory_required);
-		ptr = _malloc_free_list(size);
+		/* sort smallest to largest */
+		if(n->size < i->size)
+		{
+			n->next = i;
+			if(NULL == last) _free_list = n;
+			else last->next = n;
+			return;
+		}
+
+		/* iterate */
+		last = i;
+		i = i->next;
+	}
+
+	/* Looks like we are the biggest yet */
+	last->next = n;
+}
+
+/************************************************************************
+ * We only mark a block as unused, we don't actually deallocate it here *
+ ************************************************************************/
+void free(void* ptr)
+{
+#ifdef _MALLOC_ENABLE_FREE
+	struct _malloc_node* i = _allocated_list;
+	struct _malloc_node* last = NULL;
+	while(NULL != i)
+	{
+		if(i->block == ptr)
+		{
+			/* detach */
+			if(NULL == last) _allocated_list = i->next;
+			else last->next = i->next;
+
+			i->used = _NOT_IN_USE;
+			_malloc_insert_block(i, _NOT_IN_USE);
+			return;
+		}
+
+		/* iterate */
+		last = i;
+		i = i->next;
+	}
+
+	/* we received a pointer to a block that wasn't allocated */
+	/* Bail *HARD* */
+	exit(EXIT_FAILURE);
+#endif
+	return;
+}
+
+/************************************************************************
+ * find if there is any "FREED" blocks big enough to sit on our memory  *
+ * budget's face and ruin its life. Respectfully of course              *
+ ************************************************************************/
+void* _malloc_find_free(unsigned size)
+{
+	struct _malloc_node* i = _free_list;
+	struct _malloc_node* last = NULL;
+	while(NULL != i)
+	{
+		if((_NOT_IN_USE == i->used) && (i->size > size))
+		{
+			/* disconnect from list */
+			if(NULL == last) _free_list = i->next;
+			else last->next = i->next;
+
+			/* insert */
+			i->used = _IN_USE;
+			_malloc_insert_block(i, _IN_USE);
+			return i->block;
+		}
+
+		/* iterate */
+		last = i->next;
+		i = i->next;
+	}
+
+	/* Couldn't find anything big enough */
+	return NULL;
+}
+
+void* _malloc_add_new(unsigned size)
+{
+	struct _malloc_node* n;
+#ifdef __uefi__
+	n = _malloc_uefi(sizeof(struct _malloc_node));
+	n->block = _malloc_uefi(size);
+#else
+	n = _malloc_brk(sizeof(struct _malloc_node));
+	n->block = _malloc_brk(size);
+#endif
+	n->size = size;
+	n->used = _IN_USE;
+	_malloc_insert_block(n, _IN_USE);
+	return n->block;
+}
+
+void* malloc(unsigned size)
+{
+	void* ptr = _malloc_find_free(size);
+	if(NULL == ptr)
+	{
+		ptr = _malloc_add_new(size);
 	}
 	return ptr;
 }
