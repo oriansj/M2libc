@@ -272,10 +272,9 @@ int close(int fd)
 
 int unlink(char* filename)
 {
-	asm("lea_rdi,[rsp+DWORD] %8"
-	    "mov_rdi,[rdi]"
-	    "mov_rax, %87"
-	    "syscall");
+	FILE* f = fopen(filename, "r");
+	struct efi_file_protocol* fd = f->fd;
+	__uefi_1(fd, fd->delete);
 }
 
 
