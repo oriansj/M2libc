@@ -59,8 +59,9 @@ int mkdir(char const* name, mode_t _mode)
 	if(new_directory != -1)
 	{
 		_close(new_directory);
+		return 0;
 	}
-	return new_directory;
+	return -1;
 }
 
 
