@@ -52,10 +52,8 @@ int chdir(char* path)
 
 int fchdir(int fd)
 {
-	asm("lea_rdi,[rsp+DWORD] %8"
-	    "mov_rdi,[rdi]"
-	    "mov_rax, %81"
-	    "syscall");
+	/* TODO: not yet implemented. */
+	return -1;
 }
 
 int _get_file_size(struct efi_file_protocol* f)
