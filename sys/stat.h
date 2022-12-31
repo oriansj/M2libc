@@ -19,7 +19,9 @@
 #define _SYS_STAT_H
 
 #ifdef __M2__
-#if __i386__
+#if __uefi__
+#include <uefi/sys/stat.c>
+#elif __i386__
 #include <x86/linux/sys/stat.c>
 #elif __x86_64__
 #include <amd64/linux/sys/stat.c>

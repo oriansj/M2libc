@@ -18,8 +18,6 @@
 #ifndef __FCNTL_C
 #define __FCNTL_C
 
-#include <amd64/uefi/uefi.c>
-
 #define O_RDONLY 0
 #define O_WRONLY 1
 #define O_RDWR 2
@@ -32,6 +30,8 @@
 #define S_IWUSR 00200
 #define S_IRUSR 00400
 #define S_IRWXU 00700
+
+#include <uefi/uefi.c>
 
 void free(void* l);
 

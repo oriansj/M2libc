@@ -19,7 +19,9 @@
 #define _FCNTL_C
 
 #ifdef __M2__
-#if __i386__
+#if __uefi__
+#include <uefi/fcntl.c>
+#elif __i386__
 #include <x86/linux/fcntl.c>
 #elif __x86_64__
 #include <amd64/linux/fcntl.c>

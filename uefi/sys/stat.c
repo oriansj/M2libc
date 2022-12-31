@@ -18,7 +18,7 @@
 #ifndef _SYS_STAT_C
 #define _SYS_STAT_C
 
-#include <amd64/uefi/uefi.c>
+#include <uefi/uefi.c>
 #include <sys/types.h>
 
 #define S_IRWXU 00700
@@ -49,6 +49,7 @@ int fchmod(int a, mode_t b)
 	return 0;
 }
 
+int __open(struct efi_file_protocol* _rootdir, char* name, long mode, long attributes);
 int mkdir(char const* name, mode_t _mode)
 {
 	struct efi_file_protocol* new_directory;

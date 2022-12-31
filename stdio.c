@@ -32,22 +32,6 @@
 #define SEEK_CUR 1
 #define SEEK_END 2
 
-/* Actual format of FILE */
-struct __IO_FILE
-{
-	int fd;
-	int bufmode; /* O_RDONLY = 0, O_WRONLY = 1 */
-	int bufpos;
-	int file_pos;
-	int buflen;
-	char* buffer;
-	struct __IO_FILE* next;
-	struct __IO_FILE* prev;
-};
-
-/* Now give us the FILE we all love */
-typedef struct __IO_FILE FILE;
-
 /* Required variables */
 FILE* stdin;
 FILE* stdout;

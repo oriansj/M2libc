@@ -19,6 +19,23 @@
 #define _STDIO_H
 
 #ifdef __M2__
+
+/* Actual format of FILE */
+struct __IO_FILE
+{
+	int fd;
+	int bufmode; /* O_RDONLY = 0, O_WRONLY = 1 */
+	int bufpos;
+	int file_pos;
+	int buflen;
+	char* buffer;
+	struct __IO_FILE* next;
+	struct __IO_FILE* prev;
+};
+
+/* Now give us the FILE we all love */
+typedef struct __IO_FILE FILE;
+
 #include <stdio.c>
 #else
 

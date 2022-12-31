@@ -19,8 +19,9 @@
 #ifndef _UNISTD_C
 #define _UNISTD_C
 
-#include <amd64/uefi/uefi.c>
+#include <uefi/uefi.c>
 #include <string.h>
+#include <stdio.h>
 
 #define NULL 0
 #define EOF 0xFFFFFFFF
@@ -94,6 +95,9 @@ void _set_environment(char** envp)
 	}
 }
 
+FILE* fopen(char const* filename, char const* mode);
+size_t fread(void* buffer, size_t size, size_t count, FILE* stream);
+int fclose(FILE* stream);
 int spawn(char* file_name, char** argv, char** envp)
 {
 	FILE* fcmd = fopen(file_name, "r");

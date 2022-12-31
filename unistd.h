@@ -19,7 +19,9 @@
 #define _UNISTD_H
 
 #ifdef __M2__
-#if __i386__
+#if __uefi__
+#include <uefi/unistd.c>
+#elif __i386__
 #include <x86/linux/unistd.c>
 #elif __x86_64__
 #include <amd64/linux/unistd.c>
