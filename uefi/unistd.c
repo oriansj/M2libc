@@ -1,4 +1,4 @@
-/* Copyright (C) 2020 Jeremiah Orians
+/* Copyright (C) 2022 Andrius Štikonas
  * This file is part of M2-Planet.
  *
  * M2-Planet is free software: you can redistribute it and/or modify
@@ -20,7 +20,6 @@
 #define _UNISTD_C
 
 #include <uefi/uefi.c>
-#include <string.h>
 #include <stdio.h>
 
 #define NULL 0
@@ -32,6 +31,10 @@
 #define SEEK_END 2
 
 void* malloc(unsigned size);
+size_t strlen(char const* str);
+char* strncpy(char* dest, char const* src, size_t count);
+char* strncat(char* dest, char const* src, size_t count);
+void* memcpy(void* dest, void const* src, size_t count);
 
 int access(char* pathname, int mode)
 {

@@ -21,6 +21,7 @@
 #define _UEFI_C
 
 #include <ctype.h>
+#include <uefi/string_p.h>
 
 #define PAGE_SIZE 4096
 #define USER_STACK_SIZE 8388608
