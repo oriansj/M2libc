@@ -322,6 +322,8 @@ int uname(struct utsname* unameData)
 	memcpy(unameData->version, "1.0", 4);
 #ifdef __x86_64__
 	memcpy(unameData->machine, "x86_64", 7);
+#else
+#error unsupported arch
 #endif
 }
 
