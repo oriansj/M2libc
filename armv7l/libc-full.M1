@@ -144,3 +144,6 @@
 	'0' R1 R0 NO_SHIFT MOVE_ALWAYS  ; MOV R0,R1
 	{LR} POP_ALWAYS                 ; Prepare for return
 	'1' LR RETURN
+
+:GLOBAL__envp
+	NULL

@@ -53,3 +53,6 @@
 :FUNCTION__exit
 	LOAD R0 R14 0
 	SYS_EXIT
+
+:GLOBAL__envp
+	NULL

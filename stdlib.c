@@ -401,3 +401,45 @@ size_t wcstombs(char* dest, char* src, size_t n)
 
 	return i;
 }
+
+/************************************************************************
+ * getenv - get an environmental variable                               *
+ ************************************************************************/
+size_t _strlen(char const* str)
+{
+	size_t i = 0;
+	while(0 != str[i]) i = i + 1;
+	return i;
+}
+int _strncmp(char const* lhs, char const* rhs, size_t count)
+{
+	size_t i = 0;
+	while(count > i)
+	{
+		if(0 == lhs[i]) break;
+		if(lhs[i] != rhs[i]) return lhs[i] - rhs[i];
+		i = i + 1;
+	}
+
+	return 0;
+}
+char** _envp;
+char* getenv (char const* name)
+{
+	char** p = _envp;
+	char* q;
+	int length = _strlen(name);
+
+	while (p[0] != 0)
+	{
+		if(_strncmp(name, p[0], length) == 0)
+		{
+			q = p[0] + length;
+			if(q[0] == '=')
+				return q + 1;
+		}
+		p += sizeof(char**); /* M2 pointer arithemtic */
+	}
+
+	return 0;
+}

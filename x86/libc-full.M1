@@ -29,6 +29,8 @@
 	sal_eax, !2                 ; OFFSET = OFFSET * WORDSIZE
 	add_eax,ebp                 ; ENVP_address = ESP + OFFSET
 	push_eax                    ; Put envp on the stack
+	mov_ebx, &GLOBAL__envp      ; Get _envp global
+	mov_[ebx],eax               ; Save environment to _envp
 
 	;; Stack offset
 	add_ebp, %4                 ; Fix ebp
@@ -51,3 +53,6 @@
 	pop_ebx
 	mov_eax, %1
 	int !0x80
+
+:GLOBAL__envp
+	NULL

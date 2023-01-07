@@ -36,6 +36,7 @@ extern void free(void* l);
 extern void* malloc(unsigned size);
 extern void* memset(void* ptr, int value, int num);
 extern void* calloc(int count, int size);
+extern char *getenv(const char *name);
 
 size_t wcstombs(char* dest, const wchar_t* src, size_t n);
 
