@@ -443,3 +443,49 @@ char* getenv (char const* name)
 
 	return 0;
 }
+
+/************************************************************************
+ * setenv - set an environmental variable                               *
+ ************************************************************************/
+char* _strcpy(char* dest, char const* src)
+{
+	int i = 0;
+
+	while (0 != src[i])
+	{
+		dest[i] = src[i];
+		i = i + 1;
+	}
+	dest[i] = 0;
+
+	return dest;
+}
+
+int setenv(char const *s, char const *v, int overwrite_p)
+{
+	char** p = _envp;
+	int length = _strlen(s);
+	char* q;
+
+	while (p[0] != 0)
+	{
+		if (_strncmp (s, p[0], length) == 0)
+		{
+			q = p[0] + length;
+			if (q[0] == '=')
+				break;
+		}
+		p += sizeof(char**); /* M2 pointer arithemtic */
+	}
+	char *entry = malloc (length + _strlen(v) + 2);
+	int end_p = p[0] == 0;
+	p[0] = entry;
+	_strcpy(entry, s);
+	_strcpy(entry + length, "=");
+	_strcpy(entry + length + 1, v);
+	entry[length + _strlen(v) + 2] = 0;
+	if (end_p != 0)
+		p[1] = 0;
+
+	return 0;
+}
