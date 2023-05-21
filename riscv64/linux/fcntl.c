@@ -35,12 +35,12 @@
 
 int _open(char* name, int flag, int mode)
 {
-	asm("RD_A0 !-100 ADDI" /* AT_FDCWD */
-	    "RD_A1 RS1_FP !-8 LD"
-	    "RD_A2 RS1_FP !-16 LD"
-	    "RD_A3 RS1_FP !-24 LD"
-	    "RD_A7 !56 ADDI"
-	    "ECALL");
+	asm("rd_a0 !-100 addi" /* AT_FDCWD */
+	    "rd_a1 rs1_fp !-8 ld"
+	    "rd_a2 rs1_fp !-16 ld"
+	    "rd_a3 rs1_fp !-24 ld"
+	    "rd_a7 !56 addi"
+	    "ecall");
 }
 
 #define STDIN_FILENO  0

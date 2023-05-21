@@ -15,30 +15,30 @@
 ## along with stage0.  If not, see <http://www.gnu.org/licenses/>.
 
 :_start
-    RD_FP RS1_SP MV        ; Protect stack pointer
+    rd_fp rs1_sp mv        ; Protect stack pointer
 
     ; Prepare argv
-    RD_A0 RS1_FP !4 ADDI   ; ARGV_address = FP + 4
-    RD_SP RS1_SP !-4 ADDI
-    RS1_SP RS2_A0 SW       ; Put argv on the stack
+    rd_a0 rs1_fp !4 addi   ; ARGV_address = FP + 4
+    rd_sp rs1_sp !-4 addi
+    rs1_sp rs2_a0 sw       ; Put argv on the stack
 
     ; Prepare envp
-    RD_A0 RS1_FP MV        ; Address we need to load from
-    RD_A0 RS1_A0 LW        ; Get ARGC
-    RD_A0 RS1_A0 !2 ADDI   ; OFFSET = ARGC + 2
-    RD_A0 RS1_A0 RS2_X3 SLLI ; OFFSET = OFFSET * WORDSIZE
-    RD_A0 RS1_FP RS2_A0 ADD ; ENVP_address = RSP + OFFSET
-    RD_SP RS1_SP !-4 ADDI
-    RS1_SP RS2_A0 SW       ; Put envp on the stack
+    rd_a0 rs1_fp mv        ; Address we need to load from
+    rd_a0 rs1_a0 lw        ; Get ARGC
+    rd_a0 rs1_a0 !2 addi   ; OFFSET = ARGC + 2
+    rd_a0 rs1_a0 rs2_x3 slli ; OFFSET = OFFSET * WORDSIZE
+    rd_a0 rs1_fp rs2_a0 add ; ENVP_address = RSP + OFFSET
+    rd_sp rs1_sp !-4 addi
+    rs1_sp rs2_a0 sw       ; Put envp on the stack
 
     ; Stack offset
-    RD_FP RS1_FP !4 ADDI
+    rd_fp rs1_fp !4 addi
 
     ; Call main function
-    RD_RA $FUNCTION_main JAL
+    rd_ra $FUNCTION_main jal
 
     ; Exit to kernel
 :FUNCTION_exit
 :FUNCTION__exit
-    RD_A7 !93 ADDI         ; Syscall for exit
-    ECALL                  ; Exit with code in a0
+    rd_a7 !93 addi         ; Syscall for exit
+    ecall                  ; Exit with code in a0

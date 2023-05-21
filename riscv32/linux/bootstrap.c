@@ -29,26 +29,26 @@
 
 int fgetc(FILE* f)
 {
-	asm("RD_A0 RS1_FP !-4 LW"
-	    "RS1_SP RS2_A0 SW"
-	    "RD_A1 RS1_SP MV"
-	    "RD_A2 !1 ADDI"
-	    "RD_A7 !63 ADDI"
-	    "ECALL"
-	    "RD_A1 MV"
-	    "RD_T0 RS1_A0 MV"
-	    "RD_A0 RS1_SP LW"
-	    "RS1_T0 @8 BNEZ"
-	    "RD_A0 !-1 ADDI");
+	asm("rd_a0 rs1_fp !-4 lw"
+	    "rs1_sp rs2_a0 sw"
+	    "rd_a1 rs1_sp mv"
+	    "rd_a2 !1 addi"
+	    "rd_a7 !63 addi"
+	    "ecall"
+	    "rd_a1 mv"
+	    "rd_t0 rs1_a0 mv"
+	    "rd_a0 rs1_sp lw"
+	    "rs1_t0 @8 bnez"
+	    "rd_a0 !-1 addi");
 }
 
 void fputc(char s, FILE* f)
 {
-	asm("RD_A0 RS1_FP !-8 LW"
-	    "RD_A1 RS1_FP !-4 ADDI"
-	    "RD_A2 !1 ADDI"   /* 1 byte */
-	    "RD_A7 !64 ADDI"  /* write */
-	    "ECALL");
+	asm("rd_a0 rs1_fp !-8 lw"
+	    "rd_a1 rs1_fp !-4 addi"
+	    "rd_a2 !1 addi"   /* 1 byte */
+	    "rd_a7 !64 addi"  /* write */
+	    "ecall");
 }
 
 void fputs(char* s, FILE* f)
@@ -62,12 +62,12 @@ void fputs(char* s, FILE* f)
 
 FILE* open(char* name, int flag, int mode)
 {
-	asm("RD_A0 !-100 ADDI" /* AT_FDCWD */
-	    "RD_A1 RS1_FP !-4 LW"
-	    "RD_A2 RS1_FP !-8 LW"
-	    "RD_A3 RS1_FP !-12 LW"
-	    "RD_A7 !56 ADDI"   /* openat */
-	    "ECALL");
+	asm("rd_a0 !-100 addi" /* AT_FDCWD */
+	    "rd_a1 rs1_fp !-4 lw"
+	    "rd_a2 rs1_fp !-8 lw"
+	    "rd_a3 rs1_fp !-12 lw"
+	    "rd_a7 !56 addi"   /* openat */
+	    "ecall");
 }
 
 FILE* fopen(char* filename, char* mode)
@@ -92,9 +92,9 @@ FILE* fopen(char* filename, char* mode)
 
 int close(int fd)
 {
-	asm("RD_A0 RS1_FP !-4 LW"
-	    "RD_A7 !57 ADDI"    /* close */
-	    "ECALL");
+	asm("rd_a0 rs1_fp !-4 lw"
+	    "rd_a7 !57 addi"    /* close */
+	    "ecall");
 }
 
 int fclose(FILE* stream)
@@ -105,9 +105,9 @@ int fclose(FILE* stream)
 
 int brk(void *addr)
 {
-	asm("RD_A0 RS1_FP !-4 LW"
-	    "RD_A7 !214 ADDI"   /* brk */
-	    "ECALL");
+	asm("rd_a0 rs1_fp !-4 lw"
+	    "rd_a7 !214 addi"   /* brk */
+	    "ecall");
 }
 
 long _malloc_ptr;
@@ -164,7 +164,7 @@ void free(void* l)
 
 void exit(int value)
 {
-	asm("RD_A0 RS1_FP !-4 LW"
-	    "RD_A7 !93 ADDI"   /* exit */
-	    "ECALL");
+	asm("rd_a0 rs1_fp !-4 lw"
+	    "rd_a7 !93 addi"   /* exit */
+	    "ecall");
 }

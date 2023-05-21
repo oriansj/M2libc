@@ -40,50 +40,50 @@
 
 int chmod(char *pathname, int mode)
 {
-        asm("RD_A0 !-100 ADDI" /* AT_FDCWD */
-	    "RD_A1 RS1_FP !-4 LW"
-	    "RD_A2 RS1_FP !-8 LW"
-	    "RD_A7 !53 ADDI"
-	    "ECALL");
+        asm("rd_a0 !-100 addi" /* AT_FDCWD */
+	    "rd_a1 rs1_fp !-4 lw"
+	    "rd_a2 rs1_fp !-8 lw"
+	    "rd_a7 !53 addi"
+	    "ecall");
 }
 
 
 int fchmod(int a, mode_t b)
 {
-        asm("RD_A0 !-100 ADDI" /* AT_FDCWD */
-	    "RD_A1 RS1_FP !-4 LW"
-	    "RD_A2 RS1_FP !-8 LW"
-	    "RD_A7 !52 ADDI"
-	    "ECALL");
+        asm("rd_a0 !-100 addi" /* AT_FDCWD */
+	    "rd_a1 rs1_fp !-4 lw"
+	    "rd_a2 rs1_fp !-8 lw"
+	    "rd_a7 !52 addi"
+	    "ecall");
 }
 
 
 int mkdir(char const* a, mode_t b)
 {
-        asm("RD_A0 !-100 ADDI" /* AT_FDCWD */
-	    "RD_A1 RS1_FP !-4 LW"
-	    "RD_A2 RS1_FP !-8 LW"
-	    "RD_A7 !34 ADDI"
-	    "ECALL");
+        asm("rd_a0 !-100 addi" /* AT_FDCWD */
+	    "rd_a1 rs1_fp !-4 lw"
+	    "rd_a2 rs1_fp !-8 lw"
+	    "rd_a7 !34 addi"
+	    "ecall");
 }
 
 
 int mknod(char const* a, mode_t b, dev_t c)
 {
-        asm("RD_A0 !-100 ADDI" /* AT_FDCWD */
-	    "RD_A1 RS1_FP !-4 LW"
-	    "RD_A2 RS1_FP !-8 LW"
-	    "RD_A3 RS1_FP !-12 LW"
-	    "RD_A7 !33 ADDI"
-	    "ECALL");
+        asm("rd_a0 !-100 addi" /* AT_FDCWD */
+	    "rd_a1 rs1_fp !-4 lw"
+	    "rd_a2 rs1_fp !-8 lw"
+	    "rd_a3 rs1_fp !-12 lw"
+	    "rd_a7 !33 addi"
+	    "ecall");
 }
 
 
 mode_t umask(mode_t m)
 {
-	asm("RD_A0 RS1_FP !-4 LW"
-	    "RD_A7 !166 ADDI"
-	    "ECALL");
+	asm("rd_a0 rs1_fp !-4 lw"
+	    "rd_a7 !166 addi"
+	    "ecall");
 }
 
 #endif

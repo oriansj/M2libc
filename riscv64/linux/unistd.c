@@ -27,112 +27,112 @@ void* malloc(unsigned size);
 
 int access(char* pathname, int mode)
 {
-	asm("RD_A0 !-100 ADDI" /* AT_FDCWD */
-	    "RD_A1 RS1_FP !-8 LD"
-	    "RD_A2 RS1_FP !-16 LD"
-	    "RD_A3 ADDI" /* flags = 0 */
-	    "RD_A7 !48 ADDI"
-	    "ECALL");
+	asm("rd_a0 !-100 addi" /* AT_FDCWD */
+	    "rd_a1 rs1_fp !-8 ld"
+	    "rd_a2 rs1_fp !-16 ld"
+	    "rd_a3 addi" /* flags = 0 */
+	    "rd_a7 !48 addi"
+	    "ecall");
 }
 
 int chdir(char* path)
 {
-	asm("RD_A0 RS1_FP !-8 LD"
-	    "RD_A7 !49 ADDI"
-	    "ECALL");
+	asm("rd_a0 rs1_fp !-8 ld"
+	    "rd_a7 !49 addi"
+	    "ecall");
 }
 
 int fchdir(int fd)
 {
-	asm("RD_A0 RS1_FP !-8 LD"
-	    "RD_A7 !50 ADDI"
-	    "ECALL");
+	asm("rd_a0 rs1_fp !-8 ld"
+	    "rd_a7 !50 addi"
+	    "ecall");
 }
 
 void _exit(int value);
 
 int fork()
 {
-	asm("RD_A7 !220 ADDI"
-	    "RD_A0 !17 ADDI" /* SIGCHLD */
-	    "RD_A1 MV"       /* Child uses duplicate of parent's stack */
-	    "ECALL");
+	asm("rd_a7 !220 addi"
+	    "rd_a0 !17 addi" /* SIGCHld */
+	    "rd_a1 mv"       /* Child uses duplicate of parent's stack */
+	    "ecall");
 }
 
 
 int waitpid (int pid, int* status_ptr, int options)
 {
 	/* Uses wait4 with struct rusage *ru set to NULL */
-	asm("RD_A0 RS1_FP !-8 LD"
-	    "RD_A1 RS1_FP !-16 LD"
-	    "RD_A2 RS1_FP !-24 LD"
-	    "RD_A3 ADDI"
-	    "RD_A7 !260 ADDI"
-	    "ECALL");
+	asm("rd_a0 rs1_fp !-8 ld"
+	    "rd_a1 rs1_fp !-16 ld"
+	    "rd_a2 rs1_fp !-24 ld"
+	    "rd_a3 addi"
+	    "rd_a7 !260 addi"
+	    "ecall");
 }
 
 
 int execve(char* file_name, char** argv, char** envp)
 {
-	asm("RD_A0 RS1_FP !-8 LD"
-	    "RD_A1 RS1_FP !-16 LD"
-	    "RD_A2 RS1_FP !-24 LD"
-	    "RD_A7 !221 ADDI"
-	    "ECALL");
+	asm("rd_a0 rs1_fp !-8 ld"
+	    "rd_a1 rs1_fp !-16 ld"
+	    "rd_a2 rs1_fp !-24 ld"
+	    "rd_a7 !221 addi"
+	    "ecall");
 }
 
 int read(int fd, char* buf, unsigned count)
 {
-	asm("RD_A0 RS1_FP !-8 LD"
-	    "RD_A1 RS1_FP !-16 LD"
-	    "RD_A2 RS1_FP !-24 LD"
-	    "RD_A7 !63 ADDI"
-	    "ECALL");
+	asm("rd_a0 rs1_fp !-8 ld"
+	    "rd_a1 rs1_fp !-16 ld"
+	    "rd_a2 rs1_fp !-24 ld"
+	    "rd_a7 !63 addi"
+	    "ecall");
 }
 
 int write(int fd, char* buf, unsigned count)
 {
-	asm("RD_A0 RS1_FP !-8 LD"
-	    "RD_A1 RS1_FP !-16 LD"
-	    "RD_A2 RS1_FP !-24 LD"
-	    "RD_A7 !64 ADDI"
-	    "ECALL");
+	asm("rd_a0 rs1_fp !-8 ld"
+	    "rd_a1 rs1_fp !-16 ld"
+	    "rd_a2 rs1_fp !-24 ld"
+	    "rd_a7 !64 addi"
+	    "ecall");
 }
 
 int lseek(int fd, int offset, int whence)
 {
-	asm("RD_A0 RS1_FP !-8 LD"
-	    "RD_A1 RS1_FP !-16 LD"
-	    "RD_A2 RS1_FP !-24 LD"
-	    "RD_A7 !62 ADDI"
-	    "ECALL");
+	asm("rd_a0 rs1_fp !-8 ld"
+	    "rd_a1 rs1_fp !-16 ld"
+	    "rd_a2 rs1_fp !-24 ld"
+	    "rd_a7 !62 addi"
+	    "ecall");
 }
 
 
 int close(int fd)
 {
-	asm("RD_A0 RS1_FP !-8 LD"
-	    "RD_A7 !57 ADDI"    /* close */
-	    "ECALL");
+	asm("rd_a0 rs1_fp !-8 ld"
+	    "rd_a7 !57 addi"    /* close */
+	    "ecall");
 }
 
 
 int unlink (char* filename)
 {
-	asm("RD_A0 !-100 ADDI" /* AT_FDCWD */
-	    "RD_A1 RS1_FP !-8 LD"
-	    "RD_A2 !0 ADDI"     /* No flags */
-	    "RD_A7 !35 ADDI"    /* unlinkat */
-	    "ECALL");
+	asm("rd_a0 !-100 addi" /* AT_FDCWD */
+	    "rd_a1 rs1_fp !-8 ld"
+	    "rd_a2 !0 addi"     /* No flags */
+	    "rd_a7 !35 addi"    /* unlinkat */
+	    "ecall");
 }
 
 
 int _getcwd(char* buf, int size)
 {
-	asm("RD_A0 RS1_FP !-8 LD"
-	    "RD_A1 RS1_FP !-16 LD"
-	    "RD_A7 !17 ADDI"
-	    "ECALL");
+	asm("rd_a0 rs1_fp !-8 ld"
+	    "rd_a1 rs1_fp !-16 ld"
+	    "rd_a7 !17 addi"
+	    "ecall");
 }
 
 
@@ -158,9 +158,9 @@ char* get_current_dir_name()
 
 int brk(void *addr)
 {
-	asm("RD_A0 RS1_FP !-8 LD"
-	    "RD_A7 !214 ADDI"
-	    "ECALL");
+	asm("rd_a0 rs1_fp !-8 ld"
+	    "rd_a7 !214 addi"
+	    "ecall");
 }
 
 struct utsname
@@ -174,9 +174,9 @@ struct utsname
 
 int uname(struct utsname* unameData)
 {
-	asm("RD_A0 RS1_FP !-8 LD"
-	    "RD_A7 !160 ADDI"
-	    "ECALL");
+	asm("rd_a0 rs1_fp !-8 ld"
+	    "rd_a7 !160 addi"
+	    "ecall");
 }
 
 #endif
