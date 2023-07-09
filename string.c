@@ -125,15 +125,17 @@ int strcmp(char const* lhs, char const* rhs )
 
 int strncmp(char const* lhs, char const* rhs, size_t count)
 {
+	if(count == 0) return 0;
+
 	size_t i = 0;
-	while(count > i)
+	while(0 != lhs[i])
 	{
-		if(0 == lhs[i]) break;
 		if(lhs[i] != rhs[i]) return lhs[i] - rhs[i];
 		i = i + 1;
+		if(count <= i) return 0;
 	}
 
-	return 0;
+	return lhs[i] - rhs[i];
 }
 
 
