@@ -166,6 +166,7 @@ int spawn(char* file_name, char** argv, char** envp)
 	/* Setup environment for child process */
 	_set_environment(envp);
 	_set_variable("cwd", _cwd);
+	_set_variable("root", _root);
 
 	/* Run command */
 	rval = __uefi_3(child_ih, 0, 0, _system->boot_services->start_image);
@@ -328,6 +329,37 @@ int uname(struct utsname* unameData)
 #else
 #error unsupported arch
 #endif
+}
+
+int unshare(int flags) {
+	if (flags != 0) {
+		return -1; // Any unshare operation is invalid
+	}
+	return 0;
+}
+
+int geteuid(int flags) {
+	return 0;
+}
+
+int getegid(int flags) {
+	return 0;
+}
+
+int chroot(char const *path) {
+	char *newroot = _relative_path_to_absolute(path);
+	free(_root);
+	_root = newroot;
+	if(_root[strlen(_root) - 1] != '\\')
+	{
+		strncat(_root, "/", __PATH_MAX);
+	}
+        return 0;
+}
+
+int mount(char const *source, char const *target, char const *filesystemtype,
+          ulong mountflags, void const *data) {
+	return -1;
 }
 
 #endif

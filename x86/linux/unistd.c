@@ -194,4 +194,56 @@ int uname(struct utsname* unameData)
 	    "int !0x80");
 }
 
+int unshare(int flags) {
+  asm (
+    "lea_ebx,[esp+DWORD] %4"
+    "mov_ebx,[ebx]"
+    "mov_eax, %310"
+    "int !0x80"
+  );
+}
+
+int geteuid() {
+  asm (
+    "mov_eax, %201"
+    "int !0x80"
+  );
+}
+
+int getegid() {
+  asm (
+    "mov_eax, %202"
+    "int !0x80"
+  );
+}
+
+int mount(
+  char *source, char *target, char *filesystemtype,
+  ulong mountflags, void *data
+) {
+  asm (
+    "lea_ebx,[esp+DWORD] %20"
+    "mov_ebx,[ebx]"
+    "lea_ecx,[esp+DWORD] %16"
+    "mov_ecx,[ecx]"
+    "lea_edx,[esp+DWORD] %12"
+    "mov_edx,[edx]"
+    "lea_esi,[esp+DWORD] %8"
+    "mov_esi,[esi]"
+    "lea_edi,[esp+DWORD] %4"
+    "mov_edi,[edi]"
+    "mov_eax, %21"
+    "int !0x80"
+  );
+}
+
+int chroot(char *path) {
+  asm (
+    "lea_ebx,[esp+DWORD] %4"
+    "mov_ebx,[ebx]"
+    "mov_eax, %61"
+    "int !0x80"
+  );
+}
+
 #endif

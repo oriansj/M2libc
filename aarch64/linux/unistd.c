@@ -197,4 +197,51 @@ int uname(struct utsname* unameData)
 	    "SYSCALL");
 }
 
+int unshare(int flags) {
+	asm (
+		"SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
+		"SET_X8_TO_SYS_UNSHARE"
+		"SYSCALL"
+	    );
+}
+
+int geteuid() {
+	asm (
+		"SET_X8_TO_SYS_GETEUID"
+		"SYSCALL"
+	    );
+}
+
+int getegid() {
+	asm (
+		"SET_X8_TO_SYS_GETEGID"
+		"SYSCALL"
+	    );
+}
+
+int chroot(char const *path) {
+	asm (
+		"SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
+		"SET_X8_TO_SYS_CHROOT"
+		"SYSCALL"
+	    );
+}
+
+int mount(char const *source, char const *target, char const *filesystemtype,
+          ulong mountflags, void const *data) {
+	asm (
+		"SET_X0_FROM_BP" "SUB_X0_40" "DEREF_X0"
+                "SET_X4_FROM_X0"
+		"SET_X0_FROM_BP" "SUB_X0_32" "DEREF_X0"
+                "SET_X3_FROM_X0"
+		"SET_X0_FROM_BP" "SUB_X0_24" "DEREF_X0"
+                "SET_X2_FROM_X0"
+		"SET_X0_FROM_BP" "SUB_X0_16" "DEREF_X0"
+                "SET_X1_FROM_X0"
+		"SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
+		"SET_X8_TO_SYS_MOUNT"
+		"SYSCALL"
+	    );
+}
+
 #endif

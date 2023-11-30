@@ -191,4 +191,52 @@ int uname(struct utsname* unameData)
 	    "!0 R0 LOAD32 R0 MEMORY"
 	    "SYSCALL_ALWAYS");
 }
+
+int unshare(int flags) {
+	asm("!4 R0 SUB R12 ARITH_ALWAYS"
+	    "!0 R0 LOAD32 R0 MEMORY"
+	    "!337 R7 LOADI8_ALWAYS"
+	    "SYSCALL_ALWAYS");
+}
+
+int geteuid() {
+	asm(
+		"!201 R7 LOADI8_ALWAYS"
+		"SYSCALL_ALWAYS"
+	   );
+}
+
+int getegid() {
+	asm (
+		"!202 R7 LOADI8_ALWAYS"
+		"SYSCALL_ALWAYS"
+	    );
+}
+
+int chroot(char const *path) {
+	asm (
+		"!4 R0 SUB R12 ARITH_ALWAYS"
+		"!61 R7 LOADI8_ALWAYS"
+		"SYSCALL_ALWAYS"
+	    );
+}
+
+int mount(char const *source, char const *target, char const *filesystemtype,
+          ulong mountflags, void const *data) {
+	asm (
+		"!4 R0 SUB R12 ARITH_ALWAYS"
+		"!0 R0 LOAD32 R0 MEMORY"
+		"!8 R1 SUB R12 ARITH_ALWAYS"
+		"!0 R1 LOAD32 R1 MEMORY"
+		"!12 R2 SUB R12 ARITH_ALWAYS"
+		"!0 R2 LOAD32 R2 MEMORY"
+		"!16 R3 SUB R12 ARITH_ALWAYS"
+		"!0 R3 LOAD32 R3 MEMORY"
+		"!20 R4 SUB R12 ARITH_ALWAYS"
+		"!0 R4 LOAD32 R4 MEMORY"
+		"!31 R7 LOADI8_ALWAYS"
+		"SYSCALL_ALWAYS"
+	    );
+}
+
 #endif

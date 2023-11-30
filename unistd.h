@@ -71,5 +71,16 @@ struct utsname
 
 int uname(struct utsname* unameData);
 
+int unshare(int flags);
+
+int geteuid();
+
+int getegid();
+
+int chroot(char const *path);
+
+int mount(char const *source, char const *target, char const *filesystemtype,
+          ulong mountflags, void const *data);
+
 #endif
 #endif
