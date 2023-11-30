@@ -80,7 +80,7 @@ int getegid();
 int chroot(char const *path);
 
 int mount(char const *source, char const *target, char const *filesystemtype,
-          ulong mountflags, void const *data);
+          unsigned long mountflags, void const *data);
 
 #endif
 #endif
