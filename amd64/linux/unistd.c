@@ -200,56 +200,48 @@ int uname(struct utsname* unameData)
 	    "syscall");
 }
 
-int unshare(int flags) {
-  asm (
-    "lea_rdi,[rsp+DWORD] %8"
-    "mov_rdi,[rdi]"
-    "mov_rax, %272"
-    "syscall"
-  );
+int unshare(int flags)
+{
+	asm("lea_rdi,[rsp+DWORD] %8"
+	    "mov_rdi,[rdi]"
+	    "mov_rax, %272"
+	    "syscall");
 }
 
-int geteuid() {
-  asm (
-    "mov_rax, %107"
-    "syscall"
-  );
+int geteuid()
+{
+	asm("mov_rax, %107"
+	    "syscall");
 }
 
-int getegid() {
-  asm (
-    "mov_rax, %108"
-    "syscall"
-  );
+int getegid()
+{
+	asm("mov_rax, %108"
+	    "syscall");
 }
 
-int mount(
-  char *source, char *target, char *filesystemtype,
-  ulong mountflags, void *data
-) {
-  asm (
-    "lea_rdi,[rsp+DWORD] %40"
-    "mov_rdi,[rdi]"
-    "lea_rsi,[rsp+DWORD] %32"
-    "mov_rsi,[rsi]"
-    "lea_rdx,[rsp+DWORD] %24"
-    "mov_rdx,[rdx]"
-    "lea_r10,[rsp+DWORD] %16"
-    "mov_r10,[r10]"
-    "lea_r8,[rsp+DWORD] %8"
-    "mov_r8,[r8]"
-    "mov_rax, %165"
-    "syscall"
-  );
+int mount(char *source, char *target, char *filesystemtype, SCM mountflags, void *data)
+{
+	asm("lea_rdi,[rsp+DWORD] %40"
+	    "mov_rdi,[rdi]"
+	    "lea_rsi,[rsp+DWORD] %32"
+	    "mov_rsi,[rsi]"
+	    "lea_rdx,[rsp+DWORD] %24"
+	    "mov_rdx,[rdx]"
+	    "lea_r10,[rsp+DWORD] %16"
+	    "mov_r10,[r10]"
+	    "lea_r8,[rsp+DWORD] %8"
+	    "mov_r8,[r8]"
+	    "mov_rax, %165"
+	    "syscall");
 }
 
-int chroot(char *path) {
-  asm (
-    "lea_rdi,[rsp+DWORD] %8"
-    "mov_rdi,[rdi]"
-    "mov_rax, %161"
-    "syscall"
-  );
+int chroot(char *path)
+{
+	asm("lea_rdi,[rsp+DWORD] %8"
+	    "mov_rdi,[rdi]"
+	    "mov_rax, %161"
+	    "syscall");
 }
 
 #endif

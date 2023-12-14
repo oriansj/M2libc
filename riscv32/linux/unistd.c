@@ -235,49 +235,41 @@ int uname(struct utsname* unameData)
 	    "ecall");
 }
 
-int unshare(int flags) {
-  asm (
-    "rd_a0 rs1_fp !-4 lw"
-    "rd_a7 !97 addi"
-    "ecall"
-  );
+int unshare(int flags)
+{
+	asm("rd_a0 rs1_fp !-4 lw"
+	    "rd_a7 !97 addi"
+	    "ecall");
 }
 
-int geteuid() {
-  asm (
-    "rd_a7 !175 addi"
-    "ecall"
-  );
+int geteuid()
+{
+	asm("rd_a7 !175 addi"
+	    "ecall");
 }
 
-int getegid() {
-  asm (
-    "rd_a7 !177 addi"
-    "ecall"
-  );
+int getegid()
+{
+	asm("rd_a7 !177 addi"
+	    "ecall");
 }
 
-int mount (
-  char *source, char *target, char *filesystemtype,
-  ulong mountflags, void *data
-) {
-  asm (
-    "rd_a0 rs1_fp !-4 lw"
-    "rd_a1 rs1_fp !-8 lw"
-    "rd_a2 rs1_fp !-12 lw"
-    "rd_a3 rs1_fp !-16 lw"
-    "rd_a4 rs1_fp !-20 lw"
-    "rd_a7 !40 addi"
-    "ecall"
-  );
+int mount (char *source, char *target, char *filesystemtype, SCM mountflags, void *data)
+{
+	asm("rd_a0 rs1_fp !-4 lw"
+	    "rd_a1 rs1_fp !-8 lw"
+	    "rd_a2 rs1_fp !-12 lw"
+	    "rd_a3 rs1_fp !-16 lw"
+	    "rd_a4 rs1_fp !-20 lw"
+	    "rd_a7 !40 addi"
+	    "ecall");
 }
 
-int chroot(char *path) {
-  asm (
-    "rd_a0 rs1_fp !-4 lw"
-    "rd_a7 !51 addi"
-    "ecall"
-  );
+int chroot(char *path)
+{
+	asm("rd_a0 rs1_fp !-4 lw"
+	    "rd_a7 !51 addi"
+	    "ecall");
 }
 
 #endif

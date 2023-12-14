@@ -79,8 +79,7 @@ int getegid();
 
 int chroot(char const *path);
 
-int mount(char const *source, char const *target, char const *filesystemtype,
-          unsigned long mountflags, void const *data);
+int mount(char const *source, char const *target, char const *filesystemtype, SCM mountflags, void const *data);
 
 #endif
 #endif
