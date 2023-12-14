@@ -59,6 +59,7 @@ char** _argv;
 char** _envp;
 
 char* _cwd;
+char* _root;
 
 struct efi_simple_text_output_protocol
 {
@@ -491,8 +492,12 @@ char* _relative_path_to_absolute(char* narrow_string)
 	char* absolute_path = calloc(__PATH_MAX, 1);
 	if(narrow_string[0] != '/' && narrow_string[0] != '\\')
 	{
-		strcpy(absolute_path, _cwd);
+		strcat(absolute_path, _cwd);
 	}
+	else
+	{
+		strcat(absolute_path, _root);
+        }
 	strcat(absolute_path, narrow_string);
 
 	return absolute_path;
@@ -704,6 +709,7 @@ char* strchr(char const* str, int ch);
 void _setup_current_working_directory(char** envp)
 {
 	_cwd = calloc(__PATH_MAX, 1);
+	_root = calloc(__PATH_MAX, 1);
 
 	unsigned i = 0;
 	unsigned j;
@@ -719,7 +725,26 @@ void _setup_current_working_directory(char** envp)
 			j += 1;
 		}
 		envp[i][j] = 0;
-		if(strcmp(envp[i], "cwd") == 0)
+		if(strcmp(envp[i], "root") == 0)
+		{
+			value = envp[i] + j + 1;
+			match = strchr(value, ':'); /* strip uefi device, e.g. fs0: */
+			if(match != NULL)
+			{
+				value = match + 1;
+			}
+			strcpy(_root, value);
+			k = 0;
+			while(_root[k] != '\0')
+			{
+				if(_root[k] == '\\')
+				{
+					_root[k] = '/';
+				}
+				k += 1;
+			}
+		}
+		else if(strcmp(envp[i], "cwd") == 0)
 		{
 			value = envp[i] + j + 1;
 			match = strchr(value, ':'); /* strip uefi device, e.g. fs0: */
