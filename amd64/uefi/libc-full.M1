@@ -15,7 +15,16 @@
 ## along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
 
 :_start
+	push_rbp
+	push_rbx
+	push_rdi
+	push_rsi
+	push_r12
+	push_r13
+	push_r14
+	push_r15
 	mov_rbp,rsp                                    # save stack pointer
+
 	mov_[rip+DWORD],rsp %__return_address          # save UEFI return address
 	mov_[rip+DWORD],rcx %GLOBAL__image_handle      # save image_handle
 	mov_[rip+DWORD],rdx %GLOBAL__system            # save system
@@ -42,6 +51,14 @@
 
 :FUNCTION___exit
 	mov_rsp,[rip+DWORD] %__return_address          # Get UEFI return address
+	pop_r15
+	pop_r14
+	pop_r13
+	pop_r12
+	pop_rsi
+	pop_rdi
+	pop_rbx
+	pop_rbp
 	ret
 
 # Switch to uefi stack

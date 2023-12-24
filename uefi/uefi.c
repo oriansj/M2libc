@@ -306,9 +306,12 @@ unsigned __uefi_1(void*, void*, FUNCTION f)
 	    "mov_rcx,[rcx]"
 	    "lea_rax,[rbp+DWORD] %-16"
 	    "mov_rax,[rax]"
-	    "sub_rsp, %8"
+	    "push_rsp"
+	    "push_[rsp]"
+	    "and_rsp, %-16"
+	    "sub_rsp, %32"
 	    "call_rax"
-	    "add_rsp, %8");
+	    "mov_rsp,[rsp+BYTE] %40");
 #else
 #error unsupported arch
 #endif
@@ -323,9 +326,12 @@ unsigned __uefi_2(void*, void*, FUNCTION f)
 	    "mov_rdx,[rdx]"
 	    "lea_rax,[rbp+DWORD] %-24"
 	    "mov_rax,[rax]"
-	    "sub_rsp, %16"
+	    "push_rsp"
+	    "push_[rsp]"
+	    "and_rsp, %-16"
+	    "sub_rsp, %32"
 	    "call_rax"
-	    "add_rsp, %16");
+	    "mov_rsp,[rsp+BYTE] %40");
 #else
 #error unsupported arch
 #endif
@@ -342,9 +348,12 @@ unsigned __uefi_3(void*, void*, void*, FUNCTION f)
 	    "mov_r8,[r8]"
 	    "lea_rax,[rbp+DWORD] %-32"
 	    "mov_rax,[rax]"
-	    "sub_rsp, %24"
+	    "push_rsp"
+	    "push_[rsp]"
+	    "and_rsp, %-16"
+	    "sub_rsp, %32"
 	    "call_rax"
-	    "add_rsp, %24");
+	    "mov_rsp,[rsp+BYTE] %40");
 #else
 #error unsupported arch
 #endif
@@ -363,9 +372,12 @@ unsigned __uefi_4(void*, void*, void*, void*, FUNCTION f)
 	    "mov_r9,[r9]"
 	    "lea_rax,[rbp+DWORD] %-40"
 	    "mov_rax,[rax]"
+	    "push_rsp"
+	    "push_[rsp]"
+	    "and_rsp, %-16"
 	    "sub_rsp, %32"
 	    "call_rax"
-	    "add_rsp, %32");
+	    "mov_rsp,[rsp+BYTE] %40");
 #else
 #error unsupported arch
 #endif
@@ -382,6 +394,10 @@ unsigned __uefi_5(void*, void*, void*, void*, void*, FUNCTION f)
 	    "mov_r8,[r8]"
 	    "lea_r9,[rbp+DWORD] %-32"
 	    "mov_r9,[r9]"
+	    "push_rsp"
+	    "push_[rsp]"
+	    "and_rsp, %-16"
+	    "push_rax"
 	    "lea_rax,[rbp+DWORD] %-40"
 	    "mov_rax,[rax]"
 	    "push_rax"
@@ -389,7 +405,7 @@ unsigned __uefi_5(void*, void*, void*, void*, void*, FUNCTION f)
 	    "mov_rax,[rax]"
 	    "sub_rsp, %32"
 	    "call_rax"
-	    "add_rsp, %40");
+	    "mov_rsp,[rsp+BYTE] %56");
 #else
 #error unsupported arch
 #endif
@@ -406,6 +422,9 @@ unsigned __uefi_6(void*, void*, void*, void*, void*, void*, FUNCTION f)
 	    "mov_r8,[r8]"
 	    "lea_r9,[rbp+DWORD] %-32"
 	    "mov_r9,[r9]"
+	    "push_rsp"
+	    "push_[rsp]"
+	    "and_rsp, %-16"
 	    "lea_rax,[rbp+DWORD] %-48"
 	    "mov_rax,[rax]"
 	    "push_rax"
@@ -416,7 +435,7 @@ unsigned __uefi_6(void*, void*, void*, void*, void*, void*, FUNCTION f)
 	    "mov_rax,[rax]"
 	    "sub_rsp, %32"
 	    "call_rax"
-	    "add_rsp, %48");
+	    "mov_rsp,[rsp+BYTE] %56");
 #else
 #error unsupported arch
 #endif

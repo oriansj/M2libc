@@ -221,9 +221,12 @@ char _read(FILE* f, unsigned size, FUNCTION read)
 	    "mov_r8,rsp"
 	    "lea_rax,[rbp+DWORD] %-24"
 	    "mov_rax,[rax]"
-	    "sub_rsp, %24"
+	    "push_rsp"
+	    "push_[rsp]"
+	    "and_rsp, %-16"
+	    "sub_rsp, %32"
 	    "call_rax"
-	    "add_rsp, %24"
+	    "mov_rsp,[rsp+BYTE] %40"
 	    "lea_rax,[rbp+DWORD] %-16"
 	    "mov_rax,[rax]"
 	    "test_rax,rax"
@@ -242,9 +245,12 @@ long _write(FILE* f, unsigned size, char c, FUNCTION write)
 	    "lea_r8,[rbp+DWORD] %-24"
 	    "lea_rax,[rbp+DWORD] %-32"
 	    "mov_rax,[rax]"
-	    "sub_rsp, %24"
+	    "push_rsp"
+	    "push_[rsp]"
+	    "and_rsp, %-16"
+	    "sub_rsp, %32"
 	    "call_rax"
-	    "add_rsp, %24");
+	    "mov_rsp,[rsp+BYTE] %40");
 }
 
 void _write_stdout(void* con_out, int c, FUNCTION output_string)
@@ -254,9 +260,12 @@ void _write_stdout(void* con_out, int c, FUNCTION output_string)
 	    "lea_rdx,[rbp+DWORD] %-16"
 	    "lea_rax,[rbp+DWORD] %-24"
 	    "mov_rax,[rax]"
-	    "sub_rsp, %16"
+	    "push_rsp"
+	    "push_[rsp]"
+	    "and_rsp, %-16"
+	    "sub_rsp, %32"
 	    "call_rax"
-	    "add_rsp, %16");
+	    "mov_rsp,[rsp+BYTE] %40");
 }
 
 void* _open_protocol(void* handle, struct efi_guid* protocol, void* agent_handle, void* controller_handle, long attributes, FUNCTION open_protocol)
@@ -267,6 +276,9 @@ void* _open_protocol(void* handle, struct efi_guid* protocol, void* agent_handle
 	    "mov_rdx,[rdx]"
 	    "push !0"
 	    "mov_r8,rsp"
+	    "push_rsp"
+	    "push_[rsp]"
+	    "and_rsp, %-16"
 	    "lea_r9,[rbp+DWORD] %-24"
 	    "mov_r9,[r9]"
 	    "lea_rax,[rbp+DWORD] %-40"
@@ -279,7 +291,7 @@ void* _open_protocol(void* handle, struct efi_guid* protocol, void* agent_handle
 	    "mov_rax,[rax]"
 	    "sub_rsp, %32"
 	    "call_rax"
-	    "add_rsp, %48"
+	    "mov_rsp,[rsp+BYTE] %56"
 	    "pop_rax");
 }
 
@@ -295,9 +307,12 @@ int _close_protocol(void *handle, struct efi_guid* protocol, void* agent_handle,
 	    "mov_r9,[r9]"
 	    "lea_rax,[rbp+DWORD] %-40"
 	    "mov_rax,[rax]"
+	    "push_rsp"
+	    "push_[rsp]"
+	    "and_rsp, %-16"
 	    "sub_rsp, %32"
 	    "call_rax"
-	    "add_rsp, %32");
+	    "mov_rsp,[rsp+BYTE] %40");
 }
 
 int _open_volume(struct efi_simple_file_system_protocol* rootfs, FUNCTION open_volume)
@@ -308,9 +323,12 @@ int _open_volume(struct efi_simple_file_system_protocol* rootfs, FUNCTION open_v
 	    "mov_rdx,rsp"
 	    "lea_rax,[rbp+DWORD] %-16"
 	    "mov_rax,[rax]"
-	    "sub_rsp, %16"
+	    "push_rsp"
+	    "push_[rsp]"
+	    "and_rsp, %-16"
+	    "sub_rsp, %32"
 	    "call_rax"
-	    "add_rsp, %16"
+	    "mov_rsp,[rsp+BYTE] %40"
 	    "pop_rax");
 }
 
@@ -324,6 +342,10 @@ FILE* _open(void* _rootdir, char* name, long mode, long attributes, FUNCTION ope
 	    "mov_r8,[r8]"
 	    "lea_r9,[rbp+DWORD] %-24"
 	    "mov_r9,[r9]"
+	    "push_rsp"
+	    "push_[rsp]"
+	    "and_rsp, %-16"
+	    "push_rax"
 	    "lea_rax,[rbp+DWORD] %-32"
 	    "mov_rax,[rax]"
 	    "push_rax"
@@ -331,7 +353,7 @@ FILE* _open(void* _rootdir, char* name, long mode, long attributes, FUNCTION ope
 	    "mov_rax,[rax]"
 	    "sub_rsp, %32"
 	    "call_rax"
-	    "add_rsp, %40"
+	    "mov_rsp,[rsp+BYTE] %56"
 	    "pop_rax");
 }
 
@@ -341,9 +363,12 @@ FILE* _close(FILE* f, FUNCTION close)
 	    "mov_rcx,[rcx]"
 	    "lea_rax,[rbp+DWORD] %-16"
 	    "mov_rax,[rax]"
-	    "sub_rsp, %8"
+	    "push_rsp"
+	    "push_[rsp]"
+	    "and_rsp, %-16"
+	    "sub_rsp, %32"
 	    "call_rax"
-	    "add_rsp, %8"
+	    "mov_rsp,[rsp+BYTE] %40"
 	);
 }
 
@@ -360,9 +385,12 @@ long _allocate_pages(unsigned type, unsigned memory_type, unsigned pages, long _
 	    "lea_r9,[rbp+DWORD] %-32"
 	    "lea_rax,[rbp+DWORD] %-40"
 	    "mov_rax,[rax]"
+	    "push_rsp"
+	    "push_[rsp]"
+	    "and_rsp, %-16"
 	    "sub_rsp, %32"
 	    "call_rax"
-	    "add_rsp, %32"
+	    "mov_rsp,[rsp+BYTE] %40"
 	    "lea_rax,[rbp+DWORD] %-32"
 	    "mov_rax,[rax]");
 }
@@ -376,9 +404,12 @@ void _free_pages(void* memory, unsigned pages, FUNCTION free_pages)
 	    "mov_rdx,[rdx]"
 	    "lea_rax,[rbp+DWORD] %-24"
 	    "mov_rax,[rax]"
-	    "sub_rsp, %16"
+	    "push_rsp"
+	    "push_[rsp]"
+	    "and_rsp, %-16"
+	    "sub_rsp, %32"
 	    "call_rax"
-	    "add_rsp, %16");
+	    "mov_rsp,[rsp+BYTE] %40");
 }
 
 int fgetc(FILE* f)

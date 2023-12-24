@@ -17,11 +17,11 @@
 
 DEFINE add_rax, 4805
 DEFINE add_rbp, 4881C5
-DEFINE add_rsp, 4881C4
 DEFINE add_rax,rbx 4801D8
 DEFINE add_rax,rbp 4801E8
 DEFINE add_rbx,rax 4801C3
 DEFINE and_rax,rbx 4821D8
+DEFINE and_rsp, 4881E4
 DEFINE call E8
 DEFINE call_rax FFD0
 DEFINE cmp_rbx,rax 4839C3
@@ -81,6 +81,7 @@ DEFINE mov_rax,[rsp+DWORD] 488B8424
 DEFINE mov_rax,[rip+DWORD] 488B05
 DEFINE mov_rbp,[rip+DWORD] 488B2D
 DEFINE mov_rsp,[rip+DWORD] 488B25
+DEFINE mov_rsp,[rsp+BYTE] 488BA424
 DEFINE mov_r8,[r8] 4D8B00
 DEFINE mov_r9,[r9] 4D8B09
 DEFINE mov_r10,[r10] 4D8B12
@@ -100,12 +101,24 @@ DEFINE or_rax,rbx 4809D8
 DEFINE pop_rax 58
 DEFINE pop_rbp 5D
 DEFINE pop_rbx 5B
+DEFINE pop_rsi 5E
 DEFINE pop_rdi 5F
+DEFINE pop_r12 415C
+DEFINE pop_r13 415D
+DEFINE pop_r14 415E
+DEFINE pop_r15 415F
 DEFINE push 6A
 DEFINE push_rax 50
 DEFINE push_rbp 55
 DEFINE push_rbx 53
 DEFINE push_rdi 57
+DEFINE push_rsi 56
+DEFINE push_rsp 54
+DEFINE push_r12 4154
+DEFINE push_r13 4155
+DEFINE push_r14 4156
+DEFINE push_r15 4157
+DEFINE push_[rsp] FF3424
 DEFINE ret C3
 DEFINE sal_rax, 48C1E0
 DEFINE shl_rax,cl 48D3E0
