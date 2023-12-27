@@ -88,7 +88,7 @@ int execve(char* file_name, char** argv, char** envp)
 }
 
 int read(int fd, char* buf, unsigned count)
-{ /*maybe*/
+{
 	asm("lea_rdi,[rsp+DWORD] %24"
 	    "mov_rdi,[rdi]"
 	    "lea_rsi,[rsp+DWORD] %16"
@@ -100,7 +100,7 @@ int read(int fd, char* buf, unsigned count)
 }
 
 int write(int fd, char* buf, unsigned count)
-{/*maybe*/
+{
 	asm("lea_rdi,[rsp+DWORD] %24"
 	    "mov_rdi,[rdi]"
 	    "lea_rsi,[rsp+DWORD] %16"

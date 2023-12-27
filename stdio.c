@@ -63,13 +63,14 @@ void __init_io()
 
 /* Flush all IO on exit */
 int fflush(FILE* stream);
+int fclose(FILE* stream);
 void __kill_io()
 {
 	fflush(stdout);
 	fflush(stderr);
 	while(NULL != __list)
 	{
-		fflush(__list);
+		fclose(__list);
 		__list = __list->next;
 	}
 }
