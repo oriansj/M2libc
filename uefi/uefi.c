@@ -512,6 +512,10 @@ char* _relative_path_to_absolute(char* narrow_string)
 	if(narrow_string[0] != '/' && narrow_string[0] != '\\')
 	{
 		strcat(absolute_path, _cwd);
+		if(_cwd[strlen(_cwd) - 1] != '/' && _cwd[strlen(_cwd) - 1] != '\\')
+		{
+			strcat(absolute_path, "/");
+		}
 	}
 	else
 	{
@@ -533,6 +537,11 @@ char* _posix_path_to_uefi(char* narrow_string)
 		if(absolute_path[i] == '/')
 		{
 			absolute_path[i] = '\\';
+			// Deal with /./ in paths, convert to . to \\\ which is fine in UEFI.
+			if((i < (length - 1)) && (absolute_path[i + 1] == '.') && (absolute_path[i + 2] == '/'))
+			{
+				absolute_path[i + 1] = '\\';
+			}
 		}
 		else
 		{
