@@ -531,23 +531,27 @@ char* _posix_path_to_uefi(char* narrow_string)
 	char* absolute_path = _relative_path_to_absolute(narrow_string);
 
 	unsigned length = strlen(absolute_path);
-	unsigned i;
-	for(i = 0; i < length; i += 1)
+	unsigned in = 0;
+	unsigned out = 0;
+	while(in < length)
 	{
-		if(absolute_path[i] == '/')
+		if(absolute_path[in] == '/')
 		{
-			absolute_path[i] = '\\';
-			// Deal with /./ in paths, convert to . to \\\ which is fine in UEFI.
-			if((i < (length - 1)) && (absolute_path[i + 1] == '.') && (absolute_path[i + 2] == '/'))
+			absolute_path[out] = '\\';
+			// Deal with /./ in paths.
+			if((in < (length - 1)) && (absolute_path[in + 1] == '.') && (absolute_path[in + 2] == '/'))
 			{
-				absolute_path[i + 1] = '\\';
+				in += 2;
 			}
 		}
 		else
 		{
-			absolute_path[i] = absolute_path[i];
+			absolute_path[out] = absolute_path[in];
 		}
+		in += 1;
+		out += 1;
 	}
+	absolute_path[out] = 0;
 
 	char* wide_string = _string2wide(absolute_path);
 	free(absolute_path);
