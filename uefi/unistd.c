@@ -278,7 +278,7 @@ int close(int fd)
 
 int unlink(char* filename)
 {
-	FILE* f = fopen(filename, "r");
+	FILE* f = fopen(filename, "w");
 	struct efi_file_protocol* fd = f->fd;
 	__uefi_1(fd, fd->delete);
 }
