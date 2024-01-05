@@ -36,8 +36,16 @@ char* strncpy(char* dest, char const* src, size_t count);
 char* strncat(char* dest, char const* src, size_t count);
 void* memcpy(void* dest, void const* src, size_t count);
 
+int open(char* name, int flag, int mode);
+int close(int fd);
 int access(char* pathname, int mode)
 {
+	int fd = open(pathname, 0, 0);
+	if (fd == -1)
+	{
+		return -1;
+	}
+	close(fd);
 	return 0;
 }
 
