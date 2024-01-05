@@ -36,8 +36,17 @@ char* strncpy(char* dest, char const* src, size_t count);
 char* strncat(char* dest, char const* src, size_t count);
 void* memcpy(void* dest, void const* src, size_t count);
 
+FILE* fopen(char* filename, char* mode);
+int fclose(FILE* stream);
 int access(char* pathname, int mode)
 {
+	int rval;
+	rval = fopen(pathname, 0);
+	if (rval == NULL)
+	{
+		return -1;
+	}
+	fclose(rval);
 	return 0;
 }
 

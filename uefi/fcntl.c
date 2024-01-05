@@ -52,7 +52,7 @@ int _open(char* name, int flag, int mode)
 {
 	long mode = 0;
 	long attributes = 0;
-	if(flag == O_WRONLY|O_CREAT|O_TRUNC)
+	if(flag == (O_WRONLY|O_CREAT|O_TRUNC))
 	{
 		mode = EFI_FILE_MODE_CREATE | EFI_FILE_MODE_WRITE | EFI_FILE_MODE_READ;
 	}
