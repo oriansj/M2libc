@@ -50,6 +50,11 @@
 #define END_HARDWARE_DEVICE_PATH 0x7F
 #define END_ENTIRE_DEVICE_PATH 0xFF
 
+#define TPL_APPLICATION    4
+#define TPL_CALLBACK       8
+#define TPL_NOTIFY         16
+#define TPL_HIGH_LEVEL     31
+
 void* _image_handle;
 void* _root_device;
 void* __user_stack;
