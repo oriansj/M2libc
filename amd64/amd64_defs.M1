@@ -142,7 +142,7 @@ DEFINE ret C3
 DEFINE sal_rax, 48C1E0
 DEFINE shr_rdx, 48C1EA
 DEFINE shl_rax,cl 48D3E0
-DEFINE sal_rax,cl 48D3F0
+DEFINE sal_rax,cl 48D3E0
 DEFINE shr_rax,cl 48D3E8
 DEFINE sar_rax,cl 48D3F8
 DEFINE seta_al 0F97C0
