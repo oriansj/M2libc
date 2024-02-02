@@ -82,7 +82,7 @@ DEFINE push_ebp 55
 DEFINE push_edi 57
 DEFINE ret C3
 DEFINE sal_eax, C1E0
-DEFINE sal_eax,cl D3F0
+DEFINE sal_eax,cl D3E0
 DEFINE shl_eax,cl D3E0
 DEFINE sar_eax,cl D3F8
 DEFINE shr_eax,cl D3E8
