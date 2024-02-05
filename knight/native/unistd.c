@@ -16,6 +16,7 @@
  * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <sys/utsname.h>
 #define NULL 0
 #define __PATH_MAX 4096
 #define EOF 0xFFFFFFFF
@@ -157,15 +158,6 @@ int brk(void *addr)
 	    "ADDU R0 R12 R0"
 	    "SWAP R0 R12");
 }
-
-struct utsname
-{
-	char sysname[65];    /* Operating system name (e.g., "Linux") */
-	char nodename[65];   /* Name within "some implementation-defined network" */
-	char release[65];    /* Operating system release (e.g., "2.6.28") */
-	char version[65];    /* Operating system version */
-	char machine[65];    /* Hardware identifier */
-};
 
 int uname(struct utsname* unameData)
 {

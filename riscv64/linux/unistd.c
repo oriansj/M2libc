@@ -18,7 +18,7 @@
 
 #ifndef _UNISTD_C
 #define _UNISTD_C
-
+#include <sys/utsname.h>
 #define NULL 0
 #define __PATH_MAX 4096
 #define __SI_SWAP_ERRNO_CODE
@@ -162,15 +162,6 @@ int brk(void *addr)
 	    "rd_a7 !214 addi"
 	    "ecall");
 }
-
-struct utsname
-{
-	char sysname[65];    /* Operating system name (e.g., "Linux") */
-	char nodename[65];   /* Name within "some implementation-defined network" */
-	char release[65];    /* Operating system release (e.g., "2.6.28") */
-	char version[65];    /* Operating system version */
-	char machine[65];    /* Hardware identifier */
-};
 
 int uname(struct utsname* unameData)
 {

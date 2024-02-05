@@ -17,7 +17,7 @@
 
 #ifndef _UNISTD_H
 #define _UNISTD_H
-
+#include <sys/utsname.h>
 #ifdef __M2__
 #if __uefi__
 #include <uefi/unistd.c>
@@ -59,15 +59,6 @@ char* getcwd(char* buf, unsigned size);
 char* getwd(char* buf);
 char* get_current_dir_name();
 int brk(void *addr);
-
-struct utsname
-{
-	char sysname[65];    /* Operating system name (e.g., "Linux") */
-	char nodename[65];   /* Name within "some implementation-defined network" */
-	char release[65];    /* Operating system release (e.g., "2.6.28") */
-	char version[65];    /* Operating system version */
-	char machine[65];    /* Hardware identifier */
-};
 
 int uname(struct utsname* unameData);
 
