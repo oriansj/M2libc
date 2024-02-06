@@ -256,3 +256,26 @@ int memcmp(void const* lhs, void const* rhs, size_t count)
 	}
 	return (s1[i] - s2[i]);
 }
+
+char* strstr(char* haystack, char* needle)
+{
+	int hl = strlen(haystack);
+	int sl = strlen(needle);
+	int i = 0;
+	int max = hl - sl;
+	if(hl < sl) return NULL;
+	else if(hl == sl)
+	{
+		if(0 == strncmp(haystack, needle, hl)) return haystack;
+		return NULL;
+	}
+	else
+	{
+		while(i <= max)
+		{
+			if(0 == strncmp(haystack+i, needle, hl)) return haystack+i;
+			i = i + 1;
+		}
+		return NULL;
+	}
+}
