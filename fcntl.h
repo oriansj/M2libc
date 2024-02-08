@@ -19,6 +19,8 @@
 #define _FCNTL_H
 
 #ifdef __M2__
+#include <sys/types.h>
+#include <stddef.h>
 #include <fcntl.c>
 #else
 #define O_RDONLY 0
