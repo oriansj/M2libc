@@ -52,6 +52,10 @@ int access(char* pathname, int mode)
 
 int chdir(char* path)
 {
+	if (access(path, 0) == -1)
+	{
+		return -1;
+	}
 	char* absolute_path = _relative_path_to_absolute(path);
 	strncpy(_cwd, absolute_path, __PATH_MAX);
 	if(_cwd[strlen(_cwd) - 1] != '\\')
