@@ -48,6 +48,22 @@ int __open(struct efi_file_protocol* _rootdir, char* name, long mode, long attri
 	return new_handle;
 }
 
+void _set_file_size(struct efi_file_protocol* f, unsigned new_size)
+{
+	/* Preallocate some extra space for file_name */
+	size_t file_info_size = sizeof(struct efi_file_info);
+	struct efi_file_info* file_info = calloc(1, file_info_size);
+	unsigned r = __uefi_4(f, &EFI_FILE_INFO_GUID, &file_info_size, file_info, f->get_info);
+	if(r != EFI_SUCCESS)
+	{
+		free(file_info);
+		return;
+	}
+	file_info->file_size = new_size;
+	__uefi_4(f, &EFI_FILE_INFO_GUID, file_info_size, file_info, f->set_info);
+	free(file_info);
+}
+
 int _open(char* name, int flag, int mode)
 {
 	long mode = 0;
@@ -61,7 +77,12 @@ int _open(char* name, int flag, int mode)
 		mode = EFI_FILE_MODE_READ;
 		attributes = EFI_FILE_READ_ONLY;
 	}
-	return __open(_rootdir, name, mode, attributes);
+	int handle = __open(_rootdir, name, mode, attributes);
+	if (flag & O_TRUNC)
+	{
+		_set_file_size(handle, 0);
+	}
+	return handle;
 }
 
 #define STDIN_FILENO  0
