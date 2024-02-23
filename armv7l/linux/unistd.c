@@ -187,7 +187,10 @@ int unshare(int flags)
 {
 	asm("!4 R0 SUB R12 ARITH_ALWAYS"
 	    "!0 R0 LOAD32 R0 MEMORY"
-	    "!337 R7 LOADI8_ALWAYS"
+	    /* because 337 can't fit in 1 byte */
+	    "!0 R7 LOAD32 R15 MEMORY"
+	    "~0 JUMP_ALWAYS"
+	    "%337"
 	    "SYSCALL_ALWAYS");
 }
 

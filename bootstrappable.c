@@ -100,6 +100,12 @@ int __set_reader(char* set, int mult, char* input)
 
 	while(in_set(input[i], set))
 	{
+		if('_' == input[i])
+		{
+			i = i + 1;
+			continue;
+		}
+
 		n = n * mult;
 		hold = __index_number(set, __toupper(input[i]));
 
@@ -131,22 +137,22 @@ int strtoint(char *a)
 	/* Deal with binary */
 	else if ('0' == a[0] && 'b' == a[1])
 	{
-		result = __set_reader("01", 2, a+2);
+		result = __set_reader("01_", 2, a+2);
 	}
 	/* Deal with hex */
 	else if ('0' == a[0] &&  'x' == a[1])
 	{
-		result = __set_reader("0123456789ABCDEFabcdef", 16, a+2);
+		result = __set_reader("0123456789ABCDEFabcdef_", 16, a+2);
 	}
 	/* Deal with octal */
 	else if('0' == a[0])
 	{
-		result = __set_reader("01234567", 8, a+1);
+		result = __set_reader("01234567_", 8, a+1);
 	}
 	/* Deal with decimal */
 	else
 	{
-		result = __set_reader("0123456789", 10, a);
+		result = __set_reader("0123456789_", 10, a);
 	}
 
 	/* Deal with sign extension for 64bit hosts */
