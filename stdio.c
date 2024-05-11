@@ -135,7 +135,11 @@ char* fgets(char* str, int count, FILE* stream)
 	while(i < count)
 	{
 		ch = fgetc(stream);
-		if(EOF == ch) break;
+		if(EOF == ch) {
+			/* Return null if EOF is first char read */
+			if (i == 0) return NULL;
+			break;
+		}
 
 		str[i] = ch;
 		i = i + 1;
