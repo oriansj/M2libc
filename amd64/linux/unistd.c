@@ -141,6 +141,15 @@ int unlink (char* filename)
 	    "syscall");
 }
 
+int symlink(const char *path1, const char *path2)
+{
+	asm("lea_rdi,[rsp+DWORD] %16"
+	    "mov_rdi,[rdi]"
+	    "lea_rsi,[rsp+DWORD] %8"
+	    "mov_rsi,[rsi]"
+	    "mov_rax, %88"
+	    "syscall");
+}
 
 int _getcwd(char* buf, int size)
 {

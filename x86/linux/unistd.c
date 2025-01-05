@@ -136,6 +136,15 @@ int unlink (char *filename)
 	    "int !0x80");
 }
 
+int symlink(const char *path1, const char *path2)
+{
+	asm("lea_ebx,[esp+DWORD] %8"
+	    "mov_ebx,[ebx]"
+	    "lea_ecx,[esp+DWORD] %4"
+	    "mov_ecx,[ecx]"
+	    "mov_eax, %83"
+	    "int !0x80");
+}
 
 int _getcwd(char* buf, int size)
 {

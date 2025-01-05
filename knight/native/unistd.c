@@ -120,6 +120,11 @@ int unlink (char* filename)
 	return 0;
 }
 
+int symlink(const char *path1, const char *path2)
+{
+	/* Completely meaningless in bare metal */
+	return 0;
+}
 
 int _getcwd(char* buf, int size)
 {
