@@ -636,7 +636,7 @@ size_t wcstombs(char* dest, char* src, size_t n);
 
 char* _get_environmental_variable(struct efi_guid* vendor_guid, char* name, unsigned size)
 {
-	unsigned data_size;
+	unsigned data_size = 0;
 	char* data;
 	char* variable_data;
 	char* envp_line = NULL;
