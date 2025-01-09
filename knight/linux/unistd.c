@@ -106,6 +106,11 @@ int unlink (char* filename)
 	    "SYS_UNLINK");
 }
 
+int symlink(const char *path1, const char *path2)
+{
+	/* not implemented */
+	return(-1);
+}
 
 int _getcwd(char* buf, int size)
 {
