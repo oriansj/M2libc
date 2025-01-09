@@ -145,6 +145,15 @@ int unlink (char* filename)
 	    "SYSCALL");
 }
 
+int symlink(const char *path1, const char *path2)
+{
+	asm("SET_X0_FROM_BP" "SUB_X0_16" "DEREF_X0"
+	    "SET_X2_FROM_X0"
+	    "SET_X1_TO_FCNTL_H_AT_FDCWD"
+	    "SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
+	    "SET_X8_TO_SYS_SYMLINKAT"
+	    "SYSCALL");
+}
 
 int _getcwd(char* buf, int size)
 {
