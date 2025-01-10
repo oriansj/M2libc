@@ -135,7 +135,7 @@ int unlink (char* filename)
 	    "SYSCALL_ALWAYS");
 }
 
-int symlink(const char *path1, const char *path2)
+int symlink(char *path1, char *path2)
 {
 	asm("!4 R0 SUB R12 ARITH_ALWAYS"
 	    "!0 R0 LOAD32 R0 MEMORY"

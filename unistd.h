@@ -54,7 +54,7 @@ int write(int fd, char* buf, unsigned count);
 int lseek(int fd, int offset, int whence);
 int close(int fd);
 int unlink (char *filename);
-int symlink(const char *path1, const char *path2);
+int symlink(char *path1, char *path2);
 int _getcwd(char* buf, int size);
 char* getcwd(char* buf, unsigned size);
 char* getwd(char* buf);

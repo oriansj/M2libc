@@ -296,7 +296,7 @@ int unlink(char* filename)
 	__uefi_1(fd, fd->delete);
 }
 
-int symlink(const char *path1, const char *path2)
+int symlink(char *path1, char *path2)
 {
 	/* This does not make sense in UEFI, where there are no symlinks */
 	return -1;

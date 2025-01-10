@@ -145,7 +145,7 @@ int unlink (char* filename)
 	    "SYSCALL");
 }
 
-int symlink(const char *path1, const char *path2)
+int symlink(char *path1, char *path2)
 {
 	asm("SET_X0_FROM_BP" "SUB_X0_16" "DEREF_X0"
 	    "SET_X2_FROM_X0"

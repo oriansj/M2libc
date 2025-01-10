@@ -127,7 +127,7 @@ int unlink (char* filename)
 }
 
 /* XXX: UNTESTED */
-int symlink(const char *path1, const char *path2)
+int symlink(char *path1, char *path2)
 {
 	asm("rd_a0 rs1_fp !-8 ld"
 	    "rd_a1 !-100 addi"  /* AT_FDCWD */
