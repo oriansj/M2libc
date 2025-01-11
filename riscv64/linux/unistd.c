@@ -126,7 +126,6 @@ int unlink (char* filename)
 	    "ecall");
 }
 
-/* XXX: UNTESTED */
 int symlink(char *path1, char *path2)
 {
 	asm("rd_a0 rs1_fp !-8 ld"
