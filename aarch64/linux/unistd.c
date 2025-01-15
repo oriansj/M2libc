@@ -144,6 +144,7 @@ int unlink (char* filename)
 	    "SET_X2_TO_0"
 	    "SET_X0_TO_FCNTL_H_AT_FDCWD"
 	    "SET_X8_TO_SYS_UNLINKAT"
+	    "SYSCALL");
 }
 
 int symlink(char *path1, char *path2)
