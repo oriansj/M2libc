@@ -438,7 +438,7 @@ char* getenv (char const* name)
 			if(q[0] == '=')
 				return q + 1;
 		}
-		p += sizeof(char**); /* M2 pointer arithemtic */
+		p += 1;
 	}
 
 	return 0;
@@ -475,7 +475,7 @@ int setenv(char const *s, char const *v, int overwrite_p)
 			if (q[0] == '=')
 				break;
 		}
-		p += sizeof(char**); /* M2 pointer arithemtic */
+		p += 1;
 	}
 	char *entry = malloc (length + _strlen(v) + 2);
 	int end_p = p[0] == 0;
