@@ -181,7 +181,7 @@ char* int2str(int x, int base, int signed_p)
 		if(0 == i) return "-2147483648";
 		sign_p = TRUE;
 	} /* Truncate to 32bits */
-	else i = x & (0x7FFFFFFF | (1 << 31));
+	else i = x & (0x7FFFFFFF + 0x80000000); /* M2-Planet/cc_* can't handle large signed numbers in literals */
 
 	do
 	{
