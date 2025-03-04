@@ -100,3 +100,9 @@ DEFINE sub_ebx,eax 29C3
 DEFINE test_eax,eax 85C0
 DEFINE xchg_ebx,eax 93
 DEFINE xor_eax,ebx 31D8
+DEFINE xor_eax,eax 31C0
+DEFINE xor_ebx,ebx 31DB
+DEFINE xor_ecx,ecx 31C9
+DEFINE xor_edx,edx 31D2
+DEFINE xor_edi,edi 31FF
+DEFINE xor_esi,esi 31F6
