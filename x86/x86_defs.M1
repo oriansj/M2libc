@@ -96,6 +96,7 @@ DEFINE setl_al 0F9CC0
 DEFINE setge_al 0F9DC0
 DEFINE setg_al 0F9FC0
 DEFINE setne_al 0F95C0
+DEFINE sub_eax,ebx 29D8
 DEFINE sub_ebx,eax 29C3
 DEFINE test_eax,eax 85C0
 DEFINE xchg_ebx,eax 93
