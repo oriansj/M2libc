@@ -21,6 +21,7 @@ DEFINE add_rax,rbx 4801D8
 DEFINE add_rax,rbp 4801E8
 DEFINE add_rax,rdx 4801D0
 DEFINE add_rbx,rax 4801C3
+DEFINE add_rsp,rbx 4801DC
 DEFINE and_rax,rbx 4821D8
 DEFINE and_rsp, 4881E4
 DEFINE call E8
