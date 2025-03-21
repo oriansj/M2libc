@@ -20,6 +20,7 @@ DEFINE add_ebp, 81C5
 DEFINE add_ebx,eax 01C3
 DEFINE add_eax,ebp 01E8
 DEFINE add_eax,ebx 01D8
+DEFINE add_esp,ebx 01DC
 DEFINE and_eax,ebx 21D8
 DEFINE call E8
 DEFINE call_eax FFD0
