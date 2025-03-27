@@ -47,8 +47,10 @@ DEFINE mov_eax,edx 89D0
 DEFINE mov_ebx,eax 89C3
 DEFINE mov_ecx,eax 89C1
 DEFINE mov_ecx,esp 89E1
+DEFINE mov_esi,esp 89E6
 DEFINE mov_edi,esp 89E7
 DEFINE mov_ebp,edi 89fd
+DEFINE mov_esp,esi 89F4
 DEFINE mov_ebp,esp 89E5
 DEFINE mov_eax, B8
 DEFINE mov_ebx, BB
@@ -76,10 +78,12 @@ DEFINE or_eax,ebx 09D8
 DEFINE pop_eax 58
 DEFINE pop_ebx 5B
 DEFINE pop_ebp 5D
+DEFINE pop_esi 5E
 DEFINE pop_edi 5F
 DEFINE push_eax 50
 DEFINE push_ebx 53
 DEFINE push_ebp 55
+DEFINE push_esi 56
 DEFINE push_edi 57
 DEFINE ret C3
 DEFINE sal_eax, C1E0
