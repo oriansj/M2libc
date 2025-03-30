@@ -15,6 +15,7 @@
  * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <stdarg.h>
 #include <stddef.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -420,4 +421,100 @@ int fseek(FILE* f, long offset, int whence)
 void rewind(FILE* f)
 {
 	fseek(f, 0, SEEK_SET);
+}
+
+int vfprintf(FILE* stream, char* format, va_list arg)
+{
+	int i = 0;
+	while(format[i])
+	{
+
+		if(format[i] == '%')
+		{
+			++i;
+			if(format[i] == 's')
+			{
+				char* str = va_arg(arg, char*);
+				fputs(str, stream);
+			}
+		}
+		else
+		{
+			fputc(format[i], stream);
+		}
+
+		++i;
+	}
+
+	return i;
+}
+
+int vsnprintf(char* s, size_t n, const char* format, va_list arg)
+{
+	int i = 0;
+	int output = 0;
+	int str_i;
+	char* str;
+	while(format[i] != '\0' && output < n)
+	{
+		if(format[i] == '%')
+		{
+			++i;
+
+			if(format[i] == 's')
+			{
+				str_i = 0;
+				str = va_arg(arg, char*);
+				while(str[str_i] != '\0' && output < n)
+				{
+					s[output++] = str[str_i++];
+				}
+			}
+		}
+		else
+		{
+			s[output++] = format[i++];
+		}
+	}
+
+	return i;
+}
+
+int vsprintf(char* s, const char* format, va_list arg)
+{
+	/* M2-Planet doesn't handle large literals that well. */
+	return vsnprintf(s, 2147483647, format, arg);
+}
+
+int sprintf(char* s, char* format, ...)
+{
+	va_list ap;
+	va_start(ap, format);
+	return vsprintf(s, format, ap);
+}
+
+int fprintf(FILE* stream, char* format, ...)
+{
+	va_list ap;
+	va_start(ap, format);
+	return vfprintf(stream, format, ap);
+}
+
+int printf(char* format, ...)
+{
+	va_list ap;
+	va_start(ap, format);
+	return vfprintf(stdout, format, ap);
+}
+
+int vprintf(const char * format, va_list arg)
+{
+	return vfprintf(stdout, format, arg);
+}
+
+int snprintf(char* s, size_t n, const char* format, ...)
+{
+	va_list ap;
+	va_start(ap, format);
+	return vsnprintf(s, n, format, ap);
 }

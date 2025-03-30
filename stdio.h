@@ -39,6 +39,7 @@ typedef struct __IO_FILE FILE;
 #include <stdio.c>
 #else
 
+#include <stdarg.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -97,5 +98,16 @@ extern int ungetc(int ch, FILE* stream);
 extern long ftell(FILE* stream);
 extern int fseek(FILE* f, long offset, int whence);
 extern void rewind(FILE* f);
+
+/* Variadic functions */
+extern int fprintf(FILE* stream, char* format, ...);
+extern int printf(char* format, ...);
+extern int snprintf(char* s, size_t n, const char* format, ...);
+extern int sprintf(char* s, char* format, ...);
+extern int vfprintf(FILE* stream, char* format, va_list arg);
+extern int vprintf(const char * format, va_list arg);
+extern int vsnprintf(char* s, size_t n, const char* format, va_list arg);
+extern int vsprintf(char* s, const char* format, va_list arg);
+
 #endif
 #endif
