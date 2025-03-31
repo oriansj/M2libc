@@ -20,6 +20,9 @@ DEFINE add_rbp, 4881C5
 DEFINE add_rax,rbx 4801D8
 DEFINE add_rax,rbp 4801E8
 DEFINE add_rax,rdx 4801D0
+DEFINE add_rax,r13 4C01E8
+DEFINE add_rax,r14 4C01F0
+DEFINE add_rax,r15 4C01F8
 DEFINE add_rbx,rax 4801C3
 DEFINE add_rsp,rbx 4801DC
 DEFINE and_rax,rbx 4821D8
@@ -55,6 +58,9 @@ DEFINE mov_rdi, 48C7C7
 DEFINE mov_rdx, 48C7C2
 DEFINE mov_rsi, 48C7C6
 DEFINE mov_r10, 49C7C2
+DEFINE mov_r13, 49C7C5
+DEFINE mov_r14, 49C7C6
+DEFINE mov_r15, 49C7C7
 DEFINE mov_rax,cr3 0F20D8
 DEFINE mov_rax,rdx 4889D0
 DEFINE mov_rax,rbx 4889D8
@@ -110,6 +116,9 @@ DEFINE movzx_rax,BYTE_PTR_[rax] 480FB600
 DEFINE movzx_rax,WORD_PTR_[rax] 480FB700
 DEFINE imul_rbx 48F7EB
 DEFINE mul_rbx 48F7E3
+DEFINE mul_rdi 48F7E7
+DEFINE mul_r14 49F7E6
+DEFINE mul_r15 49F7E7
 DEFINE NULL 0000000000000000
 DEFINE not_rax 48F7D0
 DEFINE or_rax,rbx 4809D8
@@ -164,6 +173,9 @@ DEFINE setle_al 0F9EC0
 DEFINE setne_al 0F95C0
 DEFINE sub_rsp, 4881EC
 DEFINE sub_rax,rbx 4829D8
+DEFINE sub_rax,r13 4C29E8
+DEFINE sub_rax,r14 4C29F0
+DEFINE sub_rax,r15 4C29F8
 DEFINE sub_rbx,rax 4829C3
 DEFINE syscall 0F05
 DEFINE test_rax,rax 4885C0
@@ -176,3 +188,6 @@ DEFINE xor_ecx,ecx 31C9
 DEFINE xor_edx,edx 31D2
 DEFINE xor_edi,edi 31FF
 DEFINE xor_esi,esi 31F6
+DEFINE xor_r13,r13 4D31ED
+DEFINE xor_r14,r14 4D31F6
+DEFINE xor_r15,r15 4D31FF

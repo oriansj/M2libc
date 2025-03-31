@@ -20,6 +20,9 @@ DEFINE add_ebp, 81C5
 DEFINE add_ebx,eax 01C3
 DEFINE add_eax,ebp 01E8
 DEFINE add_eax,ebx 01D8
+DEFINE add_eax,ecx 01C8
+DEFINE add_eax,edx 01D0
+DEFINE add_eax,edi 01F8
 DEFINE add_esp,ebx 01DC
 DEFINE and_eax,ebx 21D8
 DEFINE call E8
@@ -55,6 +58,9 @@ DEFINE mov_esp,esi 89F4
 DEFINE mov_ebp,esp 89E5
 DEFINE mov_eax, B8
 DEFINE mov_ebx, BB
+DEFINE mov_ecx, B9
+DEFINE mov_edx, BA
+DEFINE mov_edi, BF
 DEFINE mov_edx, BA
 DEFINE mov_eax,[eax] 8B00
 DEFINE mov_ebx,[ebx] 8B1B
@@ -72,6 +78,9 @@ DEFINE movzx_eax,BYTE_PTR_[eax] 0FB600
 DEFINE movzx_eax,WORD_PTR_[eax] 0FB700
 DEFINE movzx_eax,al 0FB6C0
 DEFINE mul_ebx F7E3
+DEFINE mul_ecx F7E1
+DEFINE mul_edx F7E2
+DEFINE mul_edi F7E7
 DEFINE imul_ebx F7EB
 DEFINE NULL 00000000
 DEFINE not_eax F7D0
@@ -103,6 +112,9 @@ DEFINE setge_al 0F9DC0
 DEFINE setg_al 0F9FC0
 DEFINE setne_al 0F95C0
 DEFINE sub_eax,ebx 29D8
+DEFINE sub_eax,ecx 29C8
+DEFINE sub_eax,edx 29D0
+DEFINE sub_eax,edi 29F8
 DEFINE sub_ebx,eax 29C3
 DEFINE test_eax,eax 85C0
 DEFINE xchg_ebx,eax 93
