@@ -23,7 +23,10 @@ DEFINE add_eax,ebx 01D8
 DEFINE add_eax,ecx 01C8
 DEFINE add_eax,edx 01D0
 DEFINE add_eax,edi 01F8
+DEFINE add_esp,ecx 01CC
+DEFINE add_esp,edx 01D4
 DEFINE add_esp,ebx 01DC
+DEFINE add_esp,edi 01FC
 DEFINE and_eax,ebx 21D8
 DEFINE call E8
 DEFINE call_eax FFD0
@@ -123,6 +126,9 @@ DEFINE sub_eax,ecx 29C8
 DEFINE sub_eax,edx 29D0
 DEFINE sub_eax,edi 29F8
 DEFINE sub_ebx,eax 29C3
+DEFINE sub_esp,edi 29FC
+DEFINE sub_esp,ecx 29CC
+DEFINE sub_esp,edx 29D4
 DEFINE test_eax,eax 85C0
 DEFINE xchg_ebx,eax 93
 DEFINE xor_eax,ebx 31D8
