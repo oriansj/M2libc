@@ -18,6 +18,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <ctype.h>
 
 #define EXIT_FAILURE 1
 #define EXIT_SUCCESS 0
@@ -489,3 +490,40 @@ int setenv(char const *s, char const *v, int overwrite_p)
 
 	return 0;
 }
+
+/************************************************************************
+ * atoi - Ascii TO Integer                                              *
+ ************************************************************************/
+int atoi(const char* str)
+{
+	int value = 0;
+	int negative = 0;
+
+	while(isspace(*str))
+	{
+		str = str + 1;
+	}
+
+	switch(*str) {
+		case '-': negative = 1;
+		/* FALLTHROUGH */
+		case '+': str = str + 1;
+		/* FALLTHROUGH */
+	}
+
+	while(isdigit(*str))
+	{
+		value = 10 * value - (*str - '0');
+		str = str + 1;
+	}
+
+	if(negative)
+	{
+		return value;
+	}
+	else
+	{
+		return -value;
+	}
+}
+
