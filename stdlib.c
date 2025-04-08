@@ -286,6 +286,53 @@ void* malloc(unsigned size)
 	return ptr;
 }
 
+void* realloc(void* ptr, unsigned size)
+{
+	void* new_alloc = malloc(size);
+
+	if(ptr == NULL || new_alloc == NULL)
+	{
+		/* If ptr is NULL we act like normal malloc.
+		 * If allocation failed return that NULL immediately. */
+		return new_alloc;
+	}
+
+	size_t old_alloc_size = 0;
+	struct _malloc_node* i = _allocated_list;
+	while(NULL != i)
+	{
+		if(i->block == ptr)
+		{
+			old_alloc_size = i->size;
+			break;
+		}
+
+		i = i->next;
+	}
+
+	if(old_alloc_size == 0)
+	{
+		/* Same behavior as the normal free */
+		/* we received a pointer to a block that wasn't allocated */
+		/* Bail *HARD* because I don't want to cover this edge case */
+		exit(EXIT_FAILURE);
+	}
+
+	/* memcpy(new_alloc, ptr, old_alloc_size); */
+	int i;
+	char* new_alloc_char = (char*)new_alloc;
+	char* ptr_char = (char*)ptr;
+	for (i = 0; i < old_alloc_size; ++i)
+	{
+		new_alloc_char[i] = ptr_char[i];
+	}
+
+	/* Free the old alloc */
+	free(ptr);
+
+	return new_alloc;
+}
+
 /************************************************************************
  * Provide a POSIX standardish memset function to keep things working   *
  ************************************************************************/
