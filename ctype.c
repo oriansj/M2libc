@@ -19,3 +19,9 @@ int isspace(char _c)
 {
 	return _c == ' ' || _c - '\t' < 5;
 }
+
+int isdigit(int _c)
+{
+	return _c <= '9' && _c >= '0';
+}
+
