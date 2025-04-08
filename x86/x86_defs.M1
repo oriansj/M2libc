@@ -66,6 +66,7 @@ DEFINE mov_edi,esp 89E7
 DEFINE mov_ebp,edi 89fd
 DEFINE mov_esp,esi 89F4
 DEFINE mov_ebp,esp 89E5
+DEFINE mov_esp,ebp 89EC
 DEFINE mov_eax, B8
 DEFINE mov_ebx, BB
 DEFINE mov_ecx, B9

@@ -279,3 +279,19 @@ char* strstr(char* haystack, char* needle)
 		return NULL;
 	}
 }
+
+char* strdup(const char* s)
+{
+	size_t length = strlen(s);
+
+	char* new_string = malloc(length);
+
+	if(!new_string)
+	{
+		return NULL;
+	}
+
+	/* strlen does not include the null terminator */
+	return memcpy(new_string, s, length + 1);
+}
+

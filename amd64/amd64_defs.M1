@@ -84,6 +84,7 @@ DEFINE mov_rdi,rbx 4889DF
 DEFINE mov_rdi,rsp 4889E7
 DEFINE mov_rdx,rsp 4889E2
 DEFINE mov_rsp,rax 4889C4
+DEFINE mov_rsp,rbp 4889EC
 DEFINE mov_rsp,r13 4C89EC
 DEFINE mov_r8,rsp 4989E0
 DEFINE mov_r13,rsp 4989E5

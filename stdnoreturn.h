@@ -1,4 +1,4 @@
-/* Copyright (C) 2022 Andrius Štikonas
+/* Copyright (C) 2025 Gtker
  * This file is part of M2-Planet.
  *
  * M2-Planet is free software: you can redistribute it and/or modify
@@ -15,13 +15,9 @@
  * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-int isspace(char _c)
-{
-	return _c == ' ' || _c - '\t' < 5;
-}
+#ifndef _STDNORETURN_H
+#define _STDNORETURN_H
 
-int isdigit(int _c)
-{
-	return _c <= '9' && _c >= '0';
-}
+#define noreturn _Noreturn
 
+#endif
