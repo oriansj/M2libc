@@ -273,7 +273,7 @@ char* strstr(char* haystack, char* needle)
 	{
 		while(i <= max)
 		{
-			if(0 == strncmp(haystack+i, needle, hl)) return haystack+i;
+			if(0 == strncmp(haystack+i, needle, sl)) return haystack+i;
 			i = i + 1;
 		}
 		return NULL;
