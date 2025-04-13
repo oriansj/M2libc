@@ -16,6 +16,7 @@
  */
 
 #include <stddef.h>
+#include <stdlib.h>
 
 char* strcpy(char* dest, char const* src)
 {
