@@ -57,7 +57,9 @@ DEFINE mov_eax,[esp+DWORD] 8B8424
 DEFINE mov_eax,ebp 89E8
 DEFINE mov_eax,ebx 89D8
 DEFINE mov_eax,ebx 89D8
+DEFINE mov_eax,ecx 89C8
 DEFINE mov_eax,edx 89D0
+DEFINE mov_edx,eax 89C2
 DEFINE mov_ebx,eax 89C3
 DEFINE mov_ecx,eax 89C1
 DEFINE mov_ecx,esp 89E1
