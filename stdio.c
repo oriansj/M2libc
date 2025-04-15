@@ -220,6 +220,7 @@ FILE* fopen(char const* filename, char const* mode)
 	int size;
 
 	if('w' == mode[0]) f = open(filename, O_WRONLY|O_CREAT|O_TRUNC, 00600);
+	else if('a' == mode[0]) f = open(filename, O_WRONLY|O_CREAT|O_APPEND, 00600);
 	else f = open(filename, 0, 0); /* Everything else is a read */
 
 	/* Negative numbers are error codes */
@@ -228,7 +229,7 @@ FILE* fopen(char const* filename, char const* mode)
 		return 0;
 	}
 
-	if('w' == mode[0])
+	if('w' == mode[0] || 'a' == mode[0])
 	{
 		/* Buffer as much as possible */
 		fi->buffer = malloc(BUFSIZ * sizeof(char));
