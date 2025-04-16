@@ -424,6 +424,50 @@ void rewind(FILE* f)
 	fseek(f, 0, SEEK_SET);
 }
 
+char* __unsigned_integer_to_string(unsigned int value, int base, int uppercase)
+{
+	static char buf[60];
+
+	char* digits = "0123456789abcdef";
+	if(uppercase)
+	{
+		digits = "0123456789ABCDEF";
+	}
+
+	char* ptr = &buf + 59;
+	*ptr = '\0';
+
+	do
+	{
+		--ptr;
+		*ptr = digits[value % base];
+		value /= base;
+	}
+	while(value != 0);
+
+	return ptr;
+}
+
+char* __integer_to_string(int value)
+{
+	static char buf[60];
+
+	char* digits = "0123456789abcdef";
+
+	char* ptr = &buf + 59;
+	*ptr = '\0';
+
+	do
+	{
+		--ptr;
+		*ptr = digits[value % 10];
+		value /= 10;
+	}
+	while(value != 0);
+
+	return ptr;
+}
+
 int vfprintf(FILE* stream, char* format, va_list arg)
 {
 	int i = 0;
@@ -437,6 +481,46 @@ int vfprintf(FILE* stream, char* format, va_list arg)
 			{
 				char* str = va_arg(arg, char*);
 				fputs(str, stream);
+			}
+			else if(format[i] == 'u' || format[i] == 'x' || format[i] == 'X' || format[i] == 'o')
+			{
+				int uppercase = 0;
+				int base = 10;
+				if(format[i] == 'x')
+				{
+					base = 16;
+				}
+				else if(format[i] == 'X')
+				{
+					uppercase = 1;
+					base = 16;
+				}
+				else if(format[i] == 'o')
+				{
+					base = 8;
+				}
+
+				unsigned int value = va_arg(arg, unsigned int);
+				fputs(__unsigned_integer_to_string(value, base, uppercase), stream);
+			}
+			else if(format[i] == 'd' || format[i] == 'i')
+			{
+				int value = va_arg(arg, int);
+				if(value < 0)
+				{
+					fputc('-', stream);
+					value = -value;
+				}
+				fputs(__integer_to_string(value), stream);
+			}
+			else if(format[i] == 'c')
+			{
+				char value = va_arg(arg, char);
+				fputc(value, stream);
+			}
+			else if(format[i] == '%')
+			{
+				fputc('%', stream);
 			}
 		}
 		else
@@ -471,6 +555,58 @@ int vsnprintf(char* s, size_t n, const char* format, va_list arg)
 					s[output++] = str[str_i++];
 				}
 			}
+			else if(format[i] == 'u' || format[i] == 'x' || format[i] == 'X' || format[i] == 'o')
+			{
+				int uppercase = 0;
+				int base = 10;
+				if(format[i] == 'x')
+				{
+					base = 16;
+				}
+				else if(format[i] == 'X')
+				{
+					uppercase = 1;
+					base = 16;
+				}
+				else if(format[i] == 'o')
+				{
+					base = 8;
+				}
+
+				unsigned int value = va_arg(arg, unsigned int);
+				str = __unsigned_integer_to_string(value, base, uppercase);
+				str_i = 0;
+				while(str[str_i] != '\0' && output < n)
+				{
+					s[output++] = str[str_i++];
+				}
+			}
+			else if(format[i] == 'd' || format[i] == 'i')
+			{
+				int value = va_arg(arg, int);
+				if(value < 0)
+				{
+					s[output++] = '-';
+					value = -value;
+				}
+				str = __integer_to_string(value);
+				str_i = 0;
+				while(str[str_i] != '\0' && output < n)
+				{
+					s[output++] = str[str_i++];
+				}
+			}
+			else if(format[i] == 'c')
+			{
+				char value = va_arg(arg, char);
+				s[output++] = value;
+			}
+			else if(format[i] == '%')
+			{
+					s[output++] = '%';
+			}
+
+			++i;
 		}
 		else
 		{
