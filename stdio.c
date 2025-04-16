@@ -471,6 +471,8 @@ int vsnprintf(char* s, size_t n, const char* format, va_list arg)
 					s[output++] = str[str_i++];
 				}
 			}
+
+			++i;
 		}
 		else
 		{
