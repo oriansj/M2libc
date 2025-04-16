@@ -513,6 +513,11 @@ int vfprintf(FILE* stream, char* format, va_list arg)
 				}
 				fputs(__integer_to_string(value), stream);
 			}
+			else if(format[i] == 'c')
+			{
+				char value = va_arg(arg, char);
+				fputc(value, stream);
+			}
 			else if(format[i] == '%')
 			{
 				fputc('%', stream);
@@ -590,6 +595,11 @@ int vsnprintf(char* s, size_t n, const char* format, va_list arg)
 				{
 					s[output++] = str[str_i++];
 				}
+			}
+			else if(format[i] == 'c')
+			{
+				char value = va_arg(arg, char);
+				s[output++] = value;
 			}
 			else if(format[i] == '%')
 			{
