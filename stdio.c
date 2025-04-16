@@ -424,6 +424,26 @@ void rewind(FILE* f)
 	fseek(f, 0, SEEK_SET);
 }
 
+char* __integer_to_string(int value, int base)
+{
+	static char buf[60];
+
+	char* digits = "0123456789abcdef";
+
+	char* ptr = &buf + 59;
+	*ptr = '\0';
+
+	do
+	{
+		--ptr;
+		*ptr = digits[value % base];
+		value /= base;
+	}
+	while(value != 0);
+
+	return ptr;
+}
+
 int vfprintf(FILE* stream, char* format, va_list arg)
 {
 	int i = 0;
@@ -437,6 +457,16 @@ int vfprintf(FILE* stream, char* format, va_list arg)
 			{
 				char* str = va_arg(arg, char*);
 				fputs(str, stream);
+			}
+			else if(format[i] == 'd' || format[i] == 'i')
+			{
+				int value = va_arg(arg, int);
+				if(value < 0)
+				{
+					fputc('-', stream);
+					value = -value;
+				}
+				fputs(__integer_to_string(value, 10), stream);
 			}
 		}
 		else
@@ -466,6 +496,21 @@ int vsnprintf(char* s, size_t n, const char* format, va_list arg)
 			{
 				str_i = 0;
 				str = va_arg(arg, char*);
+				while(str[str_i] != '\0' && output < n)
+				{
+					s[output++] = str[str_i++];
+				}
+			}
+			else if(format[i] == 'd' || format[i] == 'i')
+			{
+				int value = va_arg(arg, int);
+				if(value < 0)
+				{
+					s[output++] = '-';
+					value = -value;
+				}
+				str = __integer_to_string(value, 10);
+				str_i = 0;
 				while(str[str_i] != '\0' && output < n)
 				{
 					s[output++] = str[str_i++];
