@@ -16,6 +16,7 @@
 
 
 DEFINE add_rax, 4805
+DEFINE add_rax,BYTE 4883C0
 DEFINE add_rbp, 4881C5
 DEFINE add_rax,rbx 4801D8
 DEFINE add_rax,rbp 4801E8
