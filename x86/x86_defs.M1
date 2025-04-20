@@ -15,7 +15,8 @@
 ## along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
 
 
-DEFINE add_eax, 81C0
+DEFINE add_eax, 05
+DEFINE add_eax,BYTE 83C0
 DEFINE add_ebp, 81C5
 DEFINE add_ebx,eax 01C3
 DEFINE add_eax,ebp 01E8
