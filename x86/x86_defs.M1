@@ -129,6 +129,8 @@ DEFINE sub_eax,ecx 29C8
 DEFINE sub_eax,edx 29D0
 DEFINE sub_eax,edi 29F8
 DEFINE sub_ebx,eax 29C3
+DEFINE sub_esp, 81EC
+DEFINE sub_esp,BYTE 83EC
 DEFINE sub_esp,edi 29FC
 DEFINE sub_esp,ecx 29CC
 DEFINE sub_esp,edx 29D4
