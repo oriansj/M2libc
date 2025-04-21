@@ -15,7 +15,8 @@
 ## along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
 
 
-DEFINE add_eax, 81C0
+DEFINE add_eax, 05
+DEFINE add_eax,BYTE 83C0
 DEFINE add_ebp, 81C5
 DEFINE add_ebx,eax 01C3
 DEFINE add_eax,ebp 01E8
@@ -124,11 +125,15 @@ DEFINE setl_al 0F9CC0
 DEFINE setge_al 0F9DC0
 DEFINE setg_al 0F9FC0
 DEFINE setne_al 0F95C0
+DEFINE sub_eax, 2d
+DEFINE sub_eax,BYTE 83E8
 DEFINE sub_eax,ebx 29D8
 DEFINE sub_eax,ecx 29C8
 DEFINE sub_eax,edx 29D0
 DEFINE sub_eax,edi 29F8
 DEFINE sub_ebx,eax 29C3
+DEFINE sub_esp, 81EC
+DEFINE sub_esp,BYTE 83EC
 DEFINE sub_esp,edi 29FC
 DEFINE sub_esp,ecx 29CC
 DEFINE sub_esp,edx 29D4
