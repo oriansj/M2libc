@@ -470,6 +470,8 @@ char* __integer_to_string(int value)
 
 int __vsnprintf_string_offset;
 va_list __vsnprintf_ap;
+/* One line since M2-Mesoplanet doesn't support multi line macros */
+#define INLINE_STRSCPY str_i = 0; while(str[str_i] != '\0' && output < n) { s[output++] = str[str_i++]; }
 int vsnprintf(char* s, size_t n, const char* format, va_list arg)
 {
 	int i = 0;
@@ -487,12 +489,8 @@ int vsnprintf(char* s, size_t n, const char* format, va_list arg)
 
 			if(format[i] == 's')
 			{
-				str_i = 0;
 				str = va_arg(arg, char*);
-				while(str[str_i] != '\0' && output < n)
-				{
-					s[output++] = str[str_i++];
-				}
+				INLINE_STRSCPY
 			}
 			else if(format[i] == 'u' || format[i] == 'x' || format[i] == 'X' || format[i] == 'o')
 			{
@@ -514,11 +512,7 @@ int vsnprintf(char* s, size_t n, const char* format, va_list arg)
 
 				unsigned int value = va_arg(arg, unsigned int);
 				str = __unsigned_integer_to_string(value, base, uppercase);
-				str_i = 0;
-				while(str[str_i] != '\0' && output < n)
-				{
-					s[output++] = str[str_i++];
-				}
+				INLINE_STRSCPY
 			}
 			else if(format[i] == 'd' || format[i] == 'i')
 			{
@@ -529,11 +523,7 @@ int vsnprintf(char* s, size_t n, const char* format, va_list arg)
 					value = -value;
 				}
 				str = __integer_to_string(value);
-				str_i = 0;
-				while(str[str_i] != '\0' && output < n)
-				{
-					s[output++] = str[str_i++];
-				}
+				INLINE_STRSCPY
 			}
 			else if(format[i] == 'c')
 			{
@@ -564,6 +554,7 @@ int vsnprintf(char* s, size_t n, const char* format, va_list arg)
 
 	return output;
 }
+#undef INLINE_STRSCPY
 
 #define PRINTF_BUFFER_SIZE 4096
 /* Add one to always have a null terminator */
