@@ -33,6 +33,10 @@
 #include <riscv32/linux/unistd.c>
 #elif __riscv && __riscv_xlen==64
 #include <riscv64/linux/unistd.c>
+#elif __knight_posix__
+#include <knight/linux/unistd.c>
+#elif __knight__
+#include <knight/native/unistd.c>
 #else
 #error arch not supported
 #endif
