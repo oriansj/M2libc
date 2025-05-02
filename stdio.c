@@ -468,78 +468,19 @@ char* __integer_to_string(int value)
 	return ptr;
 }
 
-int vfprintf(FILE* stream, char* format, va_list arg)
-{
-	int i = 0;
-	while(format[i])
-	{
-
-		if(format[i] == '%')
-		{
-			++i;
-			if(format[i] == 's')
-			{
-				char* str = va_arg(arg, char*);
-				fputs(str, stream);
-			}
-			else if(format[i] == 'u' || format[i] == 'x' || format[i] == 'X' || format[i] == 'o')
-			{
-				int uppercase = 0;
-				int base = 10;
-				if(format[i] == 'x')
-				{
-					base = 16;
-				}
-				else if(format[i] == 'X')
-				{
-					uppercase = 1;
-					base = 16;
-				}
-				else if(format[i] == 'o')
-				{
-					base = 8;
-				}
-
-				unsigned int value = va_arg(arg, unsigned int);
-				fputs(__unsigned_integer_to_string(value, base, uppercase), stream);
-			}
-			else if(format[i] == 'd' || format[i] == 'i')
-			{
-				int value = va_arg(arg, int);
-				if(value < 0)
-				{
-					fputc('-', stream);
-					value = -value;
-				}
-				fputs(__integer_to_string(value), stream);
-			}
-			else if(format[i] == 'c')
-			{
-				char value = va_arg(arg, char);
-				fputc(value, stream);
-			}
-			else if(format[i] == '%')
-			{
-				fputc('%', stream);
-			}
-		}
-		else
-		{
-			fputc(format[i], stream);
-		}
-
-		++i;
-	}
-
-	return i;
-}
-
+int __vsnprintf_string_offset;
+va_list __vsnprintf_ap;
+/* One line since M2-Mesoplanet doesn't support multi line macros */
+#define INLINE_STRSCPY str_i = 0; while(str[str_i] != '\0' && output < n) { s[output++] = str[str_i++]; }
 int vsnprintf(char* s, size_t n, const char* format, va_list arg)
 {
 	int i = 0;
 	int output = 0;
 	int str_i;
 	char* str;
+
+	__vsnprintf_string_offset = 0;
+
 	while(format[i] != '\0' && output < n)
 	{
 		if(format[i] == '%')
@@ -548,12 +489,8 @@ int vsnprintf(char* s, size_t n, const char* format, va_list arg)
 
 			if(format[i] == 's')
 			{
-				str_i = 0;
 				str = va_arg(arg, char*);
-				while(str[str_i] != '\0' && output < n)
-				{
-					s[output++] = str[str_i++];
-				}
+				INLINE_STRSCPY
 			}
 			else if(format[i] == 'u' || format[i] == 'x' || format[i] == 'X' || format[i] == 'o')
 			{
@@ -575,11 +512,7 @@ int vsnprintf(char* s, size_t n, const char* format, va_list arg)
 
 				unsigned int value = va_arg(arg, unsigned int);
 				str = __unsigned_integer_to_string(value, base, uppercase);
-				str_i = 0;
-				while(str[str_i] != '\0' && output < n)
-				{
-					s[output++] = str[str_i++];
-				}
+				INLINE_STRSCPY
 			}
 			else if(format[i] == 'd' || format[i] == 'i')
 			{
@@ -590,11 +523,7 @@ int vsnprintf(char* s, size_t n, const char* format, va_list arg)
 					value = -value;
 				}
 				str = __integer_to_string(value);
-				str_i = 0;
-				while(str[str_i] != '\0' && output < n)
-				{
-					s[output++] = str[str_i++];
-				}
+				INLINE_STRSCPY
 			}
 			else if(format[i] == 'c')
 			{
@@ -614,8 +543,39 @@ int vsnprintf(char* s, size_t n, const char* format, va_list arg)
 		}
 	}
 
-	return i;
+	__vsnprintf_string_offset = i;
+	__vsnprintf_ap = arg;
+
+	if(output < n)
+	{
+		/* Null terminator doesn't count */
+		s[output] = '\0';
+	}
+
+	return output;
 }
+#undef INLINE_STRSCPY
+
+#define PRINTF_BUFFER_SIZE 4096
+/* Add one to always have a null terminator */
+char printf_buf[PRINTF_BUFFER_SIZE + 1];
+int vfprintf(FILE* stream, char* format, va_list arg)
+{
+	int output = 0;
+	va_list ap = arg;
+
+	do
+	{
+		output += vsnprintf(printf_buf, PRINTF_BUFFER_SIZE, format, ap);
+		format += __vsnprintf_string_offset;
+		ap = __vsnprintf_ap;
+		fputs(printf_buf, stream);
+	}
+	while(__vsnprintf_string_offset != 0);
+
+	return output;
+}
+#undef PRINTF_BUFFER_SIZE
 
 int vsprintf(char* s, const char* format, va_list arg)
 {
