@@ -33,6 +33,10 @@
 #include <riscv32/linux/sys/stat.c>
 #elif __riscv && __riscv_xlen==64
 #include <riscv64/linux/sys/stat.c>
+#elif __knight_posix__
+#include <knight/linux/sys/stat.c>
+#elif __knight__
+#include <knight/native/sys/stat.c>
 #else
 #error arch not supported
 #endif
