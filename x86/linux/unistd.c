@@ -216,18 +216,20 @@ int getegid()
 
 int mount(char *source, char *target, char *filesystemtype, SCM mountflags, void *data)
 {
-	asm("lea_ebx,[esp+DWORD] %20"
+	asm("push_esi"
+	    "lea_ebx,[esp+DWORD] %24"
 	    "mov_ebx,[ebx]"
-	    "lea_ecx,[esp+DWORD] %16"
+	    "lea_ecx,[esp+DWORD] %20"
 	    "mov_ecx,[ecx]"
-	    "lea_edx,[esp+DWORD] %12"
+	    "lea_edx,[esp+DWORD] %16"
 	    "mov_edx,[edx]"
-	    "lea_esi,[esp+DWORD] %8"
+	    "lea_esi,[esp+DWORD] %12"
 	    "mov_esi,[esi]"
-	    "lea_edi,[esp+DWORD] %4"
+	    "lea_edi,[esp+DWORD] %8"
 	    "mov_edi,[edi]"
 	    "mov_eax, %21"
-	    "int !0x80");
+	    "int !0x80"
+	    "pop_esi");
 }
 
 int chroot(char *path)
