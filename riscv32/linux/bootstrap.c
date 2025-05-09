@@ -16,15 +16,30 @@
  * along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// CONSTANT stdin 0
-// CONSTANT stdout 1
-// CONSTANT stderr 2
-// CONSTANT EOF 0xFFFFFFFF
-// CONSTANT NULL 0
-// CONSTANT EXIT_FAILURE 1
-// CONSTANT EXIT_SUCCESS 0
-// CONSTANT TRUE 1
-// CONSTANT FALSE 0
+enum
+{
+	stdin = 0,
+	stdout = 1,
+	stderr = 2,
+};
+
+enum
+{
+	EOF = 0xFFFFFFFF,
+	NULL = 0,
+};
+
+enum
+{
+	EXIT_FAILURE = 1,
+	EXIT_SUCCESS = 0,
+};
+
+enum
+{
+	TRUE = 1,
+	FALSE = 0,
+};
 
 
 int fgetc(FILE* f)
