@@ -223,7 +223,12 @@ int write(int fd, char* buf, unsigned count)
 {
 	struct efi_file_protocol* f = fd;
 	unsigned i;
-	char c = 0;
+	/* UEFI requires UTF-16 chars with a 2 byte null terminator.
+	 * We only write a single char at a time which requires 4 bytes.
+	 * 2 for the char itself and 2 for the null terminator.
+	 * With an int64_t we are guaranteed that the null terminator
+	 * is present, initialized at declaration, and aligned correctly.*/
+	int64_t c = 0;
 
 	/* In UEFI StdErr might not be printing stuff to console, so just use stdout */
 	if(f == STDOUT_FILENO || f == STDERR_FILENO)
