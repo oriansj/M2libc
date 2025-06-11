@@ -63,6 +63,17 @@ void fputs(char* s, FILE* f)
 	}
 }
 
+unsigned fwrite(char* buffer, unsigned size, unsigned count, FILE* f) {
+	count = size * count;
+
+	unsigned i = 0;
+	for(; i < count; i = i + 1) {
+		fputc(buffer[i], f);
+	}
+
+	return i;
+}
+
 FILE* open_read(int filename)
 {
 	asm("LOAD R0 R14 0"

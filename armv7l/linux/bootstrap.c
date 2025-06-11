@@ -74,6 +74,17 @@ void fputs(char* s, FILE* f)
 	}
 }
 
+unsigned fwrite(char* buffer, unsigned size, unsigned count, FILE* f) {
+	count = size * count;
+
+	unsigned i = 0;
+	for(; i < count; i = i + 1) {
+		fputc(buffer[i], f);
+	}
+
+	return i;
+}
+
 FILE* open(char* name, int flag, int mode)
 {
 	asm("!4 R0 SUB R12 ARITH_ALWAYS"

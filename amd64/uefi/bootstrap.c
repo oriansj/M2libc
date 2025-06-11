@@ -460,6 +460,17 @@ void fputc(char c, FILE* f)
 	_write(file, size, c, file->write);
 }
 
+unsigned fwrite(char* buffer, unsigned size, unsigned count, FILE* f) {
+	count = size * count;
+
+	unsigned i = 0;
+	for(; i < count; i = i + 1) {
+		fputc(buffer[i], f);
+	}
+
+	return i;
+}
+
 void fputs(char* s, FILE* f)
 {
 	while(0 != s[0])
