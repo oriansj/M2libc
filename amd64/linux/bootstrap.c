@@ -58,6 +58,17 @@ int fgetc(FILE* f)
 	    ":FUNCTION_fgetc_Done");
 }
 
+unsigned fread(char* buffer, unsigned size, unsigned count, FILE* f) {
+	count = size * count;
+
+	unsigned i = 0;
+	for(; i < count; i = i + 1) {
+		buffer[i] = fgetc(f);
+	}
+
+	return i;
+}
+
 void fputc(char s, FILE* f)
 {
 	asm("mov_rax, %1"

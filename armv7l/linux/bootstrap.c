@@ -55,6 +55,17 @@ int fgetc(FILE* f)
 	    "!0 R0 MVNI8_EQUAL");
 }
 
+unsigned fread(char* buffer, unsigned size, unsigned count, FILE* f) {
+	count = size * count;
+
+	unsigned i = 0;
+	for(; i < count; i = i + 1) {
+		buffer[i] = fgetc(f);
+	}
+
+	return i;
+}
+
 void fputc(char s, FILE* f)
 {
 	asm("!8 R0 SUB R12 ARITH_ALWAYS"

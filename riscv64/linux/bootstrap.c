@@ -57,6 +57,17 @@ int fgetc(FILE* f)
 	    "rd_a0 !-1 addi");
 }
 
+unsigned fread(char* buffer, unsigned size, unsigned count, FILE* f) {
+	count = size * count;
+
+	unsigned i = 0;
+	for(; i < count; i = i + 1) {
+		buffer[i] = fgetc(f);
+	}
+
+	return i;
+}
+
 void fputc(char s, FILE* f)
 {
 	asm("rd_a0 rs1_fp !-16 ld"
