@@ -69,14 +69,20 @@ void fputc(char s, FILE* f)
 }
 
 unsigned fwrite(char* buffer, unsigned size, unsigned count, FILE* f) {
+	if(size == 0 || count == 0) {
+		return 0;
+	}
 	count = size * count;
 
-	unsigned i = 0;
-	for(; i < count; i = i + 1) {
-		fputc(buffer[i], f);
-	}
-
-	return i;
+	asm(
+			"mov_rax, %1"
+			"lea_rsi,[rsp+DWORD] %32"
+			"mov_rsi,[rsi]"
+			"lea_rdx,[rsp+DWORD] %16"
+			"mov_rdx,[rdx]"
+			"lea_rdi,[rsp+DWORD] %8"
+			"mov_rdi,[rdi]"
+			"syscall");
 }
 
 void fputs(char* s, FILE* f)
