@@ -42,10 +42,12 @@ DEFINE jmp_rcx FFE1
 DEFINE je 0F84
 DEFINE jne 0F85
 DEFINE lea_rax,[rbp+DWORD] 488D85
+DEFINE lea_rax,[rsp+DWORD] 488D8424
 DEFINE lea_rax,[rip+DWORD] 488D05
 DEFINE lea_rax,[r13+DWORD] 498D85
 DEFINE lea_rax,[r14+DWORD] 498D86
 DEFINE lea_rax,[r15+DWORD] 498D87
+DEFINE lea_rbx,[rsp+DWORD] 488D9C24
 DEFINE lea_rbx,[rip+DWORD] 488D1D
 DEFINE lea_rbx,[r13+DWORD] 498D9D
 DEFINE lea_rbx,[r14+DWORD] 498D9E
@@ -85,6 +87,7 @@ DEFINE mov_rcx,rax 4889C1
 DEFINE mov_rdi,rax 4889C7
 DEFINE mov_rdi,rbx 4889DF
 DEFINE mov_rdi,rsp 4889E7
+DEFINE mov_rdx,rax 4889C2
 DEFINE mov_rdx,rsp 4889E2
 DEFINE mov_rsp,rax 4889C4
 DEFINE mov_rsp,rbp 4889EC

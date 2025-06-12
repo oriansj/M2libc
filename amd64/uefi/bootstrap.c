@@ -443,6 +443,17 @@ int fgetc(FILE* f)
 	return c;
 }
 
+unsigned fread(char* buffer, unsigned size, unsigned count, FILE* f) {
+	count = size * count;
+
+	unsigned i = 0;
+	for(; i < count; i = i + 1) {
+		buffer[i] = fgetc(f);
+	}
+
+	return i;
+}
+
 void fputc(char c, FILE* f)
 {
 	unsigned size = 1;
@@ -458,6 +469,17 @@ void fputc(char c, FILE* f)
 	}
 	struct efi_file_protocol* file = f;
 	_write(file, size, c, file->write);
+}
+
+unsigned fwrite(char* buffer, unsigned size, unsigned count, FILE* f) {
+	count = size * count;
+
+	unsigned i = 0;
+	for(; i < count; i = i + 1) {
+		fputc(buffer[i], f);
+	}
+
+	return i;
 }
 
 void fputs(char* s, FILE* f)

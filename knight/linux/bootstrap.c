@@ -57,6 +57,17 @@ int fgetc(FILE* f)
 	    "MOVE R0 R1");
 }
 
+unsigned fread(char* buffer, unsigned size, unsigned count, FILE* f) {
+	count = size * count;
+
+	unsigned i = 0;
+	for(; i < count; i = i + 1) {
+		buffer[i] = fgetc(f);
+	}
+
+	return i;
+}
+
 void fputc(char s, FILE* f)
 {
 	asm("LOAD R0 R14 0"
@@ -76,6 +87,17 @@ void fputs(char* s, FILE* f)
 		fputc(s[0], f);
 		s = s + 1;
 	}
+}
+
+unsigned fwrite(char* buffer, unsigned size, unsigned count, FILE* f) {
+	count = size * count;
+
+	unsigned i = 0;
+	for(; i < count; i = i + 1) {
+		fputc(buffer[i], f);
+	}
+
+	return i;
 }
 
 FILE* open(char* name, int flag, int mode)
