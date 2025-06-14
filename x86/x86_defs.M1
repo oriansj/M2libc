@@ -31,7 +31,7 @@ DEFINE add_esp,edi 01FC
 DEFINE and_eax,ebx 21D8
 DEFINE call E8
 DEFINE call_eax FFD0
-DEFINE cmp 39C3
+DEFINE cmp_ebx,eax 39C3
 DEFINE cdq 99
 DEFINE div_ebx F7F3
 DEFINE idiv_ebx F7FB
