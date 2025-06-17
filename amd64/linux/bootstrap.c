@@ -79,30 +79,36 @@ void fputc(char s, FILE* f)
 	    "syscall");
 }
 
-unsigned fwrite(char* buffer, unsigned size, unsigned count, FILE* f) {
-	if(size == 0 || count == 0) {
-		return 0;
-	}
-	count = size * count;
-
+unsigned write(FILE* f, char* buffer, unsigned count) {
 	asm(
 			"mov_rax, %1"
-			"lea_rsi,[rsp+DWORD] %32"
+			"lea_rsi,[rsp+DWORD] %16"
 			"mov_rsi,[rsi]"
-			"lea_rdx,[rsp+DWORD] %16"
+			"lea_rdx,[rsp+DWORD] %8"
 			"mov_rdx,[rdx]"
-			"lea_rdi,[rsp+DWORD] %8"
+			"lea_rdi,[rsp+DWORD] %24"
 			"mov_rdi,[rdi]"
 			"syscall");
 }
 
+unsigned fwrite(char* buffer, unsigned size, unsigned count, FILE* f) {
+	if(size == 0 || count == 0) {
+		return 0;
+	}
+
+	return write(f, buffer, size * count);
+}
+
+int strlen(char* str )
+{
+	int i = 0;
+	while(0 != str[i]) i = i + 1;
+	return i;
+}
+
 void fputs(char* s, FILE* f)
 {
-	while(0 != s[0])
-	{
-		fputc(s[0], f);
-		s = s + 1;
-	}
+	write(f, s, strlen(s));
 }
 
 FILE* open(char* name, int flag, int mode)
@@ -181,13 +187,6 @@ void* malloc(int size)
 	long old_malloc = _malloc_ptr;
 	_malloc_ptr = _malloc_ptr + size;
 	return old_malloc;
-}
-
-int strlen(char* str )
-{
-	int i = 0;
-	while(0 != str[i]) i = i + 1;
-	return i;
 }
 
 void* memset(void* ptr, int value, int num)
