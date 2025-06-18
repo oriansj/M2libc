@@ -40,6 +40,7 @@ enum
 	FALSE = 0,
 };
 
+void* malloc(int size);
 
 int fgetc(FILE* f)
 {
@@ -69,16 +70,6 @@ unsigned fread(char* buffer, unsigned size, unsigned count, FILE* f) {
 	return i;
 }
 
-void fputc(char s, FILE* f)
-{
-	asm("mov_rax, %1"
-	    "lea_rdi,[rsp+DWORD] %8"
-	    "mov_rdi,[rdi]"
-	    "lea_rsi,[rsp+DWORD] %16"
-	    "mov_rdx, %1"
-	    "syscall");
-}
-
 unsigned write(FILE* f, char* buffer, unsigned count) {
 	asm(
 			"mov_rax, %1"
@@ -89,6 +80,18 @@ unsigned write(FILE* f, char* buffer, unsigned count) {
 			"lea_rdi,[rsp+DWORD] %24"
 			"mov_rdi,[rdi]"
 			"syscall");
+}
+
+char* __fputc_buffer;
+void fputc(char s, FILE* f)
+{
+	/* We don't have operator & */
+	if(__fputc_buffer == NULL) {
+		__fputc_buffer = malloc(1);
+	}
+	__fputc_buffer[0] = s;
+
+	write(f, __fputc_buffer, 1);
 }
 
 unsigned fwrite(char* buffer, unsigned size, unsigned count, FILE* f) {
