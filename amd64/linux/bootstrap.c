@@ -42,6 +42,19 @@ enum
 
 void* malloc(int size);
 
+unsigned read(FILE* f, char* buffer, unsigned count) {
+	asm(
+			"xor_eax,eax"
+			"lea_rsi,[rsp+DWORD] %16"
+			"mov_rsi,[rsi]"
+			"lea_rdx,[rsp+DWORD] %8"
+			"mov_rdx,[rdx]"
+			"lea_rdi,[rsp+DWORD] %24"
+			"mov_rdi,[rdi]"
+			"syscall");
+}
+
+
 int fgetc(FILE* f)
 {
 	asm("lea_rdi,[rsp+DWORD] %8"
@@ -60,15 +73,9 @@ int fgetc(FILE* f)
 }
 
 unsigned fread(char* buffer, unsigned size, unsigned count, FILE* f) {
-	count = size * count;
-
-	unsigned i = 0;
-	for(; i < count; i = i + 1) {
-		buffer[i] = fgetc(f);
-	}
-
-	return i;
+	return read(f, buffer, size * count);
 }
+
 
 unsigned write(FILE* f, char* buffer, unsigned count) {
 	asm(
