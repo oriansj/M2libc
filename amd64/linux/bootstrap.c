@@ -55,21 +55,19 @@ unsigned read(FILE* f, char* buffer, unsigned count) {
 }
 
 
+char* __fputc_buffer;
 int fgetc(FILE* f)
 {
-	asm("lea_rdi,[rsp+DWORD] %8"
-	    "mov_rdi,[rdi]"
-	    "mov_rax, %0"
-	    "push_rax"
-	    "lea_rsi,[rsp+DWORD] %0"
-	    "mov_rdx, %1"
-	    "syscall"
-	    "mov_rbx, %0"
-	    "cmp_rbx,rax"
-	    "pop_rax"
-	    "jne %FUNCTION_fgetc_Done"
-	    "mov_rax, %-1"
-	    ":FUNCTION_fgetc_Done");
+	/* We don't have operator & */
+	if(__fputc_buffer == NULL) {
+		__fputc_buffer = malloc(1);
+	}
+
+	if(read(f, __fputc_buffer, 1) == 1) {
+		return EOF;
+	}
+
+	return __fputc_buffer[0];
 }
 
 unsigned fread(char* buffer, unsigned size, unsigned count, FILE* f) {
@@ -89,7 +87,6 @@ unsigned write(FILE* f, char* buffer, unsigned count) {
 			"syscall");
 }
 
-char* __fputc_buffer;
 void fputc(char s, FILE* f)
 {
 	/* We don't have operator & */
