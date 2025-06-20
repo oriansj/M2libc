@@ -44,7 +44,7 @@ void* malloc(int size);
 
 unsigned read(FILE* f, char* buffer, unsigned count) {
 	asm(
-			"xor_eax,eax"
+			"mov_rax, %0"
 			"lea_rsi,[rsp+DWORD] %16"
 			"mov_rsi,[rsi]"
 			"lea_rdx,[rsp+DWORD] %8"
