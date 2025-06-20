@@ -44,7 +44,7 @@ void* malloc(int size);
 
 unsigned read(FILE* f, char* buffer, unsigned count) {
 	asm(
-			"xor_eax,eax"
+			"mov_rax, %0"
 			"lea_rsi,[rsp+DWORD] %16"
 			"mov_rsi,[rsi]"
 			"lea_rdx,[rsp+DWORD] %8"
@@ -63,7 +63,7 @@ int fgetc(FILE* f)
 		__fputc_buffer = malloc(1);
 	}
 
-	if(read(f, __fputc_buffer, 1) == 1) {
+	if(read(f, __fputc_buffer, 1) <= 0) {
 		return EOF;
 	}
 
