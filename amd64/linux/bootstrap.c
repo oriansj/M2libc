@@ -63,7 +63,7 @@ int fgetc(FILE* f)
 		__fputc_buffer = malloc(1);
 	}
 
-	if(read(f, __fputc_buffer, 1) == 1) {
+	if(read(f, __fputc_buffer, 1) <= 0) {
 		return EOF;
 	}
 
