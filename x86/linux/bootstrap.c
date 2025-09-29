@@ -40,74 +40,91 @@ enum
 	FALSE = 0,
 };
 
+void* malloc(int size);
 
+unsigned read(FILE* f, char* buffer, unsigned count) {
+	asm("mov_eax, %3"
+		"lea_ecx,[esp+DWORD] %8"
+		"mov_ecx,[ecx]"
+		"lea_edx,[esp+DWORD] %4"
+		"mov_edx,[edx]"
+		"lea_ebx,[esp+DWORD] %12"
+		"mov_ebx,[ebx]"
+		"int !0x80");
+}
+
+char* __fputc_buffer;
 int fgetc(FILE* f)
 {
-	asm("mov_eax, %3"
-	    "lea_ebx,[esp+DWORD] %4"
-	    "mov_ebx,[ebx]"
-	    "push_ebx"
-	    "mov_ecx,esp"
-	    "mov_edx, %1"
-	    "int !0x80"
-	    "test_eax,eax"
-	    "pop_eax"
-	    "jne %FUNCTION_fgetc_Done"
-	    "mov_eax, %-1"
-	    ":FUNCTION_fgetc_Done");
+	/* We don't have operator & */
+	if(__fputc_buffer == NULL) {
+		__fputc_buffer = malloc(1);
+	}
+
+	if(read(f, __fputc_buffer, 1) <= 0) {
+		return EOF;
+	}
+
+	return __fputc_buffer[0];
 }
 
 unsigned fread(char* buffer, unsigned size, unsigned count, FILE* f) {
-	count = size * count;
+	return read(f, buffer, size * count);
+}
 
-	unsigned i = 0;
-	for(; i < count; i = i + 1) {
-		buffer[i] = fgetc(f);
-	}
 
-	return i;
+unsigned write(FILE* f, char* buffer, unsigned count) {
+	asm("mov_eax, %4"
+		"lea_ecx,[esp+DWORD] %8"
+		"mov_ecx,[ecx]"
+		"lea_edx,[esp+DWORD] %4"
+		"mov_edx,[edx]"
+		"lea_ebx,[esp+DWORD] %12"
+		"mov_ebx,[ebx]"
+		"int !0x80");
 }
 
 void fputc(char s, FILE* f)
 {
-	asm("mov_eax, %4"
-	    "lea_ebx,[esp+DWORD] %4"
-	    "mov_ebx,[ebx]"
-	    "lea_ecx,[esp+DWORD] %8"
-	    "mov_edx, %1"
-	    "int !0x80");
+	/* We don't have operator & */
+	if(__fputc_buffer == NULL) {
+		__fputc_buffer = malloc(1);
+	}
+	__fputc_buffer[0] = s;
+
+	write(f, __fputc_buffer, 1);
+}
+
+unsigned fwrite(char* buffer, unsigned size, unsigned count, FILE* f) {
+	if(size == 0 || count == 0) {
+		return 0;
+	}
+
+	return write(f, buffer, size * count);
+}
+
+int strlen(char* str )
+{
+	int i = 0;
+	while(0 != str[i]) i = i + 1;
+	return i;
 }
 
 void fputs(char* s, FILE* f)
 {
-	while(0 != s[0])
-	{
-		fputc(s[0], f);
-		s = s + 1;
-	}
-}
-
-unsigned fwrite(char* buffer, unsigned size, unsigned count, FILE* f) {
-	count = size * count;
-
-	unsigned i = 0;
-	for(; i < count; i = i + 1) {
-		fputc(buffer[i], f);
-	}
-
-	return i;
+	write(f, s, strlen(s));
 }
 
 FILE* open(char* name, int flag, int mode)
 {
-	asm("lea_ebx,[esp+DWORD] %12"
-	    "mov_ebx,[ebx]"
-	    "lea_ecx,[esp+DWORD] %8"
-	    "mov_ecx,[ecx]"
-	    "lea_edx,[esp+DWORD] %4"
-	    "mov_edx,[edx]"
-	    "mov_eax, %5"
-	    "int !0x80");
+	asm("mov_eax, %5"
+		"lea_ecx,[esp+DWORD] %8"
+		"mov_ecx,[ecx]"
+		"lea_edx,[esp+DWORD] %4"
+		"mov_edx,[edx]"
+		"lea_ebx,[esp+DWORD] %12"
+		"mov_ebx,[ebx]"
+		"int !0x80");
 }
 
 FILE* fopen(char* filename, char* mode)
@@ -173,13 +190,6 @@ void* malloc(int size)
 	long old_malloc = _malloc_ptr;
 	_malloc_ptr = _malloc_ptr + size;
 	return old_malloc;
-}
-
-int strlen(char* str )
-{
-	int i = 0;
-	while(0 != str[i]) i = i + 1;
-	return i;
 }
 
 void* memset(void* ptr, int value, int num)
