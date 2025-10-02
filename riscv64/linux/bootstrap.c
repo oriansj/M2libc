@@ -42,59 +42,61 @@ enum
 };
 
 
+void* malloc(int size);
+
+unsigned read(FILE* f, char* buffer, unsigned count) {
+	asm("rd_a0 rs1_fp !-8 ld"
+	    "rd_a1 rs1_fp !-16 ld"
+	    "rd_a2 rs1_fp !-24 ld"
+	    "rd_a7 !63 addi"
+	    "ecall");
+}
+
+
+char* __fputc_buffer;
 int fgetc(FILE* f)
 {
-	asm("rd_a0 rs1_fp !-8 ld"
-	    "rs1_sp rs2_a0 sd"
-	    "rd_a1 rs1_sp mv"
-	    "rd_a2 !1 addi"
-	    "rd_a7 !63 addi"
-	    "ecall"
-	    "rd_a1 mv"
-	    "rd_t0 rs1_a0 mv"
-	    "rd_a0 rs1_sp ld"
-	    "rs1_t0 @8 bnez"
-	    "rd_a0 !-1 addi");
+	/* We don't have operator & */
+	if(__fputc_buffer == NULL) {
+		__fputc_buffer = malloc(1);
+	}
+
+	if(read(f, __fputc_buffer, 1) <= 0) {
+		return EOF;
+	}
+
+	return __fputc_buffer[0];
 }
 
 unsigned fread(char* buffer, unsigned size, unsigned count, FILE* f) {
-	count = size * count;
+	return read(f, buffer, size * count);
+}
 
-	unsigned i = 0;
-	for(; i < count; i = i + 1) {
-		buffer[i] = fgetc(f);
-	}
-
-	return i;
+unsigned write(FILE* f, char* buffer, unsigned count) {
+	asm("rd_a0 rs1_fp !-8 ld"
+	    "rd_a1 rs1_fp !-16 ld"
+	    "rd_a2 rs1_fp !-24 ld"
+	    "rd_a7 !64 addi"
+	    "ecall");
 }
 
 void fputc(char s, FILE* f)
 {
-	asm("rd_a0 rs1_fp !-16 ld"
-	    "rd_a1 rs1_fp !-8 addi"
-	    "rd_a2 !1 addi"   /* 1 byte */
-	    "rd_a7 !64 addi"  /* write */
-	    "ecall");
-}
-
-void fputs(char* s, FILE* f)
-{
-	while(0 != s[0])
-	{
-		fputc(s[0], f);
-		s = s + 1;
+	/* We don't have operator & */
+	if(__fputc_buffer == NULL) {
+		__fputc_buffer = malloc(1);
 	}
+	__fputc_buffer[0] = s;
+
+	write(f, __fputc_buffer, 1);
 }
 
 unsigned fwrite(char* buffer, unsigned size, unsigned count, FILE* f) {
-	count = size * count;
-
-	unsigned i = 0;
-	for(; i < count; i = i + 1) {
-		fputc(buffer[i], f);
+	if(size == 0 || count == 0) {
+		return 0;
 	}
 
-	return i;
+	return write(f, buffer, size * count);
 }
 
 FILE* open(char* name, int flag, int mode)
@@ -174,6 +176,11 @@ int strlen(char* str )
 	int i = 0;
 	while(0 != str[i]) i = i + 1;
 	return i;
+}
+
+void fputs(char* s, FILE* f)
+{
+	write(f, s, strlen(s));
 }
 
 void* memset(void* ptr, int value, int num)
