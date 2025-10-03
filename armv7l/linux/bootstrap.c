@@ -41,59 +41,67 @@ enum
 };
 
 
-int fgetc(FILE* f)
-{
+void* malloc(int size);
+
+unsigned read(FILE* f, char* buffer, unsigned count) {
 	asm("!4 R0 SUB R12 ARITH_ALWAYS"
 	    "!0 R0 LOAD32 R0 MEMORY"
-	    "{R0} PUSH_ALWAYS"
-	    "'0' SP R1 NO_SHIFT MOVE_ALWAYS"
-	    "!1 R2 LOADI8_ALWAYS"
+	    "!8 R1 SUB R12 ARITH_ALWAYS"
+	    "!0 R1 LOAD32 R1 MEMORY"
+	    "!12 R2 SUB R12 ARITH_ALWAYS"
+	    "!0 R2 LOAD32 R2 MEMORY"
 	    "!3 R7 LOADI8_ALWAYS"
-	    "SYSCALL_ALWAYS"
-	    "!0 CMPI8 R0 IMM_ALWAYS"
-	    "{R0} POP_ALWAYS"
-	    "!0 R0 MVNI8_EQUAL");
+	    "SYSCALL_ALWAYS");
+}
+
+
+char* __fputc_buffer;
+int fgetc(FILE* f)
+{
+	/* We don't have operator & */
+	if(__fputc_buffer == NULL) {
+		__fputc_buffer = malloc(1);
+	}
+
+	if(read(f, __fputc_buffer, 1) <= 0) {
+		return EOF;
+	}
+
+	return __fputc_buffer[0];
 }
 
 unsigned fread(char* buffer, unsigned size, unsigned count, FILE* f) {
-	count = size * count;
-
-	unsigned i = 0;
-	for(; i < count; i = i + 1) {
-		buffer[i] = fgetc(f);
-	}
-
-	return i;
+	return read(f, buffer, size * count);
 }
 
-void fputc(char s, FILE* f)
-{
-	asm("!8 R0 SUB R12 ARITH_ALWAYS"
+unsigned write(FILE* f, char* buffer, unsigned count) {
+	asm("!4 R0 SUB R12 ARITH_ALWAYS"
 	    "!0 R0 LOAD32 R0 MEMORY"
-	    "!4 R1 SUB R12 ARITH_ALWAYS"
-	    "!1 R2 LOADI8_ALWAYS"
+	    "!8 R1 SUB R12 ARITH_ALWAYS"
+	    "!0 R1 LOAD32 R1 MEMORY"
+	    "!12 R2 SUB R12 ARITH_ALWAYS"
+	    "!0 R2 LOAD32 R2 MEMORY"
 	    "!4 R7 LOADI8_ALWAYS"
 	    "SYSCALL_ALWAYS");
 }
 
-void fputs(char* s, FILE* f)
+void fputc(char s, FILE* f)
 {
-	while(0 != s[0])
-	{
-		fputc(s[0], f);
-		s = s + 1;
+	/* We don't have operator & */
+	if(__fputc_buffer == NULL) {
+		__fputc_buffer = malloc(1);
 	}
+	__fputc_buffer[0] = s;
+
+	write(f, __fputc_buffer, 1);
 }
 
 unsigned fwrite(char* buffer, unsigned size, unsigned count, FILE* f) {
-	count = size * count;
-
-	unsigned i = 0;
-	for(; i < count; i = i + 1) {
-		fputc(buffer[i], f);
+	if(size == 0 || count == 0) {
+		return 0;
 	}
 
-	return i;
+	return write(f, buffer, size * count);
 }
 
 FILE* open(char* name, int flag, int mode)
@@ -176,6 +184,11 @@ int strlen(char* str )
 	int i = 0;
 	while(0 != str[i]) i = i + 1;
 	return i;
+}
+
+void fputs(char* s, FILE* f)
+{
+	write(f, s, strlen(s));
 }
 
 void* memset(void* ptr, int value, int num)
