@@ -41,50 +41,65 @@ enum
 	FALSE = 0,
 };
 
+void* malloc(int size);
 
-int fgetc(FILE* f)
-{
-	asm("SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "PUSH_X0"
-	    "SET_X1_FROM_SP"
-	    "SET_X2_TO_1"
+unsigned read(FILE* f, char* buffer, unsigned count) {
+	asm("SET_X0_FROM_BP" "SUB_X0_24" "DEREF_X0"
+	    "SET_X2_FROM_X0"
+	    "SET_X0_FROM_BP" "SUB_X0_16" "DEREF_X0"
+	    "SET_X1_FROM_X0"
+	    "SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
 	    "SET_X8_TO_SYS_READ"
-	    "SYSCALL"
-	    "SET_X1_TO_0"
-	    "CMP_X1_X0"
-	    "POP_X0"
-	    "SKIP_INST_NE"
-	    "SET_X0_TO_MINUS_1");
+	    "SYSCALL");
 }
 
-void fputc(char s, FILE* f)
+
+char* __fputc_buffer;
+int fgetc(FILE* f)
 {
-	asm("SET_X0_FROM_BP" "SUB_X0_8"
-	    "SET_X1_FROM_X0"
+	/* We don't have operator & */
+	if(__fputc_buffer == NULL) {
+		__fputc_buffer = malloc(1);
+	}
+
+	if(read(f, __fputc_buffer, 1) <= 0) {
+		return EOF;
+	}
+
+	return __fputc_buffer[0];
+}
+
+unsigned fread(char* buffer, unsigned size, unsigned count, FILE* f) {
+	return read(f, buffer, size * count);
+}
+
+unsigned write(FILE* f, char* buffer, unsigned count) {
+	asm("SET_X0_FROM_BP" "SUB_X0_24" "DEREF_X0"
+	    "SET_X2_FROM_X0"
 	    "SET_X0_FROM_BP" "SUB_X0_16" "DEREF_X0"
-	    "SET_X2_TO_1"
+	    "SET_X1_FROM_X0"
+	    "SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
 	    "SET_X8_TO_SYS_WRITE"
 	    "SYSCALL");
 }
 
-void fputs(char* s, FILE* f)
+void fputc(char s, FILE* f)
 {
-	while(0 != s[0])
-	{
-		fputc(s[0], f);
-		s = s + 1;
+	/* We don't have operator & */
+	if(__fputc_buffer == NULL) {
+		__fputc_buffer = malloc(1);
 	}
+	__fputc_buffer[0] = s;
+
+	write(f, __fputc_buffer, 1);
 }
 
 unsigned fwrite(char* buffer, unsigned size, unsigned count, FILE* f) {
-	count = size * count;
-
-	unsigned i = 0;
-	for(; i < count; i = i + 1) {
-		fputc(buffer[i], f);
+	if(size == 0 || count == 0) {
+		return 0;
 	}
 
-	return i;
+	return write(f, buffer, size * count);
 }
 
 FILE* open(char* name, int flag, int mode)
@@ -167,6 +182,11 @@ int strlen(char* str )
 	int i = 0;
 	while(0 != str[i]) i = i + 1;
 	return i;
+}
+
+void fputs(char* s, FILE* f)
+{
+	write(f, s, strlen(s));
 }
 
 void* memset(void* ptr, int value, int num)
