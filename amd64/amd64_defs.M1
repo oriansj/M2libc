@@ -18,6 +18,10 @@
 DEFINE add_rax, 4805
 DEFINE add_rax,BYTE 4883C0
 DEFINE add_rbp, 4881C5
+DEFINE add_rsp, 4881C4
+DEFINE add_rsp,BYTE 4883C4
+DEFINE add_rcx, 4881C1
+DEFINE add_rcx,BYTE 4883C1
 DEFINE add_rax,rbx 4801D8
 DEFINE add_rax,rbp 4801E8
 DEFINE add_rax,rdx 4801D0
@@ -53,6 +57,7 @@ DEFINE lea_rbx,[r13+DWORD] 498D9D
 DEFINE lea_rbx,[r14+DWORD] 498D9E
 DEFINE lea_rbx,[r15+DWORD] 498D9F
 DEFINE lea_rcx,[rbp+DWORD] 488D8D
+DEFINE lea_rcx,[rip+DWORD] 488D0D
 DEFINE lea_rdi,[rsp+DWORD] 488DBC24
 DEFINE lea_rdx,[rip+DWORD] 488D15
 DEFINE lea_rdx,[rsp+DWORD] 488D9424
@@ -80,6 +85,7 @@ DEFINE mov_rax,rsp 4889E0
 DEFINE mov_rax,r14 4C89F0
 DEFINE mov_rax,r15 4C89F8
 DEFINE mov_rbx,rax 4889C3
+DEFINE mov_rbx,rcx 4889CB
 DEFINE mov_rbx,rdi 4889FB
 DEFINE mov_rbp,rdi 4889FD
 DEFINE mov_rbp,rsp 4889E5
@@ -88,6 +94,7 @@ DEFINE mov_rdi,rax 4889C7
 DEFINE mov_rdi,rbx 4889DF
 DEFINE mov_rdi,rsp 4889E7
 DEFINE mov_rdx,rax 4889C2
+DEFINE mov_rsi,rax 4889C6
 DEFINE mov_rdx,rsp 4889E2
 DEFINE mov_rsp,rax 4889C4
 DEFINE mov_rsp,rbp 4889EC
@@ -100,6 +107,7 @@ DEFINE mov_[rbx],al 8803
 DEFINE mov_[rbx],ax 668903
 DEFINE mov_[rbx],eax 8903
 DEFINE mov_[rbx],rax 488903
+DEFINE mov_[rcx],rax 488901
 DEFINE mov_[rbp+DWORD],rax 488985
 DEFINE mov_[rbp+DWORD],rdi 4889BD
 DEFINE mov_[rip+DWORD],rax 488905
@@ -110,6 +118,7 @@ DEFINE mov_[rip+DWORD],rsp 488925
 DEFINE mov_eax,[rax] 8B00
 DEFINE mov_rax,[rax] 488B00
 DEFINE mov_rbx,[rbx] 488B1B
+DEFINE mov_rax,[rcx] 488B01
 DEFINE mov_rcx,[rcx] 488B09
 DEFINE mov_rdi,[rdi] 488B3F
 DEFINE mov_rdx,[rdx] 488B12
@@ -137,6 +146,7 @@ DEFINE mul_rdi 48F7E7
 DEFINE mul_r14 49F7E6
 DEFINE mul_r15 49F7E7
 DEFINE NULL 0000000000000000
+DEFINE neg_rax 48F7D8
 DEFINE not_rax 48F7D0
 DEFINE or_rax,rbx 4809D8
 DEFINE pop_rax 58

@@ -17,7 +17,9 @@
 
 DEFINE add_eax, 05
 DEFINE add_eax,BYTE 83C0
+DEFINE add_ecx, 81C1
 DEFINE add_ebp, 81C5
+DEFINE add_esp, 81C4
 DEFINE add_ebx,eax 01C3
 DEFINE add_eax,ebp 01E8
 DEFINE add_eax,ebx 01D8
@@ -51,15 +53,18 @@ DEFINE lea_ebx,[edx+DWORD] 8D9A
 DEFINE lea_ebx,[esi+DWORD] 8D9E
 DEFINE lea_ebx,[edi+DWORD] 8D9F
 DEFINE lea_ecx,[esp+DWORD] 8D8C24
+DEFINE lea_ecx,[ebp+DWORD] 8D8D
 DEFINE lea_edx,[esp+DWORD] 8D9424
 DEFINE lea_esi,[esp+DWORD] 8DB424
 DEFINE lea_edi,[esp+DWORD] 8DBC24
 DEFINE mov_eax,[esp+DWORD] 8B8424
 DEFINE mov_eax,ebp 89E8
+DEFINE mov_eax,ebp 89E8
 DEFINE mov_eax,ebx 89D8
 DEFINE mov_eax,ebx 89D8
 DEFINE mov_eax,ecx 89C8
 DEFINE mov_eax,edx 89D0
+DEFINE mov_eax,esp 89E0
 DEFINE mov_edx,eax 89C2
 DEFINE mov_ebx,eax 89C3
 DEFINE mov_ecx,eax 89C1
@@ -77,6 +82,7 @@ DEFINE mov_edx, BA
 DEFINE mov_edi, BF
 DEFINE mov_edx, BA
 DEFINE mov_eax,[eax] 8B00
+DEFINE mov_eax,[ecx] 8B01
 DEFINE mov_ebx,[ebx] 8B1B
 DEFINE mov_ecx,[ecx] 8B09
 DEFINE mov_edx,[edx] 8B12
@@ -85,6 +91,7 @@ DEFINE mov_edi,[edi] 8B3F
 DEFINE mov_[ebx],al 8803
 DEFINE mov_[ebx],ax 668903
 DEFINE mov_[ebx],eax 8903
+DEFINE mov_[ecx],eax 8901
 DEFINE movsx_eax,BYTE_PTR_[eax] 0FBE00
 DEFINE movsx_ebx,BYTE_PTR_[ebx] 0FBE1B
 DEFINE movsx_eax,WORD_PTR_[eax] 0FBF00
@@ -98,14 +105,17 @@ DEFINE mul_edi F7E7
 DEFINE imul_ebx F7EB
 DEFINE NULL 00000000
 DEFINE not_eax F7D0
+DEFINE neg_eax F7D8
 DEFINE or_eax,ebx 09D8
 DEFINE pop_eax 58
 DEFINE pop_ebx 5B
+DEFINE pop_ecx 59
 DEFINE pop_ebp 5D
 DEFINE pop_esi 5E
 DEFINE pop_edi 5F
 DEFINE push_eax 50
 DEFINE push_ebx 53
+DEFINE push_ecx 51
 DEFINE push_ebp 55
 DEFINE push_esi 56
 DEFINE push_edi 57
