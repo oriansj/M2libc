@@ -40,64 +40,60 @@ enum
 	FALSE = 0,
 };
 
+void* malloc(int size);
 
-int fgetc(FILE* f)
+unsigned read(FILE* f, char* buf, unsigned count)
 {
 	asm("LOAD R0 R14 0"
-	    "LOADI R1 -1"
-	    "COPY R2 R15"
-	    "PUSHR R1 R15"
-	    "MOVE R1 R2"
-	    "LOADI R2 1"
-	    "SYS_READ"
-	    "POPR R1 R15"
-	    "JUMP.Z R0 @FUNCTION_FGETC_DONE"
-	    "SR0I R1 24"
-	    ":FUNCTION_FGETC_DONE"
-	    "MOVE R0 R1");
+	    "LOAD R1 R14 4"
+	    "LOAD R2 R14 8"
+	    "SYS_READ");
+}
+
+char* __fputc_buffer;
+int fgetc(FILE* f)
+{
+	/* We don't have operator & */
+	if(__fputc_buffer == NULL) {
+		__fputc_buffer = malloc(1);
+	}
+
+	if(read(f, __fputc_buffer, 1) <= 0) {
+		return EOF;
+	}
+
+	return __fputc_buffer[0];
 }
 
 unsigned fread(char* buffer, unsigned size, unsigned count, FILE* f) {
-	count = size * count;
-
-	unsigned i = 0;
-	for(; i < count; i = i + 1) {
-		buffer[i] = fgetc(f);
-	}
-
-	return i;
+	return read(f, buffer, size * count);
 }
 
 void fputc(char s, FILE* f)
 {
-	asm("LOAD R0 R14 0"
-	    "SL0I R0 24"
-	    "COPY R1 R15"
-	    "PUSHR R0 R15"
-	    "LOAD R0 R14 4"
-	    "LOADI R2 1"
-	    "SYS_WRITE"
-	    "POPR R1 R15");
+	/* We don't have operator & */
+	if(__fputc_buffer == NULL) {
+		__fputc_buffer = malloc(1);
+	}
+	__fputc_buffer[0] = s;
+
+	write(f, __fputc_buffer, 1);
 }
 
-void fputs(char* s, FILE* f)
+unsigned write(FILE* f, char* buf, unsigned count)
 {
-	while(0 != s[0])
-	{
-		fputc(s[0], f);
-		s = s + 1;
-	}
+	asm("LOAD R0 R14 0"
+	    "LOAD R1 R14 4"
+	    "LOAD R2 R14 8"
+	    "SYS_WRITE");
 }
 
 unsigned fwrite(char* buffer, unsigned size, unsigned count, FILE* f) {
-	count = size * count;
-
-	unsigned i = 0;
-	for(; i < count; i = i + 1) {
-		fputc(buffer[i], f);
+	if(size == 0 || count == 0) {
+		return 0;
 	}
 
-	return i;
+	return write(f, buffer, size * count);
 }
 
 FILE* open(char* name, int flag, int mode)
@@ -175,6 +171,11 @@ int strlen(char* str )
 	int i = 0;
 	while(0 != str[i]) i = i + 1;
 	return i;
+}
+
+void fputs(char* s, FILE* f)
+{
+	write(f, s, strlen(s));
 }
 
 void* memset(void* ptr, int value, int num)
