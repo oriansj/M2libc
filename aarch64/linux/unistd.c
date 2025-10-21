@@ -27,143 +27,143 @@ void* malloc(unsigned size);
 
 int access(char* pathname, int mode)
 {
-	asm("SET_X0_FROM_BP" "SUB_X0_16" "DEREF_X0"
-	    "SET_X2_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X1_FROM_X0"
-	    "SET_X0_TO_0"
-	    "SET_X3_FROM_X0"
-	    "SET_X0_TO_FCNTL_H_AT_FDCWD"
-	    "SET_X8_TO_SYS_FACCESSAT"
-	    "SYSCALL");
+	asm("mov_x0,x17" "sub_x0,x0,16" "ldr_x0,[x0]"
+	    "mov_x2,x0"
+	    "mov_x0,x17" "sub_x0,x0,8" "ldr_x0,[x0]"
+	    "mov_x1,x0"
+	    "mov_x0,0"
+	    "mov_x3,x0"
+	    "mov_x0,-100"
+	    "mov_x8,48"
+	    "svc_0");
 }
 
 int chdir(char* path)
 {
-	asm("SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X8_TO_SYS_CHDIR"
-	    "SYSCALL");
+	asm("mov_x0,x17" "sub_x0,x0,8" "ldr_x0,[x0]"
+	    "mov_x8,49"
+	    "svc_0");
 }
 
 int fchdir(int fd)
 {
-	asm("SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X8_TO_SYS_FCHDIR"
-	    "SYSCALL");
+	asm("mov_x0,x17" "sub_x0,x0,8" "ldr_x0,[x0]"
+	    "mov_x8,50"
+	    "svc_0");
 }
 
 void _exit(int value);
 
 int fork()
 {
-	asm("SET_X0_TO_0"
-	    "SET_X1_FROM_X0"
-	    "SET_X2_FROM_X0"
-	    "SET_X3_FROM_X0"
-	    "SET_X4_FROM_X0"
-	    "SET_X5_FROM_X0"
-	    "SET_X6_FROM_X0"
-	    "SET_X0_TO_17"
-	    "SET_X8_TO_SYS_CLONE"
-	    "SYSCALL");
+	asm("mov_x0,0"
+	    "mov_x1,x0"
+	    "mov_x2,x0"
+	    "mov_x3,x0"
+	    "mov_x4,x0"
+	    "mov_x5,x0"
+	    "mov_x6,x0"
+	    "mov_x0,17"
+	    "mov_x8,220"
+	    "svc_0");
 }
 
 
 int waitpid (int pid, int* status_ptr, int options)
 {
-	asm("SET_X0_TO_MINUS_1"
-	    "SET_X3_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_24" "DEREF_X0"
-	    "SET_X2_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_16" "DEREF_X0"
-	    "SET_X1_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X8_TO_SYS_WAIT4"
-	    "SYSCALL");
+	asm("mov_x0,-1"
+	    "mov_x3,x0"
+	    "mov_x0,x17" "sub_x0,x0,24" "ldr_x0,[x0]"
+	    "mov_x2,x0"
+	    "mov_x0,x17" "sub_x0,x0,16" "ldr_x0,[x0]"
+	    "mov_x1,x0"
+	    "mov_x0,x17" "sub_x0,x0,8" "ldr_x0,[x0]"
+	    "mov_x8,260"
+	    "svc_0");
 }
 
 
 int execve(char* file_name, char** argv, char** envp)
 {
-	asm("SET_X0_FROM_BP" "SUB_X0_24" "DEREF_X0"
-	    "SET_X2_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_16" "DEREF_X0"
-	    "SET_X1_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X8_TO_SYS_EXECVE"
-	    "SYSCALL");
+	asm("mov_x0,x17" "sub_x0,x0,24" "ldr_x0,[x0]"
+	    "mov_x2,x0"
+	    "mov_x0,x17" "sub_x0,x0,16" "ldr_x0,[x0]"
+	    "mov_x1,x0"
+	    "mov_x0,x17" "sub_x0,x0,8" "ldr_x0,[x0]"
+	    "mov_x8,221"
+	    "svc_0");
 }
 
 int read(int fd, char* buf, unsigned count)
 {
-	asm("SET_X0_FROM_BP" "SUB_X0_24" "DEREF_X0"
-	    "SET_X2_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_16" "DEREF_X0"
-	    "SET_X1_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X8_TO_SYS_READ"
-	    "SYSCALL");
+	asm("mov_x0,x17" "sub_x0,x0,24" "ldr_x0,[x0]"
+	    "mov_x2,x0"
+	    "mov_x0,x17" "sub_x0,x0,16" "ldr_x0,[x0]"
+	    "mov_x1,x0"
+	    "mov_x0,x17" "sub_x0,x0,8" "ldr_x0,[x0]"
+	    "mov_x8,63"
+	    "svc_0");
 }
 
 int write(int fd, char* buf, unsigned count)
 {
-	asm("SET_X0_FROM_BP" "SUB_X0_24" "DEREF_X0"
-	    "SET_X2_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_16" "DEREF_X0"
-	    "SET_X1_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X8_TO_SYS_WRITE"
-	    "SYSCALL");
+	asm("mov_x0,x17" "sub_x0,x0,24" "ldr_x0,[x0]"
+	    "mov_x2,x0"
+	    "mov_x0,x17" "sub_x0,x0,16" "ldr_x0,[x0]"
+	    "mov_x1,x0"
+	    "mov_x0,x17" "sub_x0,x0,8" "ldr_x0,[x0]"
+	    "mov_x8,64"
+	    "svc_0");
 }
 
 int lseek(int fd, int offset, int whence)
 {
-	asm("SET_X0_TO_MINUS_1"
-	    "SET_X3_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_24" "DEREF_X0"
-	    "SET_X2_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_16" "DEREF_X0"
-	    "SET_X1_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X8_TO_SYS_LSEEK"
-	    "SYSCALL");
+	asm("mov_x0,-1"
+	    "mov_x3,x0"
+	    "mov_x0,x17" "sub_x0,x0,24" "ldr_x0,[x0]"
+	    "mov_x2,x0"
+	    "mov_x0,x17" "sub_x0,x0,16" "ldr_x0,[x0]"
+	    "mov_x1,x0"
+	    "mov_x0,x17" "sub_x0,x0,8" "ldr_x0,[x0]"
+	    "mov_x8,62"
+	    "svc_0");
 }
 
 
 int close(int fd)
 {
-	asm("SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X8_TO_SYS_CLOSE"
-	    "SYSCALL");
+	asm("mov_x0,x17" "sub_x0,x0,8" "ldr_x0,[x0]"
+	    "mov_x8,57"
+	    "svc_0");
 }
 
 
 int unlink (char* filename)
 {
-	asm("SET_X1_FROM_X0"
-	    "SET_X2_TO_0"
-	    "SET_X0_TO_FCNTL_H_AT_FDCWD"
-	    "SET_X8_TO_SYS_UNLINKAT"
-	    "SYSCALL");
+	asm("mov_x1,x0"
+	    "mov_x2,0"
+	    "mov_x0,-100"
+	    "mov_x8,35"
+	    "svc_0");
 }
 
 int symlink(char *path1, char *path2)
 {
-	asm("SET_X0_FROM_BP" "SUB_X0_16" "DEREF_X0"
-	    "SET_X2_FROM_X0"
-	    "SET_X1_TO_FCNTL_H_AT_FDCWD"
-	    "SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X8_TO_SYS_SYMLINKAT"
-	    "SYSCALL");
+	asm("mov_x0,x17" "sub_x0,x0,16" "ldr_x0,[x0]"
+	    "mov_x2,x0"
+	    "mov_x1,-100"
+	    "mov_x0,x17" "sub_x0,x0,8" "ldr_x0,[x0]"
+	    "mov_x8,36"
+	    "svc_0");
 }
 
 int _getcwd(char* buf, int size)
 {
-	asm("SET_X0_FROM_BP" "SUB_X0_16" "DEREF_X0"
-	    "SET_X1_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X8_TO_SYS_GETCWD"
-	    "SYSCALL");
+	asm("mov_x0,x17" "sub_x0,x0,16" "ldr_x0,[x0]"
+	    "mov_x1,x0"
+	    "mov_x0,x17" "sub_x0,x0,8" "ldr_x0,[x0]"
+	    "mov_x8,17"
+	    "svc_0");
 }
 
 
@@ -189,57 +189,57 @@ char* get_current_dir_name()
 
 int brk(void *addr)
 {
-	asm("SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X8_TO_SYS_BRK"
-	    "SYSCALL");
+	asm("mov_x0,x17" "sub_x0,x0,8" "ldr_x0,[x0]"
+	    "mov_x8,214"
+	    "svc_0");
 }
 
 int uname(struct utsname* unameData)
 {
-	asm("SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X8_TO_SYS_UNAME"
-	    "SYSCALL");
+	asm("mov_x0,x17" "sub_x0,x0,8" "ldr_x0,[x0]"
+	    "mov_x8,160"
+	    "svc_0");
 }
 
 int unshare(int flags)
 {
-	asm("SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X8_TO_SYS_UNSHARE"
-	    "SYSCALL");
+	asm("mov_x0,x17" "sub_x0,x0,8" "ldr_x0,[x0]"
+	    "mov_x8,97"
+	    "svc_0");
 }
 
 int geteuid()
 {
-	asm("SET_X8_TO_SYS_GETEUID"
-	    "SYSCALL");
+	asm("mov_x8,175"
+	    "svc_0");
 }
 
 int getegid()
 {
-	asm("SET_X8_TO_SYS_GETEGID"
-	    "SYSCALL");
+	asm("mov_x8,177"
+	    "svc_0");
 }
 
 int chroot(char const *path)
 {
-	asm("SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X8_TO_SYS_CHROOT"
-	    "SYSCALL");
+	asm("mov_x0,x17" "sub_x0,x0,8" "ldr_x0,[x0]"
+	    "mov_x8,51"
+	    "svc_0");
 }
 
 int mount(char const *source, char const *target, char const *filesystemtype, SCM mountflags, void const *data)
 {
-	asm("SET_X0_FROM_BP" "SUB_X0_40" "DEREF_X0"
-	    "SET_X4_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_32" "DEREF_X0"
-	    "SET_X3_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_24" "DEREF_X0"
-	    "SET_X2_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_16" "DEREF_X0"
-	    "SET_X1_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X8_TO_SYS_MOUNT"
-	    "SYSCALL");
+	asm("mov_x0,x17" "sub_x0,x0,40" "ldr_x0,[x0]"
+	    "mov_x4,x0"
+	    "mov_x0,x17" "sub_x0,x0,32" "ldr_x0,[x0]"
+	    "mov_x3,x0"
+	    "mov_x0,x17" "sub_x0,x0,24" "ldr_x0,[x0]"
+	    "mov_x2,x0"
+	    "mov_x0,x17" "sub_x0,x0,16" "ldr_x0,[x0]"
+	    "mov_x1,x0"
+	    "mov_x0,x17" "sub_x0,x0,8" "ldr_x0,[x0]"
+	    "mov_x8,40"
+	    "svc_0");
 }
 
 #endif

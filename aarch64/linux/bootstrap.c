@@ -44,13 +44,13 @@ enum
 void* malloc(int size);
 
 unsigned read(FILE* f, char* buffer, unsigned count) {
-	asm("SET_X0_FROM_BP" "SUB_X0_24" "DEREF_X0"
-	    "SET_X2_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_16" "DEREF_X0"
-	    "SET_X1_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X8_TO_SYS_READ"
-	    "SYSCALL");
+	asm("mov_x0,x17" "sub_x0,x0,24" "ldr_x0,[x0]"
+	    "mov_x2,x0"
+	    "mov_x0,x17" "sub_x0,x0,16" "ldr_x0,[x0]"
+	    "mov_x1,x0"
+	    "mov_x0,x17" "sub_x0,x0,8" "ldr_x0,[x0]"
+	    "mov_x8,63"
+	    "svc_0");
 }
 
 
@@ -74,13 +74,13 @@ unsigned fread(char* buffer, unsigned size, unsigned count, FILE* f) {
 }
 
 unsigned write(FILE* f, char* buffer, unsigned count) {
-	asm("SET_X0_FROM_BP" "SUB_X0_24" "DEREF_X0"
-	    "SET_X2_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_16" "DEREF_X0"
-	    "SET_X1_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X8_TO_SYS_WRITE"
-	    "SYSCALL");
+	asm("mov_x0,x17" "sub_x0,x0,24" "ldr_x0,[x0]"
+	    "mov_x2,x0"
+	    "mov_x0,x17" "sub_x0,x0,16" "ldr_x0,[x0]"
+	    "mov_x1,x0"
+	    "mov_x0,x17" "sub_x0,x0,8" "ldr_x0,[x0]"
+	    "mov_x8,64"
+	    "svc_0");
 }
 
 void fputc(char s, FILE* f)
@@ -104,15 +104,15 @@ unsigned fwrite(char* buffer, unsigned size, unsigned count, FILE* f) {
 
 FILE* open(char* name, int flag, int mode)
 {
-	asm("SET_X0_FROM_BP" "SUB_X0_24" "DEREF_X0"
-	    "SET_X3_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_16" "DEREF_X0"
-	    "SET_X2_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X1_FROM_X0"
-	    "SET_X0_TO_FCNTL_H_AT_FDCWD"
-	    "SET_X8_TO_SYS_OPENAT"
-	    "SYSCALL");
+	asm("mov_x0,x17" "sub_x0,x0,24" "ldr_x0,[x0]"
+	    "mov_x3,x0"
+	    "mov_x0,x17" "sub_x0,x0,16" "ldr_x0,[x0]"
+	    "mov_x2,x0"
+	    "mov_x0,x17" "sub_x0,x0,8" "ldr_x0,[x0]"
+	    "mov_x1,x0"
+	    "mov_x0,-100"
+	    "mov_x8,56"
+	    "svc_0");
 }
 
 FILE* fopen(char* filename, char* mode)
@@ -137,9 +137,9 @@ FILE* fopen(char* filename, char* mode)
 
 int close(int fd)
 {
-	asm("SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X8_TO_SYS_CLOSE"
-	    "SYSCALL");
+	asm("mov_x0,x17" "sub_x0,x0,8" "ldr_x0,[x0]"
+	    "mov_x8,57"
+	    "svc_0");
 }
 
 int fclose(FILE* stream)
@@ -150,9 +150,9 @@ int fclose(FILE* stream)
 
 int brk(void *addr)
 {
-	asm("SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X8_TO_SYS_BRK"
-	    "SYSCALL");
+	asm("mov_x0,x17" "sub_x0,x0,8" "ldr_x0,[x0]"
+	    "mov_x8,214"
+	    "svc_0");
 }
 
 long _malloc_ptr;
@@ -214,7 +214,7 @@ void free(void* l)
 
 void exit(int value)
 {
-	asm("SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X8_TO_SYS_EXIT"
-	    "SYSCALL");
+	asm("mov_x0,x17" "sub_x0,x0,8" "ldr_x0,[x0]"
+	    "mov_x8,93"
+	    "svc_0");
 }

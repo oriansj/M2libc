@@ -35,15 +35,15 @@
 
 int _open(char* name, int flag, int mode)
 {
-	asm("SET_X0_FROM_BP" "SUB_X0_24" "DEREF_X0"
-	    "SET_X3_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_16" "DEREF_X0"
-	    "SET_X2_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X1_FROM_X0"
-	    "SET_X0_TO_FCNTL_H_AT_FDCWD"
-	    "SET_X8_TO_SYS_OPENAT"
-	    "SYSCALL");
+	asm("mov_x0,x17" "sub_x0,x0,24" "ldr_x0,[x0]"
+	    "mov_x3,x0"
+	    "mov_x0,x17" "sub_x0,x0,16" "ldr_x0,[x0]"
+	    "mov_x2,x0"
+	    "mov_x0,x17" "sub_x0,x0,8" "ldr_x0,[x0]"
+	    "mov_x1,x0"
+	    "mov_x0,-100"
+	    "mov_x8,56"
+	    "svc_0");
 }
 
 #define STDIN_FILENO  0

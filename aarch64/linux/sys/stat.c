@@ -38,61 +38,61 @@
 
 int chmod(char *pathname, int mode)
 {
-	asm("SET_X0_FROM_BP" "SUB_X0_16" "DEREF_X0"
-	    "SET_X2_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X1_FROM_X0"
-	    "SET_X0_TO_0"
-	    "SET_X3_FROM_X0"
-	    "SET_X0_TO_FCNTL_H_AT_FDCWD"
-	    "SET_X8_TO_SYS_FCHMODAT"
-	    "SYSCALL");
+	asm("mov_x0,x17" "sub_x0,x0,16" "ldr_x0,[x0]"
+	    "mov_x2,x0"
+	    "mov_x0,x17" "sub_x0,x0,8" "ldr_x0,[x0]"
+	    "mov_x1,x0"
+	    "mov_x0,0"
+	    "mov_x3,x0"
+	    "mov_x0,-100"
+	    "mov_x8,53"
+	    "svc_0");
 }
 
 
 int fchmod(int a, mode_t b)
 {
-	asm("SET_X0_FROM_BP" "SUB_X0_16" "DEREF_X0"
-	    "SET_X2_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X1_FROM_X0"
-	    "SET_X0_TO_0"
-	    "SET_X3_FROM_X0"
-	    "SET_X0_TO_FCNTL_H_AT_FDCWD"
-	    "SET_X8_TO_SYS_FCHMOD"
-	    "SYSCALL");
+	asm("mov_x0,x17" "sub_x0,x0,16" "ldr_x0,[x0]"
+	    "mov_x2,x0"
+	    "mov_x0,x17" "sub_x0,x0,8" "ldr_x0,[x0]"
+	    "mov_x1,x0"
+	    "mov_x0,0"
+	    "mov_x3,x0"
+	    "mov_x0,-100"
+	    "mov_x8,52"
+	    "svc_0");
 }
 
 
 int mkdir(char const* a, mode_t b)
 {
-	asm("SET_X0_FROM_BP" "SUB_X0_16" "DEREF_X0"
-	    "SET_X2_FROM_X0"
-	    "SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X1_FROM_X0"
-	    "SET_X0_TO_0"
-	    "SET_X3_FROM_X0"
-	    "SET_X0_TO_FCNTL_H_AT_FDCWD"
-	    "SET_X8_TO_SYS_MKDIRAT"
-	    "SYSCALL");
+	asm("mov_x0,x17" "sub_x0,x0,16" "ldr_x0,[x0]"
+	    "mov_x2,x0"
+	    "mov_x0,x17" "sub_x0,x0,8" "ldr_x0,[x0]"
+	    "mov_x1,x0"
+	    "mov_x0,0"
+	    "mov_x3,x0"
+	    "mov_x0,-100"
+	    "mov_x8,34"
+	    "svc_0");
 }
 
 
 int mknod(char const* a, mode_t b, dev_t c)
 {
-	asm("SET_X3_FROM_X2"
-	    "SET_X2_FROM_X1"
-	    "SET_X1_FROM_X0"
-	    "SET_X0_TO_FCNTL_H_AT_FDCWD"
-	    "SET_X8_TO_SYS_MKNODAT"
-	    "SYSCALL");
+	asm("mov_x3,x2"
+	    "mov_x2,x1"
+	    "mov_x1,x0"
+	    "mov_x0,-100"
+	    "mov_x8,33"
+	    "svc_0");
 }
 
 
 mode_t umask(mode_t m)
 {
-	asm("SET_X0_FROM_BP" "SUB_X0_8" "DEREF_X0"
-	    "SET_X8_TO_SYS_UMASK"
-	    "SYSCALL");
+	asm("mov_x0,x17" "sub_x0,x0,8" "ldr_x0,[x0]"
+	    "mov_x8,166"
+	    "svc_0");
 }
 #endif
