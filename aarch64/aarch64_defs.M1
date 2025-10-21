@@ -62,7 +62,7 @@ DEFINE ldr_lr,[x18],8 5e8640f8
 DEFINE ldr_lr,[sp],8 fe8740f8
 
 DEFINE INIT_SP f2030091 # mov x18, sp
-DEFINE mov_x18,x17 f2030091
+DEFINE mov_x18,sp f2030091
 
 
 # Jump/branch/call/return
