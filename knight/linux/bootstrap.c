@@ -69,6 +69,14 @@ unsigned fread(char* buffer, unsigned size, unsigned count, FILE* f) {
 	return read(f, buffer, size * count);
 }
 
+unsigned write(FILE* f, char* buf, unsigned count)
+{
+	asm("LOAD R0 R14 0"
+	    "LOAD R1 R14 4"
+	    "LOAD R2 R14 8"
+	    "SYS_WRITE");
+}
+
 void fputc(char s, FILE* f)
 {
 	/* We don't have operator & */
@@ -78,14 +86,6 @@ void fputc(char s, FILE* f)
 	__fputc_buffer[0] = s;
 
 	write(f, __fputc_buffer, 1);
-}
-
-unsigned write(FILE* f, char* buf, unsigned count)
-{
-	asm("LOAD R0 R14 0"
-	    "LOAD R1 R14 4"
-	    "LOAD R2 R14 8"
-	    "SYS_WRITE");
 }
 
 unsigned fwrite(char* buffer, unsigned size, unsigned count, FILE* f) {
