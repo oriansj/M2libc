@@ -251,6 +251,13 @@ void* calloc(int count, int size)
 	return ret;
 }
 
+void assert(int condition) {
+	if(!condition) {
+		fputs("M2libc assertion failed\n", stderr);
+		exit(EXIT_FAILURE);
+	}
+}
+
 void free(void* l)
 {
 	return;
