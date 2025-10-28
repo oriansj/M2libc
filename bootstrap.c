@@ -152,6 +152,97 @@ void* memset(void* ptr, int value, int num)
 	}
 }
 
+/* The real memcpy has void* parameters and return types, but
+ * for M2-Planet it doesn't matter and it leads to slightly better
+ * codegen if they're char* from the start. */
+char* memcpy(char* dst, char* src, unsigned count)
+{
+	if(NULL == dst) return dst;
+	if(NULL == src) return NULL;
+
+	unsigned i = 0;
+	while(i < count)
+	{
+		dst[i] = src[i];
+		i = i + 1;
+	}
+
+	return dst;
+}
+
+int strcmp(char* lhs, char* rhs)
+{
+	int i = 0;
+	while(0 != lhs[i])
+	{
+		if(lhs[i] != rhs[i]) return lhs[i] - rhs[i];
+		i = i + 1;
+	}
+
+	return lhs[i] - rhs[i];
+}
+
+char* strchr(char* str, int ch)
+{
+	char* p = str;
+	while(ch != p[0])
+	{
+		if(0 == p[0]) return NULL;
+		p = p + 1;
+	}
+	if(0 == p[0]) return NULL;
+	return p;
+}
+
+int isspace(int c) {
+	return c == ' ' || c == '\n' || c == '\t';
+}
+
+int isdigit(int c) {
+	return c >= '0' && c <= '9';
+}
+
+int isalpha(int c) {
+	c = c | 32; /* lowercase the char */
+	return c >= 'a' && c <= 'z';
+}
+
+int isalnum(int c) {
+	return isalpha(c) || isdigit(c);
+}
+
+int atoi(char* str)
+{
+	while(isspace(str[0]))
+	{
+		str = str + 1;
+	}
+
+	int negative = 0;
+	if (str[0] == '-') {
+		negative = 1;
+	}
+	if (str[0] == '+') {
+		str = str + 1;
+	}
+
+	int value = 0;
+	while(isdigit(str[0]))
+	{
+		value = 10 * value - (str[0] - '0');
+		str = str + 1;
+	}
+
+	if(negative == 1)
+	{
+		return value;
+	}
+	else
+	{
+		return -value;
+	}
+}
+
 void* calloc(int count, int size)
 {
 	void* ret = malloc(count * size);
