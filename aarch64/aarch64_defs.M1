@@ -111,6 +111,9 @@ DEFINE cset_w0,ne e0079f1a
 DEFINE cset_w0,gt e0d79f1a
 DEFINE cset_w0,ge e0b79f1a
 
+# Csel
+DEFINE csel_x2,x3,x2,eq 6200829a
+
 # Load literals (PC-relative)
 DEFINE LOAD_W0_AHEAD 40000098
 DEFINE ldrsw_x0,8 40000098
@@ -180,6 +183,7 @@ DEFINE ldr_x8,[sp,48] e81b40f9
 
 
 # Move data between registers
+DEFINE mov_x0,x2 e00302aa
 DEFINE SET_X0_FROM_BP e00311aa
 DEFINE mov_x0,x17 e00311aa
 DEFINE SET_X0_FROM_X13 e0030daa # mov x0, x13
@@ -407,6 +411,8 @@ DEFINE mov_x0,1024 008080d2
 DEFINE mov_x0,4096 000082d2
 DEFINE mov_x0,65536 2000a0d2
 DEFINE mov_x0,262144 8000a0d2
+
+DEFINE mov_x3,1 230080d2
 
 DEFINE mov_x14,8 0e0180d2
 DEFINE mov_x14,16 0e0280d2
