@@ -34,6 +34,7 @@ DEFINE and_eax,ebx 21D8
 DEFINE call E8
 DEFINE call_eax FFD0
 DEFINE cmp_ebx,eax 39C3
+DEFINE cmp_ebx,edx 39D3
 DEFINE cdq 99
 DEFINE div_ebx F7F3
 DEFINE idiv_ebx F7FB
@@ -107,6 +108,7 @@ DEFINE NULL 00000000
 DEFINE not_eax F7D0
 DEFINE neg_eax F7D8
 DEFINE or_eax,ebx 09D8
+DEFINE or_ecx,eax 09C1
 DEFINE pop_eax 58
 DEFINE pop_ebx 5B
 DEFINE pop_ecx 59
