@@ -38,6 +38,7 @@ DEFINE and_rsp, 4881E4
 DEFINE call E8
 DEFINE call_rax FFD0
 DEFINE cmp_rbx,rax 4839C3
+DEFINE cmp_rbx,rdx 4839D3
 DEFINE cqo 4899
 DEFINE div_rbx 48F7F3
 DEFINE idiv_rbx 48F7FB
@@ -79,6 +80,7 @@ DEFINE mov_r14, 49C7C6
 DEFINE mov_r15, 49C7C7
 DEFINE mov_rax,cr3 0F20D8
 DEFINE mov_rax,rdx 4889D0
+DEFINE mov_rax,rcx 4889C8
 DEFINE mov_rax,rbx 4889D8
 DEFINE mov_rax,rbp 4889E8
 DEFINE mov_rax,rsp 4889E0
@@ -149,6 +151,7 @@ DEFINE NULL 0000000000000000
 DEFINE neg_rax 48F7D8
 DEFINE not_rax 48F7D0
 DEFINE or_rax,rbx 4809D8
+DEFINE or_rcx,rax 4809C1
 DEFINE pop_rax 58
 DEFINE pop_rbp 5D
 DEFINE pop_rbx 5B
