@@ -77,6 +77,7 @@ DEFINE CBZ_X0_PAST_BR a00000b4
 DEFINE cbz_x0,20 a00000b4
 DEFINE CBNZ_X0_PAST_BR a00000b5
 DEFINE cbnz_x0,20 a00000b5
+DEFINE cbnz_x6,20 a6000035
 
 DEFINE SKIP_INST_EQ 40000054
 DEFINE b.eq_8 40000054
@@ -114,6 +115,17 @@ DEFINE cset_w0,cc e0279f1a
 DEFINE cset_w0,ls e0879f1a
 DEFINE cset_w0,cs e0379f1a
 DEFINE cset_w0,hi e0979f1a
+
+DEFINE cset_w6,lt e6a79f1a
+DEFINE cset_w6,le e6c79f1a
+DEFINE cset_w6,eq e6179f1a
+DEFINE cset_w6,ne e6079f1a
+DEFINE cset_w6,gt e6d79f1a
+DEFINE cset_w6,ge e6b79f1a
+DEFINE cset_w6,cc e6279f1a
+DEFINE cset_w6,ls e6879f1a
+DEFINE cset_w6,cs e6379f1a
+DEFINE cset_w6,hi e6979f1a
 
 # Csel
 DEFINE csel_x2,x3,x2,eq 6200829a
