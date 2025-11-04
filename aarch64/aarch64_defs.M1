@@ -110,6 +110,10 @@ DEFINE cset_w0,eq e0179f1a
 DEFINE cset_w0,ne e0079f1a
 DEFINE cset_w0,gt e0d79f1a
 DEFINE cset_w0,ge e0b79f1a
+DEFINE cset_w0,cc e0279f1a
+DEFINE cset_w0,ls e0879f1a
+DEFINE cset_w0,cs e0379f1a
+DEFINE cset_w0,hi e0979f1a
 
 # Csel
 DEFINE csel_x2,x3,x2,eq 6200829a
