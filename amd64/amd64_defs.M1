@@ -37,8 +37,11 @@ DEFINE and_rax,rbx 4821D8
 DEFINE and_rsp, 4881E4
 DEFINE call E8
 DEFINE call_rax FFD0
+DEFINE cmp_rax,BYTE 4883F8
 DEFINE cmp_rbx,rax 4839C3
 DEFINE cmp_rbx,rdx 4839D3
+DEFINE cmp_rcx,BYTE 4883F9
+DEFINE cmp_rcx,rdx 4839d1
 DEFINE cqo 4899
 DEFINE div_rbx 48F7F3
 DEFINE idiv_rbx 48F7FB
@@ -57,6 +60,7 @@ DEFINE lea_rbx,[rip+DWORD] 488D1D
 DEFINE lea_rbx,[r13+DWORD] 498D9D
 DEFINE lea_rbx,[r14+DWORD] 498D9E
 DEFINE lea_rbx,[r15+DWORD] 498D9F
+DEFINE lea_rbx,[rbp+DWORD] 488D9D
 DEFINE lea_rcx,[rbp+DWORD] 488D8D
 DEFINE lea_rcx,[rip+DWORD] 488D0D
 DEFINE lea_rdi,[rsp+DWORD] 488DBC24
@@ -142,6 +146,9 @@ DEFINE movsx_rax,WORD_PTR_[rax] 480FBF00
 DEFINE movsx_rax,DWORD_PTR_[rax] 486300
 DEFINE movzx_rax,BYTE_PTR_[rax] 480FB600
 DEFINE movzx_rax,WORD_PTR_[rax] 480FB700
+DEFINE movzx_rbx,BYTE_PTR_[rbx] 480FB61B
+DEFINE movzx_rcx,BYTE_PTR_[rax] 480FB608
+DEFINE movzx_rdx,BYTE_PTR_[rbx] 480FB613
 DEFINE imul_rbx 48F7EB
 DEFINE mul_rbx 48F7E3
 DEFINE mul_rdi 48F7E7
@@ -227,3 +234,5 @@ DEFINE xor_esi,esi 31F6
 DEFINE xor_r13,r13 4D31ED
 DEFINE xor_r14,r14 4D31F6
 DEFINE xor_r15,r15 4D31FF
+DEFINE inc_rax 48ffc0
+DEFINE inc_rbx 48ffc3
