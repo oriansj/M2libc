@@ -99,6 +99,7 @@ DEFINE mov_rbp,rsp 4889E5
 DEFINE mov_rcx,rax 4889C1
 DEFINE mov_rdi,rax 4889C7
 DEFINE mov_rdi,rbx 4889DF
+DEFINE mov_rdi,rdx 4889D7
 DEFINE mov_rdi,rsp 4889E7
 DEFINE mov_rdx,rax 4889C2
 DEFINE mov_rsi,rax 4889C6
@@ -153,6 +154,7 @@ DEFINE movzx_rcx,BYTE_PTR_[rax] 480FB608
 DEFINE movzx_rdx,BYTE_PTR_[rbx] 480FB613
 DEFINE imul_rbx 48F7EB
 DEFINE mul_rbx 48F7E3
+DEFINE mul_rcx 48F7E1
 DEFINE mul_rdi 48F7E7
 DEFINE mul_r14 49F7E6
 DEFINE mul_r15 49F7E7
