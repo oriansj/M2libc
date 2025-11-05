@@ -70,11 +70,13 @@ DEFINE mov_eax,ebx 89D8
 DEFINE mov_eax,ecx 89C8
 DEFINE mov_eax,edx 89D0
 DEFINE mov_eax,esp 89E0
+DEFINE mov_eax,edi 89F8
 DEFINE mov_edx,eax 89C2
 DEFINE mov_ebx,eax 89C3
 DEFINE mov_ecx,eax 89C1
 DEFINE mov_ecx,esp 89E1
 DEFINE mov_esi,esp 89E6
+DEFINE mov_edi,eax 89C7
 DEFINE mov_edi,esp 89E7
 DEFINE mov_ebp,edi 89fd
 DEFINE mov_esp,esi 89F4
@@ -93,6 +95,7 @@ DEFINE mov_ecx,[ecx] 8B09
 DEFINE mov_edx,[edx] 8B12
 DEFINE mov_esi,[esi] 8B36
 DEFINE mov_edi,[edi] 8B3F
+DEFINE mov_[eax],dl 8810
 DEFINE mov_[ebx],al 8803
 DEFINE mov_[ebx],ax 668903
 DEFINE mov_[ebx],eax 8903
@@ -167,3 +170,4 @@ DEFINE xor_edi,edi 31FF
 DEFINE xor_esi,esi 31F6
 DEFINE inc_eax 40
 DEFINE inc_ebx 43
+DEFINE dec_ecx 49
