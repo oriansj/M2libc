@@ -40,6 +40,7 @@ DEFINE call_rax FFD0
 DEFINE cmp_rax,BYTE 4883F8
 DEFINE cmp_rbx,rax 4839C3
 DEFINE cmp_rbx,rdx 4839D3
+DEFINE cmp_rbx,BYTE 4883FB
 DEFINE cmp_rcx,BYTE 4883F9
 DEFINE cmp_rcx,rdx 4839d1
 DEFINE cqo 4899
