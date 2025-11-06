@@ -34,6 +34,7 @@ DEFINE and_eax,ebx 21D8
 DEFINE call E8
 DEFINE call_eax FFD0
 DEFINE cmp_eax,BYTE 83F8
+DEFINE cmp_ebx,BYTE 83FB
 DEFINE cmp_ecx,BYTE 83F9
 DEFINE cmp_ecx,edx 39D1
 DEFINE cmp_ebx,eax 39C3
