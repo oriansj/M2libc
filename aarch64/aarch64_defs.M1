@@ -121,6 +121,28 @@ DEFINE cset_w0,ls e0879f1a
 DEFINE cset_w0,cs e0379f1a
 DEFINE cset_w0,hi e0979f1a
 
+DEFINE cset_w1,lt e1a79f1a
+DEFINE cset_w1,le e1c79f1a
+DEFINE cset_w1,eq e1179f1a
+DEFINE cset_w1,ne e1079f1a
+DEFINE cset_w1,gt e1d79f1a
+DEFINE cset_w1,ge e1b79f1a
+DEFINE cset_w1,cc e1279f1a
+DEFINE cset_w1,ls e1879f1a
+DEFINE cset_w1,cs e1379f1a
+DEFINE cset_w1,hi e1979f1a
+
+DEFINE cset_w2,lt e2a79f1a
+DEFINE cset_w2,le e2c79f1a
+DEFINE cset_w2,eq e2179f1a
+DEFINE cset_w2,ne e2079f1a
+DEFINE cset_w2,gt e2d79f1a
+DEFINE cset_w2,ge e2b79f1a
+DEFINE cset_w2,cc e2279f1a
+DEFINE cset_w2,ls e2879f1a
+DEFINE cset_w2,cs e2379f1a
+DEFINE cset_w2,hi e2979f1a
+
 DEFINE cset_w6,lt e6a79f1a
 DEFINE cset_w6,le e6c79f1a
 DEFINE cset_w6,eq e6179f1a
@@ -624,6 +646,7 @@ DEFINE mvn_x0,x0 e00320aa
 DEFINE AND_X0_X1_X0 2000008a
 DEFINE and_x0,x1,x0 2000008a
 DEFINE and_x0,x0,x1 0000018a
+DEFINE and_x0,x1,x2 2000028a
 DEFINE OR_X0_X1_X0 200000aa
 DEFINE orr_x0,x1,x0 200000aa
 DEFINE orr_x0,x0,x1 000001aa
@@ -635,6 +658,8 @@ DEFINE cmp_x1,x0 3f0000eb
 DEFINE cmp_x0,x1 1f0001eb
 DEFINE cmp_x2,x3 5f0003eb
 DEFINE cmp_x0,0 1f0000f1
+DEFINE cmp_x0,48 1fc000f1
+DEFINE cmp_x0,57 1fe400f1
 DEFINE cmp_x2,0 5f0000f1
 
 DEFINE neg_x0,x0 e00300cb
