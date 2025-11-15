@@ -116,6 +116,7 @@ DEFINE movzx_ebx,BYTE_PTR_[ebx] 0FB61B
 DEFINE movzx_eax,al 0FB6C0
 DEFINE movzx_ecx,BYTE_PTR_[eax] 0FB608
 DEFINE movzx_edx,BYTE_PTR_[ebx] 0FB613
+DEFINE movzx_ebx,bl 0FB6DB
 DEFINE mul_ebx F7E3
 DEFINE mul_ecx F7E1
 DEFINE mul_edx F7E2
@@ -152,6 +153,7 @@ DEFINE sete_al 0F94C0
 DEFINE setle_al 0F9EC0
 DEFINE setl_al 0F9CC0
 DEFINE setge_al 0F9DC0
+DEFINE setge_bl 0F9DC3
 DEFINE setg_al 0F9FC0
 DEFINE setne_al 0F95C0
 DEFINE sub_eax, 2d
