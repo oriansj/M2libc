@@ -143,6 +143,7 @@ DEFINE mov_r9,[r9] 4D8B09
 DEFINE mov_r10,[r10] 4D8B12
 DEFINE mov_ss,eax 8ED0
 DEFINE movzx_rax,al 480FB6C0
+DEFINE movzx_rbx,bl 480FB6DB
 DEFINE movsxd_rax,eax 4863C0
 DEFINE movsx_rax,BYTE_PTR_[rax] 480FBE00
 DEFINE movsx_rbx,BYTE_PTR_[rbx] 480FBE1B
@@ -210,6 +211,7 @@ DEFINE setbe_al 0F96C0
 DEFINE sete_al 0F94C0
 DEFINE setg_al 0F9FC0
 DEFINE setge_al 0F9DC0
+DEFINE setge_bl 0F9DC3
 DEFINE setl_al 0F9CC0
 DEFINE setle_al 0F9EC0
 DEFINE setne_al 0F95C0
