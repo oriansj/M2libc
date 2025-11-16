@@ -126,6 +126,7 @@ DEFINE NULL 00000000
 DEFINE not_eax F7D0
 DEFINE neg_eax F7D8
 DEFINE or_eax,ebx 09D8
+DEFINE or_eax,edi 09F8
 DEFINE or_ecx,eax 09C1
 DEFINE or_eax,BYTE 83C8
 DEFINE pop_eax 58
@@ -171,6 +172,7 @@ DEFINE sub_esp,ecx 29CC
 DEFINE sub_esp,edx 29D4
 DEFINE test_eax,eax 85C0
 DEFINE xchg_ebx,eax 93
+DEFINE xchg_edi,eax 97
 DEFINE xchg_edx,ebx 87DA
 DEFINE xor_eax,ebx 31D8
 DEFINE xor_eax,eax 31C0
