@@ -127,6 +127,7 @@ DEFINE not_eax F7D0
 DEFINE neg_eax F7D8
 DEFINE or_eax,ebx 09D8
 DEFINE or_ecx,eax 09C1
+DEFINE or_eax,BYTE 83C8
 DEFINE pop_eax 58
 DEFINE pop_ebx 5B
 DEFINE pop_ecx 59
