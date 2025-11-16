@@ -165,6 +165,7 @@ DEFINE neg_rax 48F7D8
 DEFINE not_rax 48F7D0
 DEFINE or_rax,rbx 4809D8
 DEFINE or_rcx,rax 4809C1
+DEFINE or_rax,BYTE 4883C8
 DEFINE pop_rax 58
 DEFINE pop_rbp 5D
 DEFINE pop_rbx 5B
