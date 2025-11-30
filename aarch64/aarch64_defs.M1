@@ -1451,5 +1451,16 @@ DEFINE add_sp,sp,488 ffa30791
 DEFINE add_sp,sp,496 ffc30791
 DEFINE add_sp,sp,504 ffe30791
 DEFINE add_sp,sp,512 ff030891
+DEFINE add_sp,sp,520 ff230891
+DEFINE add_sp,sp,528 ff430891
+DEFINE add_sp,sp,536 ff630891
+DEFINE add_sp,sp,544 ff830891
+DEFINE add_sp,sp,552 ffa30891
+DEFINE add_sp,sp,560 ffc30891
+DEFINE add_sp,sp,568 ffe30891
+DEFINE add_sp,sp,576 ff030991
+DEFINE add_sp,sp,584 ff230991
+DEFINE add_sp,sp,592 ff430991
+DEFINE add_sp,sp,600 ff630991
 
 DEFINE nop 1f2003d5
