@@ -23,6 +23,7 @@ DEFINE str_x0,[x18,-8]! 408e1ff8
 DEFINE str_x0,[sp,-8]! e08f1ff8
 DEFINE PUSH_X1 418e1ff8
 DEFINE str_x1,[x18,-8]! 418e1ff8
+DEFINE str_x1,[sp,-8]! e18f1ff8
 DEFINE PUSH_X13 4d8e1ff8 # str x13, [x18,-8]!
 DEFINE str_x13,[x18,-8]! 4d8e1ff8
 DEFINE str_x13,[sp,-8]! ed8f1ff8
@@ -327,6 +328,7 @@ DEFINE SET_X2_FROM_X1 e20301aa
 DEFINE mov_x2,x1 e20301aa
 DEFINE mov_x7,x0 e70300aa
 DEFINE SET_X13_FROM_SP ed0312aa # mov x13, x18
+DEFINE mov_x13,x0 ed0300aa
 DEFINE mov_x13,x18 ed0312aa
 DEFINE SET_X14_FROM_X0 ee0300aa # mov x14, x0
 DEFINE mov_x14,x0 ee0300aa
