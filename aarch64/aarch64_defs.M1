@@ -162,6 +162,8 @@ DEFINE cset_w6,hi e6979f1a
 # Csel
 DEFINE csel_x2,x3,x2,eq 6200829a
 
+DEFINE csneg_w0,w0,w0,ge 00a4805a
+
 # Load literals (PC-relative)
 DEFINE LOAD_W0_AHEAD 40000098
 DEFINE ldrsw_x0,8 40000098
