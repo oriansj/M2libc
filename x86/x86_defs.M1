@@ -136,6 +136,7 @@ DEFINE imul_ebx F7EB
 DEFINE NULL 00000000
 DEFINE not_eax F7D0
 DEFINE neg_eax F7D8
+DEFINE neg_ebx F7DB
 DEFINE or_eax,ebx 09D8
 DEFINE or_eax,edi 09F8
 DEFINE or_ecx,eax 09C1
@@ -195,3 +196,4 @@ DEFINE xor_esi,esi 31F6
 DEFINE inc_eax 40
 DEFINE inc_ebx 43
 DEFINE dec_ecx 49
+DEFINE cmovs_eax,ebx 0F48C3
