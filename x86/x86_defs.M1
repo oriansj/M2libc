@@ -39,6 +39,7 @@ DEFINE cmp_eax,BYTE 83F8
 DEFINE cmp_ebx,BYTE 83FB
 DEFINE cmp_ecx,BYTE 83F9
 DEFINE cmp_edx,BYTE 83FA
+DEFINE cmp_edi,BYTE 83FF
 DEFINE cmp_ecx,edx 39D1
 DEFINE cmp_ebx,eax 39C3
 DEFINE cmp_ebx,edx 39D3
@@ -88,6 +89,7 @@ DEFINE mov_ecx,esp 89E1
 DEFINE mov_esi,eax 89C6
 DEFINE mov_esi,esp 89E6
 DEFINE mov_edi,eax 89C7
+DEFINE mov_edi,ebx 89DF
 DEFINE mov_edi,edx 89D7
 DEFINE mov_edi,esp 89E7
 DEFINE mov_ebp,edi 89fd
