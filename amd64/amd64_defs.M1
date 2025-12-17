@@ -125,6 +125,7 @@ DEFINE mov_r8,rsp 4989E0
 DEFINE mov_r13,rsp 4989E5
 DEFINE mov_r14,rax 4989C6
 DEFINE mov_r15,rax 4989C7
+DEFINE mov_[rax],rcx 488908
 DEFINE mov_[rax],dl 8810
 DEFINE mov_[rbx],al 8803
 DEFINE mov_[rbx],ax 668903
@@ -142,6 +143,7 @@ DEFINE mov_[rip+DWORD],rsp 488925
 DEFINE mov_eax,[rax] 8B00
 DEFINE mov_rax,[rax] 488B00
 DEFINE mov_rax,[rbx] 488B03
+DEFINE mov_rbx,[rax] 488B18
 DEFINE mov_rbx,[rbx] 488B1B
 DEFINE mov_rbx,[rcx] 488B19
 DEFINE mov_rax,[rcx] 488B01
