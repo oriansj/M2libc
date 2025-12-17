@@ -108,6 +108,7 @@ DEFINE mov_rbx,rdi 4889FB
 DEFINE mov_rbp,rdi 4889FD
 DEFINE mov_rbp,rsp 4889E5
 DEFINE mov_rcx,rax 4889C1
+DEFINE mov_rcx,rbx 4889D9
 DEFINE mov_rdi,rax 4889C7
 DEFINE mov_rdi,rbx 4889DF
 DEFINE mov_rdi,rdx 4889D7
