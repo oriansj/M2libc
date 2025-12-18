@@ -39,6 +39,7 @@ DEFINE and_rax,rbx 4821D8
 DEFINE and_rsp, 4881E4
 DEFINE call E8
 DEFINE call_rax FFD0
+DEFINE cmp_rax, 483D
 DEFINE cmp_rax,BYTE 4883F8
 DEFINE cmp_al,BYTE 3C
 DEFINE cmp_rax,rdx 4839D0
@@ -49,6 +50,7 @@ DEFINE cmp_bl,BYTE 80FB
 DEFINE cmp_rcx,BYTE 4883F9
 DEFINE cmp_rcx,rdx 4839d1
 DEFINE cmp_rdx,BYTE 4883FA
+DEFINE cmp_r11, 4981FB
 DEFINE cqo 4899
 DEFINE div_rax 48F7F0
 DEFINE div_rbx 48F7F3
@@ -58,6 +60,7 @@ DEFINE jmp E9
 DEFINE jmp_rcx FFE1
 DEFINE je 0F84
 DEFINE jne 0F85
+DEFINE jl 0F8C
 DEFINE jle 0F8E
 DEFINE jg 0F8F
 DEFINE lea_rax,[rbp+DWORD] 488D85
@@ -83,6 +86,7 @@ DEFINE lea_r8,[rbp+DWORD] 4C8D85
 DEFINE lea_r8,[rsp+DWORD] 4C8D8424
 DEFINE lea_r9,[rbp+DWORD] 4C8D8D
 DEFINE lea_r10,[rsp+DWORD] 4C8D9424
+DEFINE lea_r12,[rip+DWORD] 4C8D25
 DEFINE mov_cr3,rax 0F22D8
 DEFINE mov_rax, 48C7C0
 DEFINE mov_rbx, 48C7C3
@@ -100,15 +104,20 @@ DEFINE mov_rax,rbx 4889D8
 DEFINE mov_rax,rbp 4889E8
 DEFINE mov_rax,rsp 4889E0
 DEFINE mov_rax,rdi 4889F8
+DEFINE mov_rax,r10 4C89D0
+DEFINE mov_rax,r11 4C89D8
 DEFINE mov_rax,r14 4C89F0
 DEFINE mov_rax,r15 4C89F8
 DEFINE mov_rbx,rax 4889C3
 DEFINE mov_rbx,rcx 4889CB
 DEFINE mov_rbx,rdi 4889FB
+DEFINE mov_rbx,r10 4C89D3
+DEFINE mov_rbx,r11 4C89DB
 DEFINE mov_rbp,rdi 4889FD
 DEFINE mov_rbp,rsp 4889E5
 DEFINE mov_rcx,rax 4889C1
 DEFINE mov_rcx,rbx 4889D9
+DEFINE mov_rcx,r11 4C89D9
 DEFINE mov_rdi,rax 4889C7
 DEFINE mov_rdi,rbx 4889DF
 DEFINE mov_rdi,rdx 4889D7
@@ -122,6 +131,8 @@ DEFINE mov_rsp,rax 4889C4
 DEFINE mov_rsp,rbp 4889EC
 DEFINE mov_rsp,r13 4C89EC
 DEFINE mov_r8,rsp 4989E0
+DEFINE mov_r10,rax 4989C2
+DEFINE mov_r11,rax 4989C3
 DEFINE mov_r13,rsp 4989E5
 DEFINE mov_r14,rax 4989C6
 DEFINE mov_r15,rax 4989C7
@@ -133,6 +144,7 @@ DEFINE mov_[rbx],eax 8903
 DEFINE mov_[rbx],rax 488903
 DEFINE mov_[rcx],rax 488901
 DEFINE mov_[rcx],rbx 488919
+DEFINE mov_[r12],rax 49890424
 DEFINE mov_[rbp+DWORD],rax 488985
 DEFINE mov_[rbp+DWORD],rdi 4889BD
 DEFINE mov_[rip+DWORD],rax 488905
@@ -146,6 +158,7 @@ DEFINE mov_rax,[rbx] 488B03
 DEFINE mov_rbx,[rax] 488B18
 DEFINE mov_rbx,[rbx] 488B1B
 DEFINE mov_rbx,[rcx] 488B19
+DEFINE mov_rbx,[r12] 498B1C24
 DEFINE mov_rax,[rcx] 488B01
 DEFINE mov_rcx,[rcx] 488B09
 DEFINE mov_rdi,[rdi] 488B3F
@@ -197,6 +210,7 @@ DEFINE pop_rdi 5F
 DEFINE pop_r8 4158
 DEFINE pop_r9 4159
 DEFINE pop_r10 415A
+DEFINE pop_r11 415B
 DEFINE pop_r12 415C
 DEFINE pop_r13 415D
 DEFINE pop_r14 415E
@@ -213,6 +227,7 @@ DEFINE push_rsp 54
 DEFINE push_r8 4150
 DEFINE push_r9 4151
 DEFINE push_r10 4152
+DEFINE push_r11 4153
 DEFINE push_r12 4154
 DEFINE push_r13 4155
 DEFINE push_r14 4156
