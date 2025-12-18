@@ -25,6 +25,11 @@ DEFINE PUSH_X1 418e1ff8
 DEFINE str_x1,[x18,-8]! 418e1ff8
 DEFINE str_x1,[sp,-8]! e18f1ff8
 DEFINE str_x2,[x18,-8]! 428e1ff8
+DEFINE str_x3,[x18,-8]! 438e1ff8
+DEFINE str_x4,[x18,-8]! 448e1ff8
+DEFINE str_x5,[x18,-8]! 458e1ff8
+DEFINE str_x6,[x18,-8]! 468e1ff8
+DEFINE str_x7,[x18,-8]! 478e1ff8
 DEFINE str_x8,[x18,-8]! 488e1ff8
 DEFINE PUSH_X13 4d8e1ff8 # str x13, [x18,-8]!
 DEFINE str_x13,[x18,-8]! 4d8e1ff8
