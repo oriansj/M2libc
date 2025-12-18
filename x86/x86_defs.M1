@@ -37,6 +37,7 @@ DEFINE call_eax FFD0
 DEFINE cmp_eax,edx 39D0
 DEFINE cmp_eax,BYTE 83F8
 DEFINE cmp_al,BYTE 3C
+DEFINE cmp_eax, 3D
 DEFINE cmp_ebx,BYTE 83FB
 DEFINE cmp_bl,BYTE 80FB
 DEFINE cmp_ecx,BYTE 83F9
@@ -52,6 +53,7 @@ DEFINE idiv_ebx F7FB
 DEFINE int CD
 DEFINE je 0F84
 DEFINE jne 0F85
+DEFINE jl 0F8C
 DEFINE jle 0F8E
 DEFINE jmp E9
 DEFINE lea_eax,[ecx+DWORD] 8D81
