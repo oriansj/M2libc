@@ -25,6 +25,7 @@ DEFINE PUSH_X1 418e1ff8
 DEFINE str_x1,[x18,-8]! 418e1ff8
 DEFINE str_x1,[sp,-8]! e18f1ff8
 DEFINE str_x2,[x18,-8]! 428e1ff8
+DEFINE str_x8,[x18,-8]! 488e1ff8
 DEFINE PUSH_X13 4d8e1ff8 # str x13, [x18,-8]!
 DEFINE str_x13,[x18,-8]! 4d8e1ff8
 DEFINE str_x13,[sp,-8]! ed8f1ff8
@@ -46,6 +47,7 @@ DEFINE ldr_x0,[x18],8 408640f8
 DEFINE ldr_x0,[sp],8 e08740f8
 DEFINE POP_X1 418640f8
 DEFINE ldr_x1,[x18],8 418640f8
+DEFINE ldr_x8,[x18],8 488640f8
 DEFINE ldr_x1,[sp],8 e18740f8
 DEFINE POP_X13 4d8640f8 # ldr x13, [x18],8
 DEFINE ldr_x13,[x18],8 4d8640f8
