@@ -159,6 +159,7 @@ DEFINE pop_edi 5F
 DEFINE push_eax 50
 DEFINE push_ebx 53
 DEFINE push_ecx 51
+DEFINE push_edx 52
 DEFINE push_ebp 55
 DEFINE push_esi 56
 DEFINE push_edi 57
