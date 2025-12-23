@@ -21,6 +21,8 @@ DEFINE add_ecx, 81C1
 DEFINE add_ecx,BYTE 83C1
 DEFINE add_ebp, 81C5
 DEFINE add_esp, 81C4
+DEFINE add_ebx, 81C3
+DEFINE add_ebx,BYTE 83C3
 DEFINE add_ebx,eax 01C3
 DEFINE add_ebx,edi 01FB
 DEFINE add_eax,ebp 01E8
