@@ -33,6 +33,7 @@ DEFINE add_rbx, 4881C3
 DEFINE add_rbx,BYTE 4883C3
 DEFINE add_rbx,rax 4801C3
 DEFINE add_rbx,rdi 4801FB
+DEFINE add_rdx,BYTE 4883C2
 DEFINE add_rsp,rbx 4801DC
 DEFINE add_rsp,rdi 4801FC
 DEFINE add_rsp,r14 4C01F4
@@ -53,11 +54,13 @@ DEFINE cmp_rcx,BYTE 4883F9
 DEFINE cmp_rcx,rdx 4839d1
 DEFINE cmp_rdx,BYTE 4883FA
 DEFINE cmp_r11, 4981FB
+DEFINE cmp_rdi,BYTE 4883FF
 DEFINE cqo 4899
 DEFINE div_rax 48F7F0
 DEFINE div_rbx 48F7F3
 DEFINE div_rsi 48F7F6
 DEFINE idiv_rbx 48F7FB
+DEFINE idiv_rcx 48F7F9
 DEFINE jmp E9
 DEFINE jmp_rcx FFE1
 DEFINE je 0F84
@@ -92,6 +95,7 @@ DEFINE lea_r12,[rip+DWORD] 4C8D25
 DEFINE mov_cr3,rax 0F22D8
 DEFINE mov_rax, 48C7C0
 DEFINE mov_rbx, 48C7C3
+DEFINE mov_rcx, 48C7C1
 DEFINE mov_rdi, 48C7C7
 DEFINE mov_rdx, 48C7C2
 DEFINE mov_rsi, 48C7C6
@@ -143,6 +147,7 @@ DEFINE mov_[rax],rcx 488908
 DEFINE mov_[rax],dl 8810
 DEFINE mov_[rbx],al 8803
 DEFINE mov_[rbx],ax 668903
+DEFINE mov_[rbx],dl 8813
 DEFINE mov_[rbx],eax 8903
 DEFINE mov_[rbx],rax 488903
 DEFINE mov_[rbx],rcx 48890B
@@ -261,6 +266,7 @@ DEFINE sub_rsp, 4881EC
 DEFINE sub_rsp,BYTE 4883EC
 DEFINE sub_rax, 482D
 DEFINE sub_rax,BYTE 4883E8
+DEFINE sub_rbx,BYTE 4883EB
 DEFINE sub_rax,rbx 4829D8
 DEFINE sub_rax,rdx 4829D0
 DEFINE sub_rax,r13 4C29E8
