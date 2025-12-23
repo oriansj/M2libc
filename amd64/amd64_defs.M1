@@ -29,6 +29,8 @@ DEFINE add_rax,rdx 4801D0
 DEFINE add_rax,r13 4C01E8
 DEFINE add_rax,r14 4C01F0
 DEFINE add_rax,r15 4C01F8
+DEFINE add_rbx, 4881C3
+DEFINE add_rbx,BYTE 4883C3
 DEFINE add_rbx,rax 4801C3
 DEFINE add_rbx,rdi 4801FB
 DEFINE add_rsp,rbx 4801DC
