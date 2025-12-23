@@ -17,6 +17,7 @@
 
 DEFINE add_eax, 05
 DEFINE add_eax,BYTE 83C0
+DEFINE add_edx,BYTE 83C2
 DEFINE add_ecx, 81C1
 DEFINE add_ecx,BYTE 83C1
 DEFINE add_ebp, 81C5
@@ -53,6 +54,7 @@ DEFINE cdq 99
 DEFINE div_ebx F7F3
 DEFINE div_esi F7F6
 DEFINE idiv_ebx F7FB
+DEFINE idiv_ecx F7F9
 DEFINE int CD
 DEFINE je 0F84
 DEFINE jne 0F85
@@ -128,6 +130,7 @@ DEFINE mov_[eax],dl 8810
 DEFINE mov_[eax],ecx 8908
 DEFINE mov_[ebx],al 8803
 DEFINE mov_[ebx],ax 668903
+DEFINE mov_[ebx],dl 8813
 DEFINE mov_[ebx],eax 8903
 DEFINE mov_[ebx],ecx 890B
 DEFINE mov_[ecx],eax 8901
@@ -186,6 +189,7 @@ DEFINE setge_bl 0F9DC3
 DEFINE setg_al 0F9FC0
 DEFINE setne_al 0F95C0
 DEFINE sub_eax, 2d
+DEFINE sub_ebx,BYTE 83EB
 DEFINE sub_eax,BYTE 83E8
 DEFINE sub_eax,ebx 29D8
 DEFINE sub_eax,ecx 29C8
