@@ -87,6 +87,7 @@ DEFINE lea_rdx,[rip+DWORD] 488D15
 DEFINE lea_rdx,[rsp+DWORD] 488D9424
 DEFINE lea_rdx,[rbp+DWORD] 488D95
 DEFINE lea_rsi,[rsp+DWORD] 488DB424
+DEFINE lea_rsi,[rip+DWORD] 488D35
 DEFINE lea_r8,[rbp+DWORD] 4C8D85
 DEFINE lea_r8,[rsp+DWORD] 4C8D8424
 DEFINE lea_r9,[rbp+DWORD] 4C8D8D
@@ -110,6 +111,7 @@ DEFINE mov_rax,rbx 4889D8
 DEFINE mov_rax,rbp 4889E8
 DEFINE mov_rax,rsp 4889E0
 DEFINE mov_rax,rdi 4889F8
+DEFINE mov_rax,rsi 4889F0
 DEFINE mov_rax,r10 4C89D0
 DEFINE mov_rax,r11 4C89D8
 DEFINE mov_rax,r14 4C89F0
