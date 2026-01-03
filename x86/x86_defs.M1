@@ -162,6 +162,7 @@ DEFINE or_eax,BYTE 83C8
 DEFINE pop_eax 58
 DEFINE pop_ebx 5B
 DEFINE pop_ecx 59
+DEFINE pop_edx 5A
 DEFINE pop_ebp 5D
 DEFINE pop_esi 5E
 DEFINE pop_edi 5F
