@@ -120,6 +120,7 @@ DEFINE mov_eax,[ebx] 8B03
 DEFINE mov_ebx,[eax] 8B18
 DEFINE mov_ebx,[ebx] 8B1B
 DEFINE mov_ebx,[ecx] 8B19
+DEFINE mov_ecx,[eax] 8B08
 DEFINE mov_ecx,[ebx] 8B0B
 DEFINE mov_ecx,[ecx] 8B09
 DEFINE mov_edx,[ebx] 8B13
