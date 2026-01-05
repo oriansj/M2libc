@@ -173,6 +173,7 @@ DEFINE mov_rbx,[rbx] 488B1B
 DEFINE mov_rbx,[rcx] 488B19
 DEFINE mov_rbx,[r12] 498B1C24
 DEFINE mov_rax,[rcx] 488B01
+DEFINE mov_rcx,[rax] 488B08
 DEFINE mov_rcx,[rbx] 488B0B
 DEFINE mov_rcx,[rcx] 488B09
 DEFINE mov_rdi,[rdi] 488B3F
