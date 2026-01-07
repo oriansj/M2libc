@@ -157,6 +157,7 @@ DEFINE mov_[rbx],rax 488903
 DEFINE mov_[rbx],rcx 48890B
 DEFINE mov_[rcx],rax 488901
 DEFINE mov_[rcx],rbx 488919
+DEFINE mov_[rcx],rdi 488939
 DEFINE mov_[r12],rax 49890424
 DEFINE mov_[rbp+DWORD],rax 488985
 DEFINE mov_[rbp+DWORD],rdi 4889BD
@@ -278,6 +279,7 @@ DEFINE sub_rax,r13 4C29E8
 DEFINE sub_rax,r14 4C29F0
 DEFINE sub_rax,r15 4C29F8
 DEFINE sub_rbx,rax 4829C3
+DEFINE sub_rdi,rdx 4829D7
 DEFINE sub_rsp,rdi 4829FC
 DEFINE sub_rsp,r14 4C29F4
 DEFINE sub_rsp,r15 4C29FC
