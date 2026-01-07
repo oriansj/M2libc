@@ -137,6 +137,7 @@ DEFINE mov_[ebx],eax 8903
 DEFINE mov_[ebx],ecx 890B
 DEFINE mov_[ecx],eax 8901
 DEFINE mov_[ecx],ebx 8919
+DEFINE mov_[ecx],edi 8939
 DEFINE movsx_eax,BYTE_PTR_[eax] 0FBE00
 DEFINE movsx_ebx,BYTE_PTR_[ebx] 0FBE1B
 DEFINE movsx_eax,WORD_PTR_[eax] 0FBF00
@@ -199,6 +200,7 @@ DEFINE sub_eax,ecx 29C8
 DEFINE sub_eax,edx 29D0
 DEFINE sub_eax,edi 29F8
 DEFINE sub_ebx,eax 29C3
+DEFINE sub_edi,edx 29D7
 DEFINE sub_esp, 81EC
 DEFINE sub_esp,BYTE 83EC
 DEFINE sub_esp,edi 29FC
