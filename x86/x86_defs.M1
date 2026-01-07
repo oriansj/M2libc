@@ -42,8 +42,10 @@ DEFINE cmp_eax,edx 39D0
 DEFINE cmp_eax,BYTE 83F8
 DEFINE cmp_al,BYTE 3C
 DEFINE cmp_eax, 3D
+DEFINE cmp_ebx, 81FB
 DEFINE cmp_ebx,BYTE 83FB
 DEFINE cmp_bl,BYTE 80FB
+DEFINE cmp_ecx, 81F9
 DEFINE cmp_ecx,BYTE 83F9
 DEFINE cmp_edx,BYTE 83FA
 DEFINE cmp_edi,BYTE 83FF
