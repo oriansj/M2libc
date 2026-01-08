@@ -163,6 +163,7 @@ DEFINE not_eax F7D0
 DEFINE neg_eax F7D8
 DEFINE neg_ebx F7DB
 DEFINE or_eax,ebx 09D8
+DEFINE or_ebx,ecx 4809CB
 DEFINE or_eax,edi 09F8
 DEFINE or_ecx,eax 09C1
 DEFINE or_eax,BYTE 83C8
@@ -191,6 +192,8 @@ DEFINE setae_al 0F93C0
 DEFINE setb_al 0F92C0
 DEFINE setbe_al 0F96C0
 DEFINE sete_al 0F94C0
+DEFINE sete_bl 0F94C3
+DEFINE sete_cl 0F94C1
 DEFINE setle_al 0F9EC0
 DEFINE setl_al 0F9CC0
 DEFINE setge_al 0F9DC0
