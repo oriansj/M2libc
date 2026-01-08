@@ -220,6 +220,7 @@ DEFINE neg_rax 48F7D8
 DEFINE neg_rbx 48F7DB
 DEFINE not_rax 48F7D0
 DEFINE or_rax,rbx 4809D8
+DEFINE or_rbx,rcx 4809CB
 DEFINE or_rax,rdi 4809F8
 DEFINE or_rcx,rax 4809C1
 DEFINE or_rax,BYTE 4883C8
@@ -269,6 +270,8 @@ DEFINE setae_al 0F93C0
 DEFINE setb_al 0F92C0
 DEFINE setbe_al 0F96C0
 DEFINE sete_al 0F94C0
+DEFINE sete_bl 0f94C3
+DEFINE sete_cl 0f94C1
 DEFINE setg_al 0F9FC0
 DEFINE setge_al 0F9DC0
 DEFINE setge_bl 0F9DC3
