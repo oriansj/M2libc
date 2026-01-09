@@ -39,6 +39,7 @@ DEFINE add_rsp,rdi 4801FC
 DEFINE add_rsp,r14 4C01F4
 DEFINE add_rsp,r15 4C01FC
 DEFINE and_rax,rbx 4821D8
+DEFINE and_rbx,rcx 4821CB
 DEFINE and_rsp, 4881E4
 DEFINE call E8
 DEFINE call_rax FFD0
@@ -278,6 +279,8 @@ DEFINE setge_bl 0F9DC3
 DEFINE setl_al 0F9CC0
 DEFINE setle_al 0F9EC0
 DEFINE setne_al 0F95C0
+DEFINE setne_bl 0F95C3
+DEFINE setne_cl 0F95C1
 DEFINE sub_rsp, 4881EC
 DEFINE sub_rsp,BYTE 4883EC
 DEFINE sub_rax, 482D
@@ -295,6 +298,7 @@ DEFINE sub_rsp,r14 4C29F4
 DEFINE sub_rsp,r15 4C29FC
 DEFINE syscall 0F05
 DEFINE test_rax,rax 4885C0
+DEFINE test_rbx,rbx 4885DB
 DEFINE wrmsr 0F30
 DEFINE xchg_rbx,rax 4893
 DEFINE xchg_rdi,rax 4897
