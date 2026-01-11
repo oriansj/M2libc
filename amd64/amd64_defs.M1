@@ -32,6 +32,7 @@ DEFINE add_rax,r15 4C01F8
 DEFINE add_rbx, 4881C3
 DEFINE add_rbx,BYTE 4883C3
 DEFINE add_rbx,rax 4801C3
+DEFINE add_rbx,rdx 4801D3
 DEFINE add_rbx,rdi 4801FB
 DEFINE add_rdx,BYTE 4883C2
 DEFINE add_rsp,rbx 4801DC
@@ -55,6 +56,7 @@ DEFINE cmp_bl,BYTE 80FB
 DEFINE cmp_rcx, 4881F9
 DEFINE cmp_rcx,BYTE 4883F9
 DEFINE cmp_rcx,rdx 4839d1
+DEFINE cmp_rdx,rbx 4839DA
 DEFINE cmp_rdx,BYTE 4883FA
 DEFINE cmp_r11, 4981FB
 DEFINE cmp_rdi,BYTE 4883FF
@@ -156,6 +158,7 @@ DEFINE mov_r13,rsp 4989E5
 DEFINE mov_r14,rax 4989C6
 DEFINE mov_r15,rax 4989C7
 DEFINE mov_[rax],rcx 488908
+DEFINE mov_[rax],bl 8818
 DEFINE mov_[rax],dl 8810
 DEFINE mov_[rbx],al 8803
 DEFINE mov_[rbx],ax 668903
@@ -165,6 +168,7 @@ DEFINE mov_[rbx],rax 488903
 DEFINE mov_[rbx],rcx 48890B
 DEFINE mov_[rcx],rax 488901
 DEFINE mov_[rcx],rbx 488919
+DEFINE mov_[rcx],rdx 488911
 DEFINE mov_[rcx],rdi 488939
 DEFINE mov_[r12],rax 49890424
 DEFINE mov_[rbp+DWORD],rax 488985
