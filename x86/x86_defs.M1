@@ -127,6 +127,7 @@ DEFINE mov_eax,[ebx] 8B03
 DEFINE mov_ebx,[eax] 8B18
 DEFINE mov_ebx,[ebx] 8B1B
 DEFINE mov_ebx,[ecx] 8B19
+DEFINE mov_ebx,[edx] 8B1A
 DEFINE mov_ecx,[eax] 8B08
 DEFINE mov_ecx,[ebx] 8B0B
 DEFINE mov_ecx,[ecx] 8B09
@@ -146,6 +147,7 @@ DEFINE mov_[ecx],eax 8901
 DEFINE mov_[ecx],ebx 8919
 DEFINE mov_[ecx],edx 8911
 DEFINE mov_[ecx],edi 8939
+DEFINE mov_[edx],eax 8902
 DEFINE movsx_eax,BYTE_PTR_[eax] 0FBE00
 DEFINE movsx_ebx,BYTE_PTR_[ebx] 0FBE1B
 DEFINE movsx_eax,WORD_PTR_[eax] 0FBF00
