@@ -138,6 +138,7 @@ DEFINE mov_edx,[edx] 8B12
 DEFINE mov_esi,[esi] 8B36
 DEFINE mov_edi,[edi] 8B3F
 DEFINE mov_[eax],dl 8810
+DEFINE mov_[eax],ebx 8918
 DEFINE mov_[eax],ecx 8908
 DEFINE mov_[ebx],al 8803
 DEFINE mov_[ebx],ax 668903
