@@ -170,7 +170,7 @@ DEFINE not_eax F7D0
 DEFINE neg_eax F7D8
 DEFINE neg_ebx F7DB
 DEFINE or_eax,ebx 09D8
-DEFINE or_ebx,ecx 4809CB
+DEFINE or_ebx,ecx 09CB
 DEFINE or_eax,edi 09F8
 DEFINE or_ecx,eax 09C1
 DEFINE or_eax,BYTE 83C8
