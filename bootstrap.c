@@ -113,6 +113,8 @@ long _brk_ptr;
 
 void* malloc(int size)
 {
+    size = (size + sizeof(char*) - 1) & ~ (sizeof(char*) - 1);
+
 	if(NULL == _brk_ptr)
 	{
 		_brk_ptr = brk(0);
