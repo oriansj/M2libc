@@ -113,7 +113,7 @@ long _brk_ptr;
 
 void* malloc(int size)
 {
-    size = (size + sizeof(char*) - 1) & ~ (sizeof(char*) - 1);
+	size = (size + sizeof(char*) - 1) & ~ (sizeof(char*) - 1);
 
 	if(NULL == _brk_ptr)
 	{
@@ -123,8 +123,9 @@ void* malloc(int size)
 
 	if(_brk_ptr < _malloc_ptr + size)
 	{
+		long old_brk = _brk_ptr;
 		_brk_ptr = brk(_malloc_ptr + size);
-		if(-1 == _brk_ptr) return 0;
+		if(-1 == _brk_ptr || _brk_ptr == old_brk || old_brk + size < _brk_ptr) return 0;
 	}
 
 	long old_malloc = _malloc_ptr;
