@@ -125,7 +125,7 @@ void* malloc(int size)
 	{
 		long old_brk = _brk_ptr;
 		_brk_ptr = brk(_malloc_ptr + size);
-		if(-1 == _brk_ptr || _brk_ptr == old_brk || old_brk + size < _brk_ptr) return 0;
+		if(-4 /* EINTR */ == _brk_ptr || _brk_ptr == old_brk || old_brk + size < _brk_ptr) return 0;
 	}
 
 	long old_malloc = _malloc_ptr;
