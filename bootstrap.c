@@ -198,7 +198,7 @@ char* strchr(char* str, int ch)
 }
 
 int isspace(int c) {
-	return c == ' ' || c == '\n' || c == '\t';
+	return c == ' ' || c == '\n' || c == '\t' || c == '\r';
 }
 
 int isdigit(int c) {
