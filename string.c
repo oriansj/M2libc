@@ -285,7 +285,7 @@ char* strdup(const char* s)
 {
 	size_t length = strlen(s);
 
-	char* new_string = malloc(length);
+	char* new_string = malloc(length + 1);
 
 	if(!new_string)
 	{
