@@ -129,21 +129,12 @@ int spawn(char* file_name, char** argv, char** envp)
 	}
 	fclose(fcmd);
 
-	struct efi_device_path_protocol* device_path = calloc(2, sizeof(struct efi_device_path_protocol));
-	device_path->type = HARDWARE_DEVICE_PATH;
-	device_path->subtype = MEMORY_MAPPED;
-	device_path->length = sizeof(struct efi_device_path_protocol);
-	device_path->memory_type = EFI_LOADER_DATA;
-	device_path->start_address = executable;
-	device_path->end_address = executable + program_size;
-	device_path[1].type = END_HARDWARE_DEVICE_PATH;
-	device_path[1].subtype = END_ENTIRE_DEVICE_PATH;
-	device_path[1].length = 4;
-
 	void* child_ih;
 
-	unsigned rval = __uefi_6(0, _image_handle, device_path, executable, program_size, &child_ih, _system->boot_services->load_image);
-	free(device_path);
+	/* Pass NULL device_path — UEFI loads from SourceBuffer when non-NULL.
+	 * The memory-mapped device_path crashes on riscv64 EDK2.
+	 * When SourceBuffer is provided, DevicePath is only informational. */
+	unsigned rval = __uefi_6(0, _image_handle, 0, executable, program_size, &child_ih, _system->boot_services->load_image);
 	free(executable);
 	if(rval != EFI_SUCCESS) return -1;
 	struct efi_loaded_image_protocol* child_image;
@@ -340,6 +331,8 @@ int uname(struct utsname* unameData)
 	memcpy(unameData->version, "1.0", 4);
 #ifdef __x86_64__
 	memcpy(unameData->machine, "x86_64", 7);
+#elif defined(__riscv)
+	memcpy(unameData->machine, "riscv64", 8);
 #else
 #error unsupported arch
 #endif

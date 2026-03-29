@@ -1,0 +1,203 @@
+## SPDX-FileCopyrightText: 2026 Alexandre Gomes Gaigalas
+## SPDX-License-Identifier: GPL-3.0-or-later
+##
+## This file is part of M2-Planet.
+##
+## M2-Planet is free software: you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation, either version 3 of the License, or
+## (at your option) any later version.
+##
+## M2-Planet is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with M2-Planet.  If not, see <http://www.gnu.org/licenses/>.
+
+## UEFI entry point for RISC-V 64-bit.
+## UEFI passes: a0 = ImageHandle, a1 = SystemTable
+## We save callee-saved registers, store UEFI params, call _init + main,
+## then _cleanup and return.
+##
+## NOTE: M1's ! immediate encoding doesn't work for S-type (sd) offsets
+## on riscv64, so all stores use offset 0 with explicit sp adjustment.
+
+:_start
+	# Save callee-saved registers (ra, fp, s1-s11 = 13 regs = 104 bytes)
+	rd_sp rs1_sp !-8 addi
+	rs1_sp rs2_ra sd               ; save ra
+	rd_sp rs1_sp !-8 addi
+	rs1_sp rs2_fp sd               ; save fp
+	rd_sp rs1_sp !-8 addi
+	rs1_sp rs2_s1 sd               ; save s1
+	rd_sp rs1_sp !-8 addi
+	rs1_sp rs2_s2 sd               ; save s2
+	rd_sp rs1_sp !-8 addi
+	rs1_sp rs2_s3 sd               ; save s3
+	rd_sp rs1_sp !-8 addi
+	rs1_sp rs2_s4 sd               ; save s4
+	rd_sp rs1_sp !-8 addi
+	rs1_sp rs2_s5 sd               ; save s5
+	rd_sp rs1_sp !-8 addi
+	rs1_sp rs2_s6 sd               ; save s6
+	rd_sp rs1_sp !-8 addi
+	rs1_sp rs2_s7 sd               ; save s7
+	rd_sp rs1_sp !-8 addi
+	rs1_sp rs2_s8 sd               ; save s8
+	rd_sp rs1_sp !-8 addi
+	rs1_sp rs2_s9 sd               ; save s9
+	rd_sp rs1_sp !-8 addi
+	rs1_sp rs2_s10 sd              ; save s10
+	rd_sp rs1_sp !-8 addi
+	rs1_sp rs2_s11 sd              ; save s11
+
+	# Save UEFI stack pointer for later restoration
+	rd_t0 ~__return_address auipc
+	rd_t0 rs1_t0 !__return_address addi
+	rs1_t0 rs2_sp sd
+
+	# Save ImageHandle (a0) and SystemTable (a1)
+	rd_t0 ~GLOBAL__image_handle auipc
+	rd_t0 rs1_t0 !GLOBAL__image_handle addi
+	rs1_t0 rs2_a0 sd
+
+	rd_t0 ~GLOBAL__system auipc
+	rd_t0 rs1_t0 !GLOBAL__system addi
+	rs1_t0 rs2_a1 sd
+
+	;; Do UEFI initialization
+	rd_ra $FUNCTION__init jal
+
+	;; Switch to user stack
+	rd_ra $exit_uefi_stack jal
+
+	;; Prepare arguments for main(argc, argv, envp)
+	rd_t0 ~GLOBAL__argc auipc
+	rd_t0 rs1_t0 !GLOBAL__argc addi
+	rd_a0 rs1_t0 ld
+	rd_sp rs1_sp !-8 addi
+	rs1_sp rs2_a0 sd               ; push argc
+
+	rd_t0 ~GLOBAL__argv auipc
+	rd_t0 rs1_t0 !GLOBAL__argv addi
+	rd_a0 rs1_t0 ld
+	rd_sp rs1_sp !-8 addi
+	rs1_sp rs2_a0 sd               ; push argv
+
+	rd_t0 ~GLOBAL__envp auipc
+	rd_t0 rs1_t0 !GLOBAL__envp addi
+	rd_a0 rs1_t0 ld
+	rd_sp rs1_sp !-8 addi
+	rs1_sp rs2_a0 sd               ; push envp
+
+	;; Call main
+	rd_ra $FUNCTION_main jal
+
+:FUNCTION__exit
+	;; Save exit code, switch to UEFI stack, cleanup
+	rd_s1 rs1_a0 mv
+	rd_ra $enter_uefi_stack jal
+	rd_a0 rs1_s1 mv
+
+	rd_sp rs1_sp !-8 addi
+	rs1_sp rs2_a0 sd               ; save exit code
+	rd_ra $FUNCTION__cleanup jal
+	rd_a0 rs1_sp ld                ; restore exit code
+	rd_sp rs1_sp !8 addi
+
+:FUNCTION___exit
+	# Restore UEFI stack pointer (saved at _start)
+	rd_t0 ~__return_address auipc
+	rd_t0 rs1_t0 !__return_address addi
+	rd_sp rs1_t0 ld
+
+	# Restore callee-saved registers (reverse order)
+	rd_s11 rs1_sp ld
+	rd_sp rs1_sp !8 addi
+	rd_s10 rs1_sp ld
+	rd_sp rs1_sp !8 addi
+	rd_s9 rs1_sp ld
+	rd_sp rs1_sp !8 addi
+	rd_s8 rs1_sp ld
+	rd_sp rs1_sp !8 addi
+	rd_s7 rs1_sp ld
+	rd_sp rs1_sp !8 addi
+	rd_s6 rs1_sp ld
+	rd_sp rs1_sp !8 addi
+	rd_s5 rs1_sp ld
+	rd_sp rs1_sp !8 addi
+	rd_s4 rs1_sp ld
+	rd_sp rs1_sp !8 addi
+	rd_s3 rs1_sp ld
+	rd_sp rs1_sp !8 addi
+	rd_s2 rs1_sp ld
+	rd_sp rs1_sp !8 addi
+	rd_s1 rs1_sp ld
+	rd_sp rs1_sp !8 addi
+	rd_fp rs1_sp ld
+	rd_sp rs1_sp !8 addi
+	rd_ra rs1_sp ld
+	rd_sp rs1_sp !8 addi
+	ret
+
+# Switch to UEFI stack
+:enter_uefi_stack
+	rd_t0 ~GLOBAL___user_stack auipc
+	rd_t0 rs1_t0 !GLOBAL___user_stack addi
+	rs1_t0 rs2_sp sd
+
+	rd_t0 ~__uefi_stack auipc
+	rd_t0 rs1_t0 !__uefi_stack addi
+	rd_sp rs1_t0 ld
+
+	rd_fp rs1_sp mv
+	ret
+
+# Switch to user stack
+:exit_uefi_stack
+	rd_t0 ~__uefi_stack auipc
+	rd_t0 rs1_t0 !__uefi_stack addi
+	rs1_t0 rs2_sp sd
+
+	rd_t0 ~GLOBAL___user_stack auipc
+	rd_t0 rs1_t0 !GLOBAL___user_stack addi
+	rd_sp rs1_t0 ld
+
+	rd_fp rs1_sp mv
+	ret
+
+:__return_address
+	NULL
+
+:__uefi_stack
+	NULL
+
+# Global variable storage
+:GLOBAL__image_handle
+	NULL
+:GLOBAL__system
+	NULL
+:GLOBAL___user_stack
+	NULL
+:GLOBAL__malloc_start
+	NULL
+:GLOBAL__malloc_ptr
+	NULL
+:GLOBAL__brk_ptr
+	NULL
+:GLOBAL__argc
+	NULL
+:GLOBAL__argv
+	NULL
+:GLOBAL__rootdir
+	NULL
+:GLOBAL__root_device
+	NULL
+:GLOBAL__envp
+	NULL
+:GLOBAL__cwd
+	NULL
+:GLOBAL__root
+	NULL

@@ -317,6 +317,14 @@ unsigned __uefi_1(void*, void*, FUNCTION f)
 	    "sub_rsp, %32"
 	    "call_rax"
 	    "mov_rsp,[rsp+BYTE] %40");
+#elif defined(__riscv)
+	asm("rd_a0 rs1_fp !-8 ld"
+	    "rd_t0 rs1_fp !-16 ld"
+	    "rd_sp rs1_sp !-8 addi"
+	    "rs1_sp rs2_ra sd"
+	    "rd_ra rs1_t0 jalr"
+	    "rd_ra rs1_sp ld"
+	    "rd_sp rs1_sp !8 addi");
 #else
 #error unsupported arch
 #endif
@@ -337,6 +345,15 @@ unsigned __uefi_2(void*, void*, FUNCTION f)
 	    "sub_rsp, %32"
 	    "call_rax"
 	    "mov_rsp,[rsp+BYTE] %40");
+#elif defined(__riscv)
+	asm("rd_a0 rs1_fp !-8 ld"
+	    "rd_a1 rs1_fp !-16 ld"
+	    "rd_t0 rs1_fp !-24 ld"
+	    "rd_sp rs1_sp !-8 addi"
+	    "rs1_sp rs2_ra sd"
+	    "rd_ra rs1_t0 jalr"
+	    "rd_ra rs1_sp ld"
+	    "rd_sp rs1_sp !8 addi");
 #else
 #error unsupported arch
 #endif
@@ -359,6 +376,16 @@ unsigned __uefi_3(void*, void*, void*, FUNCTION f)
 	    "sub_rsp, %32"
 	    "call_rax"
 	    "mov_rsp,[rsp+BYTE] %40");
+#elif defined(__riscv)
+	asm("rd_a0 rs1_fp !-8 ld"
+	    "rd_a1 rs1_fp !-16 ld"
+	    "rd_a2 rs1_fp !-24 ld"
+	    "rd_t0 rs1_fp !-32 ld"
+	    "rd_sp rs1_sp !-8 addi"
+	    "rs1_sp rs2_ra sd"
+	    "rd_ra rs1_t0 jalr"
+	    "rd_ra rs1_sp ld"
+	    "rd_sp rs1_sp !8 addi");
 #else
 #error unsupported arch
 #endif
@@ -383,6 +410,17 @@ unsigned __uefi_4(void*, void*, void*, void*, FUNCTION f)
 	    "sub_rsp, %32"
 	    "call_rax"
 	    "mov_rsp,[rsp+BYTE] %40");
+#elif defined(__riscv)
+	asm("rd_a0 rs1_fp !-8 ld"
+	    "rd_a1 rs1_fp !-16 ld"
+	    "rd_a2 rs1_fp !-24 ld"
+	    "rd_a3 rs1_fp !-32 ld"
+	    "rd_t0 rs1_fp !-40 ld"
+	    "rd_sp rs1_sp !-8 addi"
+	    "rs1_sp rs2_ra sd"
+	    "rd_ra rs1_t0 jalr"
+	    "rd_ra rs1_sp ld"
+	    "rd_sp rs1_sp !8 addi");
 #else
 #error unsupported arch
 #endif
@@ -411,6 +449,18 @@ unsigned __uefi_5(void*, void*, void*, void*, void*, FUNCTION f)
 	    "sub_rsp, %32"
 	    "call_rax"
 	    "mov_rsp,[rsp+BYTE] %56");
+#elif defined(__riscv)
+	asm("rd_a0 rs1_fp !-8 ld"
+	    "rd_a1 rs1_fp !-16 ld"
+	    "rd_a2 rs1_fp !-24 ld"
+	    "rd_a3 rs1_fp !-32 ld"
+	    "rd_a4 rs1_fp !-40 ld"
+	    "rd_t0 rs1_fp !-48 ld"
+	    "rd_sp rs1_sp !-8 addi"
+	    "rs1_sp rs2_ra sd"
+	    "rd_ra rs1_t0 jalr"
+	    "rd_ra rs1_sp ld"
+	    "rd_sp rs1_sp !8 addi");
 #else
 #error unsupported arch
 #endif
@@ -441,6 +491,19 @@ unsigned __uefi_6(void*, void*, void*, void*, void*, void*, FUNCTION f)
 	    "sub_rsp, %32"
 	    "call_rax"
 	    "mov_rsp,[rsp+BYTE] %56");
+#elif defined(__riscv)
+	asm("rd_a0 rs1_fp !-8 ld"
+	    "rd_a1 rs1_fp !-16 ld"
+	    "rd_a2 rs1_fp !-24 ld"
+	    "rd_a3 rs1_fp !-32 ld"
+	    "rd_a4 rs1_fp !-40 ld"
+	    "rd_a5 rs1_fp !-48 ld"
+	    "rd_t0 rs1_fp !-56 ld"
+	    "rd_sp rs1_sp !-8 addi"
+	    "rs1_sp rs2_ra sd"
+	    "rd_ra rs1_t0 jalr"
+	    "rd_ra rs1_sp ld"
+	    "rd_sp rs1_sp !8 addi");
 #else
 #error unsupported arch
 #endif
@@ -832,8 +895,16 @@ void _init()
 
 	__init_io();
 	_open_protocol(_image_handle, &EFI_LOADED_IMAGE_PROTOCOL_GUID, &_image, _image_handle, 0, EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL);
-	char* load_options = calloc(_image->load_options_size, 1);
-	wcstombs(load_options, _image->load_options, _image->load_options_size);
+	char* load_options;
+	if(_image->load_options_size != 0)
+	{
+		load_options = calloc(_image->load_options_size, 1);
+		wcstombs(load_options, _image->load_options, _image->load_options_size);
+	}
+	else
+	{
+		load_options = calloc(4, 1);
+	}
 	_process_load_options(load_options);
 
 	EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_GUID.data1 = 0x964E5B22;

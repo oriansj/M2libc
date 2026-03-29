@@ -1,0 +1,88 @@
+# SPDX-FileCopyrightText: 2022 Jeremiah Orians
+# SPDX-FileCopyrightText: 2026 Alexandre Gomes Gaigalas
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+# PE32+ header for RISC-V 64-bit UEFI applications.
+# ALL fields hardcoded because hex2's relocation operators (@, %, &) insert
+# alignment padding for RISC-V that corrupts the PE header structure.
+# SizeOfCode, VirtualSize, SizeOfRawData, and SizeOfImage must be patched
+# after hex2 linking (they depend on the actual code size).
+
+:PE32_base
+# [0x00] DOS MZ header
+4D 5A 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 80 00 00 00
+
+# [0x40] Padding to PE header at 0x80
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+
+# [0x80] PE signature + COFF header
+50 45 00 00                     # "PE\0\0"
+64 50                           # Machine: RISC-V 64
+01 00                           # NumberOfSections
+00 00 00 00 00 00 00 00 00 00 00 00  # Timestamps, symbols
+F0 00                           # SizeOfOptionalHeader
+2E 00                           # Characteristics
+
+# [0x98] PE32+ Optional Header
+0B 02 00 00                     # Magic + LinkerVersion
+00 00 00 00                     # SizeOfCode [PATCH at 0x9C]
+00 00 00 00                     # SizeOfInitializedData
+00 00 00 00                     # SizeOfUninitializedData
+40 02 00 00                     # AddressOfEntryPoint (0x240)
+40 02 00 00                     # BaseOfCode (0x240)
+00 00 00 00 00 00 00 00         # ImageBase
+40 00 00 00                     # SectionAlignment
+40 00 00 00                     # FileAlignment
+00 00 00 00 00 00 00 00         # OS/Image versions
+00 00 00 00 00 00 00 00         # Subsystem/Win32 versions
+00 00 00 00                     # SizeOfImage [PATCH at 0xD0]
+40 02 00 00                     # SizeOfHeaders (0x240)
+00 00 00 00                     # Checksum
+0A 00 00 00                     # Subsystem + DllCharacteristics
+00 00 00 00 00 00 00 00         # StackReserve
+00 00 00 00 00 00 00 00         # StackCommit
+00 00 00 00 00 00 00 00         # HeapReserve
+00 00 00 00 00 00 00 00         # HeapCommit
+00 00 00 00                     # LoaderFlags
+10 00 00 00                     # NumberOfRvaAndSizes
+
+# [0x108] Data Directories (16 x 8 = 128 bytes, all zero)
+00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00  00 00 00 00 00 00 00 00
+
+# [0x188] Section: .text
+2E 74 65 78 74 00 00 00         # Name
+00 00 00 00                     # VirtualSize [PATCH at 0x18C]
+40 02 00 00                     # VirtualAddress (0x240)
+00 00 00 00                     # SizeOfRawData [PATCH at 0x194]
+40 02 00 00                     # PointerToRawData (0x240)
+00 00 00 00 00 00 00 00         # Relocations/Linenumbers
+00 00 00 00                     # NumberOf + padding
+20 00 00 60                     # Characteristics: CODE|EXECUTE|READ
+
+# [0x1B0] Padding to 0x240
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+
+# [0x240] Code starts here
+:PE32_text
