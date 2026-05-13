@@ -128,6 +128,7 @@ DEFINE mov_rax,r14 4C89F0
 DEFINE mov_rax,r15 4C89F8
 DEFINE mov_rbx,rax 4889C3
 DEFINE mov_rbx,rcx 4889CB
+DEFINE mov_rbx,rsp 4889E3
 DEFINE mov_rbx,rdi 4889FB
 DEFINE mov_rbx,r10 4C89D3
 DEFINE mov_rbx,r11 4C89DB
