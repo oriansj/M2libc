@@ -557,6 +557,7 @@ void* memset(void* ptr, int value, int num)
 		s[0] = value;
 		s = s + 1;
 	}
+	return ptr;
 }
 
 void* calloc(int count, int size)

@@ -125,7 +125,7 @@ void* malloc(int size)
 	{
 		long old_brk = _brk_ptr;
 		_brk_ptr = brk(_malloc_ptr + size);
-		if(-4 /* EINTR */ == _brk_ptr || _brk_ptr == old_brk || old_brk + size < _brk_ptr) return 0;
+		if(-4 /* EINTR */ == _brk_ptr || _brk_ptr == old_brk || _brk_ptr < _malloc_ptr + size) return 0;
 	}
 
 	long old_malloc = _malloc_ptr;
@@ -153,6 +153,7 @@ void* memset(void* ptr, int value, int num)
 		s[0] = value;
 		s = s + 1;
 	}
+	return ptr;
 }
 
 /* The real memcpy has void* parameters and return types, but
@@ -193,7 +194,6 @@ char* strchr(char* str, int ch)
 		if(0 == p[0]) return NULL;
 		p = p + 1;
 	}
-	if(0 == p[0]) return NULL;
 	return p;
 }
 
@@ -224,6 +224,7 @@ int atoi(char* str)
 	int negative = 0;
 	if (str[0] == '-') {
 		negative = 1;
+		str = str + 1;
 	}
 	if (str[0] == '+') {
 		str = str + 1;
@@ -272,4 +273,3 @@ int abs(int n) {
     }
     return n;
 }
-

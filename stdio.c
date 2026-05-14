@@ -109,7 +109,7 @@ size_t fread( void* buffer, size_t size, size_t count, FILE* stream )
 	if(0 == size) return 0;
 	if(0 == count) return 0;
 
-	long n = size + count - 1;
+	long n = size * count;
 	char* p = buffer;
 	long i;
 	unsigned c;
@@ -133,7 +133,8 @@ char* fgets(char* str, int count, FILE* stream)
 {
 	int i = 0;
 	int ch;
-	while(i < count)
+	if(count <= 0) return NULL;
+	while(i < count - 1)
 	{
 		ch = fgetc(stream);
 		if(EOF == ch) {
@@ -148,6 +149,7 @@ char* fgets(char* str, int count, FILE* stream)
 		if('\n' == ch) break;
 	}
 
+	str[i] = 0;
 	return str;
 }
 
@@ -209,14 +211,11 @@ int puts(char const* str)
 
 
 int lseek(int fd, int offset, int whence);
+int close(int fd);
 /* File management */
 FILE* fopen(char const* filename, char const* mode)
 {
 	int f;
-	FILE* fi = calloc(1, sizeof(FILE));
-	fi->next = __list;
-	if(NULL != __list) __list->prev = fi;
-	__list = fi;
 	int size;
 
 	if('w' == mode[0]) f = open(filename, O_WRONLY|O_CREAT|O_TRUNC, 00600);
@@ -229,10 +228,23 @@ FILE* fopen(char const* filename, char const* mode)
 		return 0;
 	}
 
+	FILE* fi = calloc(1, sizeof(FILE));
+	if(NULL == fi)
+	{
+		close(f);
+		return 0;
+	}
+
 	if('w' == mode[0] || 'a' == mode[0])
 	{
 		/* Buffer as much as possible */
 		fi->buffer = malloc(BUFSIZ * sizeof(char));
+		if(NULL == fi->buffer)
+		{
+			close(f);
+			free(fi);
+			return 0;
+		}
 		fi->buflen = BUFSIZ;
 		fi->bufmode = O_WRONLY;
 	}
@@ -240,7 +252,19 @@ FILE* fopen(char const* filename, char const* mode)
 	{
 		/* Get enough buffer to read it all */
 		size = lseek(f, 0, SEEK_END);
+		if(size < 0)
+		{
+			close(f);
+			free(fi);
+			return 0;
+		}
 		fi->buffer = malloc((size + 1) * sizeof(char));
+		if(NULL == fi->buffer)
+		{
+			close(f);
+			free(fi);
+			return 0;
+		}
 		fi->buflen = size;
 		fi->bufmode = O_RDONLY;
 
@@ -249,6 +273,9 @@ FILE* fopen(char const* filename, char const* mode)
 		read(f, fi->buffer, size);
 	}
 
+	fi->next = __list;
+	if(NULL != __list) __list->prev = fi;
+	__list = fi;
 	fi->fd = f;
 	return fi;
 }
@@ -256,15 +283,18 @@ FILE* fopen(char const* filename, char const* mode)
 FILE* fdopen(int fd, char* mode)
 {
 	FILE* fi = calloc(1, sizeof(FILE));
-	fi->next = __list;
-	if(NULL != __list) __list->prev = fi;
-	__list = fi;
+	if(NULL == fi) return 0;
 	int size;
 
 	if('w' == mode[0])
 	{
 		/* Buffer as much as possible */
 		fi->buffer = malloc(BUFSIZ * sizeof(char));
+		if(NULL == fi->buffer)
+		{
+			free(fi);
+			return 0;
+		}
 		fi->buflen = BUFSIZ;
 		fi->bufmode = O_WRONLY;
 	}
@@ -272,7 +302,17 @@ FILE* fdopen(int fd, char* mode)
 	{
 		/* Get enough buffer to read it all */
 		size = lseek(fd, 0, SEEK_END);
+		if(size < 0)
+		{
+			free(fi);
+			return 0;
+		}
 		fi->buffer = malloc((size + 1) * sizeof(char));
+		if(NULL == fi->buffer)
+		{
+			free(fi);
+			return 0;
+		}
 		fi->buflen = size;
 		fi->bufmode = O_RDONLY;
 
@@ -281,6 +321,9 @@ FILE* fdopen(int fd, char* mode)
 		read(fd, fi->buffer, size);
 	}
 
+	fi->next = __list;
+	if(NULL != __list) __list->prev = fi;
+	__list = fi;
 	fi->fd = fd;
 	return fi;
 }
@@ -306,7 +349,6 @@ int fflush(FILE* stream)
 }
 
 
-int close(int fd);
 int fclose(FILE* stream)
 {
 	/* Deal with STDIN, STDOUT and STDERR */
@@ -471,7 +513,7 @@ char* __integer_to_string(int value)
 int __vsnprintf_string_offset;
 va_list __vsnprintf_ap;
 /* One line since M2-Mesoplanet doesn't support multi line macros */
-#define INLINE_STRSCPY str_i = 0; while(str[str_i] != '\0' && output < n) { s[output++] = str[str_i++]; }
+#define INLINE_STRSCPY str_i = 0; while(str[str_i] != '\0' && output < n - 1) { s[output++] = str[str_i++]; }
 int vsnprintf(char* s, size_t n, const char* format, va_list arg)
 {
 	int i = 0;
@@ -481,7 +523,8 @@ int vsnprintf(char* s, size_t n, const char* format, va_list arg)
 
 	__vsnprintf_string_offset = 0;
 
-	while(format[i] != '\0' && output < n)
+	if(0 == n) return 0;
+	while(format[i] != '\0' && output < n - 1)
 	{
 		if(format[i] == '%')
 		{
@@ -519,7 +562,7 @@ int vsnprintf(char* s, size_t n, const char* format, va_list arg)
 				int value = va_arg(arg, int);
 				if(value < 0)
 				{
-					s[output++] = '-';
+					if(output < n - 1) s[output++] = '-';
 					value = -value;
 				}
 				str = __integer_to_string(value);
@@ -528,18 +571,19 @@ int vsnprintf(char* s, size_t n, const char* format, va_list arg)
 			else if(format[i] == 'c')
 			{
 				char value = va_arg(arg, char);
-				s[output++] = value;
+				if(output < n - 1) s[output++] = value;
 			}
 			else if(format[i] == '%')
 			{
-					s[output++] = '%';
+				if(output < n - 1) s[output++] = '%';
 			}
 
 			++i;
 		}
 		else
 		{
-			s[output++] = format[i++];
+			if(output < n - 1) s[output++] = format[i];
+			i = i + 1;
 		}
 	}
 
