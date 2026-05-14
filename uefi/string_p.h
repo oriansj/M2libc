@@ -43,7 +43,7 @@ char* strncpy(char* dest, char const* src, size_t count)
 		if(count == i) return dest;
 	}
 
-	while(i <= count)
+	while(i < count)
 	{
 		dest[i] = 0;
 		i = i + 1;
@@ -100,10 +100,11 @@ size_t strlen(char const* str )
 
 size_t strnlen_s(char const* str, size_t strsz )
 {
+	if(NULL == str) return 0;
 	size_t i = 0;
-	while(0 != str[i])
+	while(i < strsz)
 	{
-		if(strsz == i) return i;
+		if(0 == str[i]) return i;
 		i = i + 1;
 	}
 	return i;
@@ -145,7 +146,6 @@ char* strchr(char const* str, int ch)
 		if(0 == p[0]) return NULL;
 		p = p + 1;
 	}
-	if(0 == p[0]) return NULL;
 	return p;
 }
 
@@ -188,10 +188,10 @@ char* strpbrk(char const* dest, char const* breakset)
 	while(0 != p[0])
 	{
 		s = strchr(breakset, p[0]);
-		if(NULL != s) return strchr(p,  s[0]);
+		if(NULL != s) return p;
 		p = p + 1;
 	}
-	return p;
+	return NULL;
 }
 
 
@@ -227,14 +227,14 @@ void* memcpy(void* dest, void const* src, size_t count)
 
 void* memmove(void* dest, void const* src, size_t count)
 {
+	if(0 == count) return dest;
 	if (dest < src) return memcpy (dest, src, count);
 	char *p = dest;
 	char const *q = src;
-	count = count - 1;
-	while (count >= 0)
+	while (0 < count)
 	{
-		p[count] = q[count];
 		count = count - 1;
+		p[count] = q[count];
 	}
 	return dest;
 }
