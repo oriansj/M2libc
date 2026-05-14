@@ -102,6 +102,7 @@ DEFINE mov_edx,ebx 89DA
 DEFINE mov_ebx,eax 89C3
 DEFINE mov_ebx,ecx 89CB
 DEFINE mov_ebx,edx 89D3
+DEFINE mov_ebx,esp 89E3
 DEFINE mov_ebx,edi 89FB
 DEFINE mov_ecx,eax 89C1
 DEFINE mov_ecx,ebx 89D9
