@@ -56,8 +56,11 @@ void* _malloc_brk(unsigned size)
 
 	if(_brk_ptr < _malloc_ptr + size)
 	{
+		long old_brk = _brk_ptr;
 		_brk_ptr = brk(_malloc_ptr + size);
 		if(-1 == _brk_ptr) return 0;
+		if(_brk_ptr == old_brk) return 0;
+		if(_brk_ptr < _malloc_ptr + size) return 0;
 	}
 
 	long old_malloc = _malloc_ptr;
@@ -177,7 +180,7 @@ void* _malloc_find_free(unsigned size)
 	while(NULL != i)
 	{
 		/* see if anything in it is equal or bigger than what I need */
-		if((_NOT_IN_USE == i->used) && (i->size > size))
+		if((_NOT_IN_USE == i->used) && (i->size >= size))
 		{
 			/* disconnect from list ensuring we don't break free doing so */
 			if(NULL == last) _free_list = i->next;
@@ -288,6 +291,12 @@ void* malloc(unsigned size)
 
 void* realloc(void* ptr, unsigned size)
 {
+	if(0 == size)
+	{
+		if(NULL != ptr) free(ptr);
+		return NULL;
+	}
+
 	void* new_alloc = malloc(size);
 
 	if(ptr == NULL || new_alloc == NULL)
@@ -298,6 +307,7 @@ void* realloc(void* ptr, unsigned size)
 	}
 
 	size_t old_alloc_size = 0;
+	size_t copy_size;
 	struct _malloc_node* i = _allocated_list;
 	while(NULL != i)
 	{
@@ -318,11 +328,13 @@ void* realloc(void* ptr, unsigned size)
 		exit(EXIT_FAILURE);
 	}
 
-	/* memcpy(new_alloc, ptr, old_alloc_size); */
+	copy_size = old_alloc_size;
+	if(size < copy_size) copy_size = size;
+	/* memcpy(new_alloc, ptr, copy_size); */
 	int i;
 	char* new_alloc_char = (char*)new_alloc;
 	char* ptr_char = (char*)ptr;
-	for (i = 0; i < old_alloc_size; ++i)
+	for (i = 0; i < copy_size; ++i)
 	{
 		new_alloc_char[i] = ptr_char[i];
 	}
@@ -513,6 +525,7 @@ int setenv(char const *s, char const *v, int overwrite_p)
 {
 	char** p = _envp;
 	int length = _strlen(s);
+	int value_length = _strlen(v);
 	char* q;
 
 	while (p[0] != 0)
@@ -521,17 +534,21 @@ int setenv(char const *s, char const *v, int overwrite_p)
 		{
 			q = p[0] + length;
 			if (q[0] == '=')
+			{
+				if(0 == overwrite_p) return 0;
 				break;
+			}
 		}
 		p += 1;
 	}
-	char *entry = malloc (length + _strlen(v) + 2);
+	char *entry = malloc (length + value_length + 2);
+	if(NULL == entry) return -1;
 	int end_p = p[0] == 0;
 	p[0] = entry;
 	_strcpy(entry, s);
 	_strcpy(entry + length, "=");
 	_strcpy(entry + length + 1, v);
-	entry[length + _strlen(v) + 2] = 0;
+	entry[length + value_length + 1] = 0;
 	if (end_p != 0)
 		p[1] = 0;
 
@@ -573,4 +590,3 @@ int atoi(const char* str)
 		return -value;
 	}
 }
-
