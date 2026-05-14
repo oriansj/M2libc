@@ -97,6 +97,7 @@ int write(int fd, char* buf, unsigned count)
 		__write(buf[i], fd);
 		i = i + 1;
 	}
+	return i;
 }
 
 int lseek(int fd, int offset, int whence)
