@@ -26,7 +26,7 @@
 #include <bootstrappable.c>
 #else
 /* Universally useful functions */
-void require(int bool, char* error);
+void require(int condition, char* error);
 int match(char* a, char* b);
 int in_set(int c, char* s);
 int strtoint(char *a);
