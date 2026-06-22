@@ -90,7 +90,19 @@ int fgetc(FILE* f)
 		int r = read(f->fd, f->buffer, 1);
 
 		/* Catch special case of STDIN gets nothing (AN EOF) */
-		if(0 == r) return EOF;
+		if(0 >= r) return EOF;
+	}
+	else if(f->buflen <= f->bufpos)
+	{
+		f->file_pos = f->file_pos + f->buflen;
+		f->bufpos = 0;
+		f->buflen = read(f->fd, f->buffer, BUFSIZ);
+
+		if(0 >= f->buflen)
+		{
+			f->buflen = 0;
+			return EOF;
+		}
 	}
 
 	/* Catch EOF */
@@ -216,7 +228,6 @@ int close(int fd);
 FILE* fopen(char const* filename, char const* mode)
 {
 	int f;
-	int size;
 
 	if('w' == mode[0]) f = open(filename, O_WRONLY|O_CREAT|O_TRUNC, 00600);
 	else if('a' == mode[0]) f = open(filename, O_WRONLY|O_CREAT|O_APPEND, 00600);
@@ -250,27 +261,15 @@ FILE* fopen(char const* filename, char const* mode)
 	}
 	else
 	{
-		/* Get enough buffer to read it all */
-		size = lseek(f, 0, SEEK_END);
-		if(size < 0)
-		{
-			close(f);
-			free(fi);
-			return 0;
-		}
-		fi->buffer = malloc((size + 1) * sizeof(char));
+		fi->buffer = malloc(BUFSIZ * sizeof(char));
 		if(NULL == fi->buffer)
 		{
 			close(f);
 			free(fi);
 			return 0;
 		}
-		fi->buflen = size;
+		fi->buflen = 0;
 		fi->bufmode = O_RDONLY;
-
-		/* Now read it all */
-		lseek(f, 0, SEEK_SET);
-		read(f, fi->buffer, size);
 	}
 
 	fi->next = __list;
@@ -284,7 +283,6 @@ FILE* fdopen(int fd, char* mode)
 {
 	FILE* fi = calloc(1, sizeof(FILE));
 	if(NULL == fi) return 0;
-	int size;
 
 	if('w' == mode[0])
 	{
@@ -300,25 +298,14 @@ FILE* fdopen(int fd, char* mode)
 	}
 	else
 	{
-		/* Get enough buffer to read it all */
-		size = lseek(fd, 0, SEEK_END);
-		if(size < 0)
-		{
-			free(fi);
-			return 0;
-		}
-		fi->buffer = malloc((size + 1) * sizeof(char));
+		fi->buffer = malloc(BUFSIZ * sizeof(char));
 		if(NULL == fi->buffer)
 		{
 			free(fi);
 			return 0;
 		}
-		fi->buflen = size;
+		fi->buflen = 0;
 		fi->bufmode = O_RDONLY;
-
-		/* Now read it all */
-		lseek(fd, 0, SEEK_SET);
-		read(fd, fi->buffer, size);
 	}
 
 	fi->next = __list;
@@ -419,7 +406,7 @@ long ftell(FILE* stream)
 	if(O_WRONLY == stream->bufmode) return stream->file_pos + stream->bufpos;
 
 	/* Deal with read */
-	return stream->bufpos;
+	return stream->file_pos + stream->bufpos;
 }
 
 
@@ -438,6 +425,7 @@ int fseek(FILE* f, long offset, int whence)
 
 	/* Deal with read mode */
 	int pos;
+	int end;
 
 	if(SEEK_SET == whence)
 	{
@@ -445,18 +433,22 @@ int fseek(FILE* f, long offset, int whence)
 	}
 	else if(SEEK_CUR == whence)
 	{
-		pos = f->bufpos + offset;
+		pos = ftell(f) + offset;
 	}
 	else if(SEEK_END == whence)
 	{
-		pos = f->buflen + offset;
+		end = lseek(f->fd, 0, SEEK_END);
+		if(end < 0) return -1;
+		pos = end + offset;
 	}
 	else return -1;
 
 	if(pos < 0) return -1;
-	if(pos > f->buflen) return -1;
 
-	f->bufpos = pos;
+	if(0 > lseek(f->fd, pos, SEEK_SET)) return -1;
+	f->file_pos = pos;
+	f->bufpos = 0;
+	f->buflen = 0;
 	return pos;
 }
 
