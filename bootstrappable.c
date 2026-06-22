@@ -23,9 +23,9 @@
 #define FALSE 0
 
 
-void require(int bool, char* error)
+void require(int condition, char* error)
 {
-	if(!bool)
+	if(!condition)
 	{
 		fputs(error, stderr);
 		exit(EXIT_FAILURE);
