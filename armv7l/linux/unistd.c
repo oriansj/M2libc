@@ -141,7 +141,7 @@ int symlink(char *path1, char *path2)
 	    "!0 R0 LOAD32 R0 MEMORY"
 	    "!8 R1 SUB R12 ARITH_ALWAYS"
 	    "!0 R1 LOAD32 R1 MEMORY"
-	    "!21 R7 LOADI8_ALWAYS"
+	    "!83 R7 LOADI8_ALWAYS"
 	    "SYSCALL_ALWAYS");
 }
 
@@ -234,7 +234,7 @@ int mount(char const *source, char const *target, char const *filesystemtype, SC
 	    "!0 R3 LOAD32 R3 MEMORY"
 	    "!20 R4 SUB R12 ARITH_ALWAYS"
 	    "!0 R4 LOAD32 R4 MEMORY"
-	    "!31 R7 LOADI8_ALWAYS"
+	    "!21 R7 LOADI8_ALWAYS"
 	    "SYSCALL_ALWAYS");
 }
 
