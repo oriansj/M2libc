@@ -16,6 +16,10 @@
  * without registering a block is why the guard cannot disturb the allocator's
  * accounting; a free of an unallocated non-NULL pointer keeps bailing.
  */
+#include <stdio.h>
+/* stdio.h first: with <stdlib.h> alone M2libc's headers fail with
+ * "Unknown type mode_t" (measured; tools/mescc-probes/probe.h documents the
+ * order). The test exercises free(), not stdio. */
 #include <stdlib.h>
 
 int main(void)
