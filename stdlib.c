@@ -132,6 +132,8 @@ void _malloc_insert_block(struct _malloc_node* n, int used)
  ************************************************************************/
 void free(void* ptr)
 {
+	/* ISO C 7.22.3.3: free(NULL) takes no action */
+	if(NULL == ptr) return;
 /* just in case someone needs to quickly turn it off */
 #ifndef _MALLOC_DISABLE_FREE
 	struct _malloc_node* i = _allocated_list;
