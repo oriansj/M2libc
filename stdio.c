@@ -490,26 +490,6 @@ char* __unsigned_integer_to_string(unsigned long value, int base, int uppercase)
 	return ptr;
 }
 
-char* __integer_to_string(long value)
-{
-	static char buf[60];
-
-	char* digits = "0123456789abcdef";
-
-	char* ptr = &buf + 59;
-	*ptr = '\0';
-
-	do
-	{
-		--ptr;
-		*ptr = digits[value % 10];
-		value /= 10;
-	}
-	while(value != 0);
-
-	return ptr;
-}
-
 int __vsnprintf_string_offset;
 va_list __vsnprintf_ap;
 /* One line since M2-Mesoplanet doesn't support multi line macros */
@@ -589,12 +569,15 @@ int vsnprintf(char* s, size_t n, const char* format, va_list arg)
 				{
 					value = va_arg(arg, int);
 				}
+				/* The magnitude in unsigned arithmetic: -value overflows
+				 * for the most negative value. */
+				unsigned long magnitude = value;
 				if(value < 0)
 				{
 					if(output < n - 1) s[output++] = '-';
-					value = -value;
+					magnitude = 0 - magnitude;
 				}
-				str = __integer_to_string(value);
+				str = __unsigned_integer_to_string(magnitude, 10, 0);
 				INLINE_STRSCPY
 			}
 			else if(format[i] == 'c')
