@@ -590,7 +590,9 @@ int vsnprintf(char* s, size_t n, const char* format, va_list arg)
 				if(output < n - 1) s[output++] = '%';
 			}
 
-			++i;
+			/* A '%' at the end of the format has no conversion to step
+			 * over: stop at the terminator. */
+			if(format[i] != '\0') ++i;
 		}
 		else
 		{
