@@ -492,28 +492,190 @@ char* __unsigned_integer_to_string(unsigned long value, int base, int uppercase)
 
 int __vsnprintf_string_offset;
 va_list __vsnprintf_ap;
-/* One line since M2-Mesoplanet doesn't support multi line macros */
-#define INLINE_STRSCPY str_i = 0; while(str[str_i] != '\0' && output < n - 1) { s[output++] = str[str_i++]; }
+/* vfprintf resumes a conversion that did not fit: it sets
+ * __vsnprintf_skip to the bytes of it already written, which the next
+ * vsnprintf call produces again without writing them, and vsnprintf sets
+ * __vsnprintf_resume to that count when it stops inside a conversion, else
+ * to 0. Every vsnprintf call leaves __vsnprintf_skip at 0, so a direct
+ * call never skips. */
+int __vsnprintf_skip;
+int __vsnprintf_resume;
+/* The bytes the current conversion produced, written or skipped. */
+int __vsnprintf_produced;
+/* Set when a byte did not fit. */
+int __vsnprintf_cut;
+
+/* Write count copies of c at s[output], as far as n leaves room for the
+ * terminator; return the new output. */
+int __vsnprintf_repeat(char* s, size_t n, int output, char c, int count)
+{
+	if(__vsnprintf_cut) return output;
+	/* Bytes an earlier chunk wrote are passed over at once. */
+	if(__vsnprintf_skip > 0 && count > 0)
+	{
+		int passed = count;
+		if(__vsnprintf_skip < passed) passed = __vsnprintf_skip;
+		__vsnprintf_skip = __vsnprintf_skip - passed;
+		__vsnprintf_produced = __vsnprintf_produced + passed;
+		count = count - passed;
+	}
+	while(count > 0)
+	{
+		if(__vsnprintf_skip > 0)
+		{
+			__vsnprintf_skip = __vsnprintf_skip - 1;
+		}
+		else if(output < n - 1)
+		{
+			s[output] = c;
+			output = output + 1;
+		}
+		else
+		{
+			__vsnprintf_cut = 1;
+			return output;
+		}
+		__vsnprintf_produced = __vsnprintf_produced + 1;
+		count = count - 1;
+	}
+	return output;
+}
+
+/* Write str at s[output] up to its terminator, but at most len bytes when
+ * len is not negative, as __vsnprintf_repeat. The bytes an
+ * earlier chunk wrote are stepped over, not read again. */
+int __vsnprintf_copy(char* s, size_t n, int output, char* str, int len)
+{
+	int j = 0;
+	if(__vsnprintf_cut) return output;
+	if(__vsnprintf_skip > 0)
+	{
+		j = __vsnprintf_skip;
+		if(len >= 0 && len < j) j = len;
+		__vsnprintf_skip = __vsnprintf_skip - j;
+		__vsnprintf_produced = __vsnprintf_produced + j;
+	}
+	while(len < 0 || j < len)
+	{
+		if(str[j] == '\0') break;
+		output = __vsnprintf_repeat(s, n, output, str[j], 1);
+		if(__vsnprintf_cut) return output;
+		j = j + 1;
+	}
+	return output;
+}
+
+/* The length of str, or of its first max bytes when max is not negative;
+ * no byte past those is read, so str needs no terminator then. */
+int __vsnprintf_length(char* str, int max)
+{
+	int len = 0;
+	while(max < 0 || len < max)
+	{
+		if(str[len] == '\0') break;
+		len = len + 1;
+	}
+	return len;
+}
+
+/* A field width or precision of decimal digits at format[*i]; past the
+ * largest int it stays at that. */
+int __vsnprintf_number(const char* format, int* i)
+{
+	int value = 0;
+	int digit;
+	while(format[*i] >= '0' && format[*i] <= '9')
+	{
+		digit = format[*i] - '0';
+		if(value > (2147483647 - digit) / 10) value = 2147483647;
+		else value = value * 10 + digit;
+		*i = *i + 1;
+	}
+	return value;
+}
+
 int vsnprintf(char* s, size_t n, const char* format, va_list arg)
 {
 	int i = 0;
 	int output = 0;
-	int str_i;
 	char* str;
 
 	__vsnprintf_string_offset = 0;
+	__vsnprintf_resume = 0;
+	__vsnprintf_cut = 0;
 
-	if(0 == n) return 0;
+	if(0 == n)
+	{
+		__vsnprintf_skip = 0;
+		return 0;
+	}
 	while(format[i] != '\0' && output < n - 1)
 	{
 		if(format[i] == '%')
 		{
+			/* A conversion specification (C 7.21.6.1): flags, field
+			 * width, precision, length modifier and conversion. Where
+			 * it starts, for vfprintf to resume it. */
+			int start = i;
+			va_list start_ap = arg;
+			int left = 0;
+			int zero = 0;
+			int plus = 0;
+			int space = 0;
+			int alternate = 0;
+			int width = 0;
+			int precision = -1;
 			int is_long = 0;
+			__vsnprintf_produced = 0;
 			++i;
 
-			/* The length modifier l (C 7.21.6.1): long and unsigned long
-			 * arguments. Taken only before a conversion it applies to, so
-			 * "%lc", "%ls" and a trailing "%l" stay as before. */
+			while(format[i] == '-' || format[i] == '0' || format[i] == '+' || format[i] == ' ' || format[i] == '#')
+			{
+				if(format[i] == '-') left = 1;
+				else if(format[i] == '0') zero = 1;
+				else if(format[i] == '+') plus = 1;
+				else if(format[i] == ' ') space = 1;
+				else alternate = 1;
+				++i;
+			}
+
+			/* A negative width argument is a '-' flag and its
+			 * magnitude; the most negative int is taken as the largest. */
+			if(format[i] == '*')
+			{
+				width = va_arg(arg, int);
+				if(width < 0)
+				{
+					left = 1;
+					if(width < 0 - 2147483647) width = 2147483647;
+					else width = 0 - width;
+				}
+				++i;
+			}
+			else
+			{
+				width = __vsnprintf_number(format, &i);
+			}
+
+			/* A '.' alone is precision 0; a negative argument is none. */
+			if(format[i] == '.')
+			{
+				++i;
+				if(format[i] == '*')
+				{
+					precision = va_arg(arg, int);
+					if(precision < 0) precision = -1;
+					++i;
+				}
+				else
+				{
+					precision = __vsnprintf_number(format, &i);
+				}
+			}
+
+			/* The length modifier l: long and unsigned long arguments.
+			 * Taken only before a conversion it applies to, so "%lc",
+			 * "%ls" and a trailing "%l" stay as before. */
 			if(format[i] == 'l')
 			{
 				if(format[i + 1] == 'd' || format[i + 1] == 'i' || format[i + 1] == 'u' || format[i + 1] == 'x' || format[i + 1] == 'X' || format[i + 1] == 'o')
@@ -526,12 +688,22 @@ int vsnprintf(char* s, size_t n, const char* format, va_list arg)
 			if(format[i] == 's')
 			{
 				str = va_arg(arg, char*);
-				INLINE_STRSCPY
+				/* The padding needs the length only up to the width, so
+				 * a long string is not measured whole, nor again when
+				 * vfprintf resumes it. */
+				int bound = width;
+				if(precision >= 0 && precision < bound) bound = precision;
+				int pad = width - __vsnprintf_length(str, bound);
+				if(0 == left) output = __vsnprintf_repeat(s, n, output, ' ', pad);
+				output = __vsnprintf_copy(s, n, output, str, precision);
+				if(left) output = __vsnprintf_repeat(s, n, output, ' ', pad);
 			}
-			else if(format[i] == 'u' || format[i] == 'x' || format[i] == 'X' || format[i] == 'o')
+			else if(format[i] == 'u' || format[i] == 'x' || format[i] == 'X' || format[i] == 'o' || format[i] == 'd' || format[i] == 'i')
 			{
 				int uppercase = 0;
 				int base = 10;
+				char* prefix = "";
+				unsigned long magnitude;
 				if(format[i] == 'x')
 				{
 					base = 16;
@@ -546,48 +718,95 @@ int vsnprintf(char* s, size_t n, const char* format, va_list arg)
 					base = 8;
 				}
 
-				unsigned long value;
-				if(is_long)
+				/* '+' and ' ' sign only a signed conversion. */
+				if(format[i] == 'd' || format[i] == 'i')
 				{
-					value = va_arg(arg, unsigned long);
+					long value;
+					if(is_long)
+					{
+						value = va_arg(arg, long);
+					}
+					else
+					{
+						value = va_arg(arg, int);
+					}
+					/* The magnitude in unsigned arithmetic: -value
+					 * overflows for the most negative value. */
+					magnitude = value;
+					if(value < 0)
+					{
+						prefix = "-";
+						magnitude = 0 - magnitude;
+					}
+					else if(plus) prefix = "+";
+					else if(space) prefix = " ";
+				}
+				else if(is_long)
+				{
+					magnitude = va_arg(arg, unsigned long);
 				}
 				else
 				{
-					value = va_arg(arg, unsigned int);
+					magnitude = va_arg(arg, unsigned int);
 				}
-				str = __unsigned_integer_to_string(value, base, uppercase);
-				INLINE_STRSCPY
-			}
-			else if(format[i] == 'd' || format[i] == 'i')
-			{
-				long value;
-				if(is_long)
+
+				str = __unsigned_integer_to_string(magnitude, base, uppercase);
+				int len = __vsnprintf_length(str, -1);
+				/* Precision 0 prints no digit of a zero. */
+				if(0 == precision && 0 == magnitude) len = 0;
+				/* '#' prefixes a nonzero hexadecimal number. */
+				if(alternate && 16 == base && 0 != magnitude)
 				{
-					value = va_arg(arg, long);
+					prefix = "0x";
+					if(uppercase) prefix = "0X";
 				}
-				else
+				int zeros = 0;
+				if(precision > len) zeros = precision - len;
+				/* '#' raises an octal number's precision so that its
+				 * first digit is 0. */
+				if(alternate && 8 == base && 0 == zeros)
 				{
-					value = va_arg(arg, int);
+					if(0 == len || str[0] != '0') zeros = 1;
 				}
-				/* The magnitude in unsigned arithmetic: -value overflows
-				 * for the most negative value. */
-				unsigned long magnitude = value;
-				if(value < 0)
+				int prefix_len = __vsnprintf_length(prefix, -1);
+				/* width - zeros cannot overflow, both being at least 0. */
+				int pad = 0;
+				if(width > zeros) pad = width - zeros - len - prefix_len;
+				/* '0' pads with zeros after the sign or prefix, unless
+				 * '-' or a precision is given. */
+				if(zero && 0 == left && precision < 0 && pad > 0)
 				{
-					if(output < n - 1) s[output++] = '-';
-					magnitude = 0 - magnitude;
+					zeros = zeros + pad;
+					pad = 0;
 				}
-				str = __unsigned_integer_to_string(magnitude, 10, 0);
-				INLINE_STRSCPY
+				if(0 == left) output = __vsnprintf_repeat(s, n, output, ' ', pad);
+				output = __vsnprintf_copy(s, n, output, prefix, prefix_len);
+				output = __vsnprintf_repeat(s, n, output, '0', zeros);
+				output = __vsnprintf_copy(s, n, output, str, len);
+				if(left) output = __vsnprintf_repeat(s, n, output, ' ', pad);
 			}
 			else if(format[i] == 'c')
 			{
 				char value = va_arg(arg, char);
-				if(output < n - 1) s[output++] = value;
+				if(0 == left) output = __vsnprintf_repeat(s, n, output, ' ', width - 1);
+				output = __vsnprintf_repeat(s, n, output, value, 1);
+				if(left) output = __vsnprintf_repeat(s, n, output, ' ', width - 1);
 			}
 			else if(format[i] == '%')
 			{
-				if(output < n - 1) s[output++] = '%';
+				output = __vsnprintf_repeat(s, n, output, '%', 1);
+			}
+
+			/* A conversion that did not fit: stop at its start, with
+			 * what it already wrote, for vfprintf to resume it. */
+			if(__vsnprintf_cut)
+			{
+				__vsnprintf_string_offset = start;
+				__vsnprintf_ap = start_ap;
+				__vsnprintf_resume = __vsnprintf_produced;
+				__vsnprintf_skip = 0;
+				s[output] = '\0';
+				return output;
 			}
 
 			/* A '%' at the end of the format has no conversion to step
@@ -603,6 +822,7 @@ int vsnprintf(char* s, size_t n, const char* format, va_list arg)
 
 	__vsnprintf_string_offset = i;
 	__vsnprintf_ap = arg;
+	__vsnprintf_skip = 0;
 
 	if(output < n)
 	{
@@ -612,7 +832,6 @@ int vsnprintf(char* s, size_t n, const char* format, va_list arg)
 
 	return output;
 }
-#undef INLINE_STRSCPY
 
 #define PRINTF_BUFFER_SIZE 4096
 /* Add one to always have a null terminator */
@@ -622,14 +841,19 @@ int vfprintf(FILE* stream, char* format, va_list arg)
 	int output = 0;
 	va_list ap = arg;
 
+	__vsnprintf_resume = 0;
 	do
 	{
-		output += vsnprintf(printf_buf, PRINTF_BUFFER_SIZE, format, ap);
+		/* Resume a conversion the last chunk cut. */
+		__vsnprintf_skip = __vsnprintf_resume;
+		/* Written by its length: a "%c" of 0 is a byte like any other. */
+		int chunk = vsnprintf(printf_buf, PRINTF_BUFFER_SIZE, format, ap);
+		output += chunk;
 		format += __vsnprintf_string_offset;
 		ap = __vsnprintf_ap;
-		fputs(printf_buf, stream);
+		fwrite(printf_buf, 1, chunk, stream);
 	}
-	while(__vsnprintf_string_offset != 0);
+	while(__vsnprintf_string_offset != 0 || __vsnprintf_resume != 0);
 
 	return output;
 }
