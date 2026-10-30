@@ -66,13 +66,7 @@ void __init_io()
 int fflush(FILE* stream);
 void __kill_io()
 {
-	fflush(stdout);
-	fflush(stderr);
-	while(NULL != __list)
-	{
-		fflush(__list);
-		__list = __list->next;
-	}
+	fflush(NULL);
 }
 
 /* Standard C functions */
@@ -332,6 +326,32 @@ FILE* fdopen(int fd, char* mode)
 int write(int fd, char* buf, unsigned count);
 int fflush(FILE* stream)
 {
+	/* A null pointer flushes every output stream (ISO C 7.21.5.2) */
+	if(NULL == stream)
+	{
+		FILE* i;
+		int ret;
+		ret = 0;
+		/* Skip a null stdout or stderr, which would recurse into this branch */
+		if(NULL != stdout)
+		{
+			if(0 > fflush(stdout)) ret = EOF;
+		}
+		if(NULL != stderr)
+		{
+			if(0 > fflush(stderr)) ret = EOF;
+		}
+
+		/* Walk a copy so __list itself survives */
+		i = __list;
+		while(NULL != i)
+		{
+			if(0 > fflush(i)) ret = EOF;
+			i = i->next;
+		}
+		return ret;
+	}
+
 	/* We only need to flush on writes */
 	if(O_RDONLY == stream->bufmode) return 0;
 
