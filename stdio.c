@@ -486,7 +486,7 @@ void rewind(FILE* f)
 	fseek(f, 0, SEEK_SET);
 }
 
-char* __unsigned_integer_to_string(unsigned int value, int base, int uppercase)
+char* __unsigned_integer_to_string(unsigned long value, int base, int uppercase)
 {
 	static char buf[60];
 
@@ -510,7 +510,7 @@ char* __unsigned_integer_to_string(unsigned int value, int base, int uppercase)
 	return ptr;
 }
 
-char* __integer_to_string(int value)
+char* __integer_to_string(long value)
 {
 	static char buf[60];
 
@@ -548,7 +548,20 @@ int vsnprintf(char* s, size_t n, const char* format, va_list arg)
 	{
 		if(format[i] == '%')
 		{
+			int is_long = 0;
 			++i;
+
+			/* The length modifier l (C 7.21.6.1): long and unsigned long
+			 * arguments. Taken only before a conversion it applies to, so
+			 * "%lc", "%ls" and a trailing "%l" stay as before. */
+			if(format[i] == 'l')
+			{
+				if(format[i + 1] == 'd' || format[i + 1] == 'i' || format[i + 1] == 'u' || format[i + 1] == 'x' || format[i + 1] == 'X' || format[i + 1] == 'o')
+				{
+					is_long = 1;
+					++i;
+				}
+			}
 
 			if(format[i] == 's')
 			{
@@ -573,13 +586,29 @@ int vsnprintf(char* s, size_t n, const char* format, va_list arg)
 					base = 8;
 				}
 
-				unsigned int value = va_arg(arg, unsigned int);
+				unsigned long value;
+				if(is_long)
+				{
+					value = va_arg(arg, unsigned long);
+				}
+				else
+				{
+					value = va_arg(arg, unsigned int);
+				}
 				str = __unsigned_integer_to_string(value, base, uppercase);
 				INLINE_STRSCPY
 			}
 			else if(format[i] == 'd' || format[i] == 'i')
 			{
-				int value = va_arg(arg, int);
+				long value;
+				if(is_long)
+				{
+					value = va_arg(arg, long);
+				}
+				else
+				{
+					value = va_arg(arg, int);
+				}
 				if(value < 0)
 				{
 					if(output < n - 1) s[output++] = '-';
