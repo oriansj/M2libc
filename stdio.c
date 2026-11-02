@@ -453,7 +453,8 @@ int fseek(FILE* f, long offset, int whence)
 	if(O_WRONLY == f->bufmode)
 	{
 		fflush(f);
-		return lseek(f->fd, offset, whence);
+		if(0 > lseek(f->fd, offset, whence)) return -1;
+		return 0;
 	}
 
 	/* Deal with read mode */
@@ -477,7 +478,8 @@ int fseek(FILE* f, long offset, int whence)
 	if(pos > f->buflen) return -1;
 
 	f->bufpos = pos;
-	return pos;
+	/* Success is 0, not the new position (ISO C 7.21.9.2) */
+	return 0;
 }
 
 
