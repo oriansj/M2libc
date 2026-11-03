@@ -123,6 +123,7 @@ int lseek(int fd, int offset, int whence)
 int close(int fd)
 {
 	asm("!4 R0 SUB R12 ARITH_ALWAYS"
+	    "!0 R0 LOAD32 R0 MEMORY"
 	    "!6 R7 LOADI8_ALWAYS"
 	    "SYSCALL_ALWAYS");
 }
@@ -131,6 +132,7 @@ int close(int fd)
 int unlink (char* filename)
 {
 	asm("!4 R0 SUB R12 ARITH_ALWAYS"
+	    "!0 R0 LOAD32 R0 MEMORY"
 	    "!10 R7 LOADI8_ALWAYS"
 	    "SYSCALL_ALWAYS");
 }
@@ -218,6 +220,7 @@ int getegid()
 int chroot(char const *path)
 {
 	asm("!4 R0 SUB R12 ARITH_ALWAYS"
+	   "!0 R0 LOAD32 R0 MEMORY"
 	   "!61 R7 LOADI8_ALWAYS"
 	   "SYSCALL_ALWAYS");
 }
