@@ -85,10 +85,11 @@ int fgetc(FILE* f)
 
 		/* Catch special case of STDIN gets nothing (AN EOF) */
 		if(0 >= r) return EOF;
+		f->buflen = r;
 	}
 	else if(f->buflen <= f->bufpos)
 	{
-		f->file_pos = f->file_pos + f->buflen;
+		if(0 <= f->file_pos) f->file_pos = f->file_pos + f->buflen;
 		f->bufpos = 0;
 		f->buflen = read(f->fd, f->buffer, BUFSIZ);
 
@@ -306,6 +307,8 @@ FILE* fdopen(int fd, char* mode)
 	if(NULL != __list) __list->prev = fi;
 	__list = fi;
 	fi->fd = fd;
+	/* Preserve an existing descriptor's position; -1 marks nonseekable I/O. */
+	fi->file_pos = lseek(fd, 0, SEEK_CUR);
 	return fi;
 }
 
@@ -349,7 +352,7 @@ int fflush(FILE* stream)
 	int error = write(stream->fd, stream->buffer, stream->bufpos);
 
 	/* Keep track of position */
-	stream->file_pos = stream->file_pos + stream->bufpos;
+	if(0 <= stream->file_pos) stream->file_pos = stream->file_pos + stream->bufpos;
 	stream->bufpos = 0;
 
 	return error;
@@ -418,6 +421,7 @@ int ungetc(int ch, FILE* stream)
 
 long ftell(FILE* stream)
 {
+	if(0 > stream->file_pos) return -1;
 	/* Deal with STDIN, STDOUT and STDERR */
 	/* No ftell for you */
 	if(2 >= stream->fd) return 0;
@@ -432,6 +436,7 @@ long ftell(FILE* stream)
 
 int fseek(FILE* f, long offset, int whence)
 {
+	if(0 > f->file_pos) return -1;
 	/* Deal with STDIN, STDOUT and STDERR */
 	/* No seek and destroy missions */
 	if(2 >= f->fd) return 0;
@@ -465,7 +470,8 @@ int fseek(FILE* f, long offset, int whence)
 
 	if(pos < 0) return -1;
 
-	if(0 > lseek(f->fd, pos, SEEK_SET)) return -1;
+	int seek_result = lseek(f->fd, pos, SEEK_SET);
+	if(seek_result < 0) return -1;
 	f->file_pos = pos;
 	f->bufpos = 0;
 	f->buflen = 0;
