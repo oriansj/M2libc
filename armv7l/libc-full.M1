@@ -28,6 +28,10 @@
 	'0' R0 R0 '1' MOVE_ALWAYS       ; OFFSET = OFFSET * WORDSIZE
 	'0' R0 R0 ADD BP ARITH2_ALWAYS  ; ENVP_address = BP + OFFSET
 	{R0} PUSH_ALWAYS                ; Put envp on the stack
+	!0 R1 LOAD32 R15 MEMORY         ; Get _envp global
+	~0 JUMP_ALWAYS
+	&GLOBAL__envp
+	!0 R0 STORE32 R1 MEMORY         ; Save environment to _envp
 
 	;; Stack offset
 	!4 BP ADD BP ARITH_ALWAYS       ; Fix BP
