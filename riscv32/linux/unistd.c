@@ -144,7 +144,7 @@ int write(int fd, char* buf, unsigned count)
 	    "ecall");
 }
 
-int llseek(int fd, int offset_high, int offset_low, int result, int whence)
+int llseek(int fd, int offset_high, int offset_low, int* result, int whence)
 {
 	asm("rd_a0 rs1_fp !-4 lw"
 	    "rd_a1 rs1_fp !-8 lw"
@@ -157,12 +157,15 @@ int llseek(int fd, int offset_high, int offset_low, int result, int whence)
 
 int lseek(int fd, int offset, int whence)
 {
-	int result;
-	if(llseek(fd, offset >> 32, offset, &result, whence))
+	/* _llseek writes a 64-bit result, even on a 32-bit target. */
+	int result[2];
+	if(llseek(fd, offset >> 31, offset, result, whence))
 	{
 		return -1;
 	}
-	return result;
+	/* This interface can only represent a signed 32-bit file position. */
+	if(result[1] != (result[0] >> 31)) return -1;
+	return result[0];
 }
 
 int close(int fd)
