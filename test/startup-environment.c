@@ -6,7 +6,5 @@
 int main(void)
 {
 	char* value = getenv("M2LIBC_AUDIT");
-	if(NULL == value) return 1;
-	if(strcmp(value, "present") != 0) return 2;
-	return 0;
+	return NULL == value || strcmp(value, "present") != 0;
 }

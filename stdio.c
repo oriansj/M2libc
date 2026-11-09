@@ -241,28 +241,21 @@ FILE* fopen(char const* filename, char const* mode)
 		return 0;
 	}
 
+	fi->buffer = malloc(BUFSIZ * sizeof(char));
+	if(NULL == fi->buffer)
+	{
+		close(f);
+		free(fi);
+		return 0;
+	}
+
 	if('w' == mode[0] || 'a' == mode[0])
 	{
-		/* Buffer as much as possible */
-		fi->buffer = malloc(BUFSIZ * sizeof(char));
-		if(NULL == fi->buffer)
-		{
-			close(f);
-			free(fi);
-			return 0;
-		}
 		fi->buflen = BUFSIZ;
 		fi->bufmode = O_WRONLY;
 	}
 	else
 	{
-		fi->buffer = malloc(BUFSIZ * sizeof(char));
-		if(NULL == fi->buffer)
-		{
-			close(f);
-			free(fi);
-			return 0;
-		}
 		fi->buflen = 0;
 		fi->bufmode = O_RDONLY;
 	}
