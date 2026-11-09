@@ -279,26 +279,20 @@ FILE* fdopen(int fd, char* mode)
 	FILE* fi = calloc(1, sizeof(FILE));
 	if(NULL == fi) return 0;
 
+	fi->buffer = malloc(BUFSIZ * sizeof(char));
+	if(NULL == fi->buffer)
+	{
+		free(fi);
+		return 0;
+	}
+
 	if('w' == mode[0])
 	{
-		/* Buffer as much as possible */
-		fi->buffer = malloc(BUFSIZ * sizeof(char));
-		if(NULL == fi->buffer)
-		{
-			free(fi);
-			return 0;
-		}
 		fi->buflen = BUFSIZ;
 		fi->bufmode = O_WRONLY;
 	}
 	else
 	{
-		fi->buffer = malloc(BUFSIZ * sizeof(char));
-		if(NULL == fi->buffer)
-		{
-			free(fi);
-			return 0;
-		}
 		fi->buflen = 0;
 		fi->bufmode = O_RDONLY;
 	}
